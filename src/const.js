@@ -9,7 +9,6 @@ import { tripInfoCost } from './view/trip-cost.js';
 
 const POINTS_COUNT = 3;
 
-// ?контейнеры надо для каждой функции
 export const markup = [
 
 	{
