@@ -1,13 +1,13 @@
-const POINTS_COUNT = 3;
+import { mainMenuTemplate } from './view/main-menu.js';
+import { filterTemplate } from './view/filter.js';
+import { tripBoardTemplate } from './view/trip-board.js';
+import { newPointTemplate } from './view/new-point.js';
+import { editPointTemplate } from './view/edit-point.js';
+import { pointTemplate } from './view/point.js';
+import { tripInfo } from './view/trip-info.js';
+import { tripInfoCost } from './view/trip-cost.js';
 
-import { mainMenuTemplate } from '.view/main-menu.js';
-import { filterTemplate } from '.view/filter.js';
-import { tripBoardTemplate } from '.view/trip-board.js';
-import { newPointTemplate } from '.view/new-point.js';
-import { editPointTemplate } from '.view/edit-point.js';
-import { pointTemplate } from '.view/point.js';
-import { tripInfo } from '.view/trip-info.js';
-import { tripInfoCost } from '.view/trip-cost.js';
+const POINTS_COUNT = 3;
 
 // ?контейнеры надо для каждой функции
 export const markup = [
