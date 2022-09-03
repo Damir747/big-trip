@@ -1,11 +1,20 @@
-export const newPointTemplate = () => {
+export const newPointTemplate = (points) => {
+	const createDestinationTemplate = (cities) => {
+		return cities.map((city) => `<option value="${city}"></option>`).join('');
+	}
+
+	let cityList = "";
+	points.forEach((el) => cityList += `<option value="${el.city}"></option>`);
+
+	let photosList = "";
+	points[points.length - 1].photos.forEach((el) => photosList += `<img class="event__photo" src="${el}" alt="Event photo">`);
 	return `<li class="trip-events__item">
               <form class="event event--edit" action="#" method="post">
                 <header class="event__header">
                   <div class="event__type-wrapper">
                     <label class="event__type  event__type-btn" for="event-type-toggle-1">
                       <span class="visually-hidden">Choose event type</span>
-                      <img class="event__type-icon" width="17" height="17" src="img/icons/flight.png" alt="Event type icon">
+                      <img class="event__type-icon" width="17" height="17" src="img/icons/${points[0].point}.png" alt="Event type icon">
                     </label>
                     <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -44,8 +53,8 @@ export const newPointTemplate = () => {
                         </div>
 
                         <div class="event__type-item">
-                          <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" checked>
-                          <label class="event__type-label  event__type-label--flight" for="event-type-flight-1">Flight</label>
+                          <input id="event-type-${points[0].point}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${points[0].point}" checked>
+                          <label class="event__type-label  event__type-label--${points[0].point}" for="event-type-${points[0].point}-1">${points[0].point}</label>
                         </div>
 
                         <div class="event__type-item">
@@ -68,13 +77,11 @@ export const newPointTemplate = () => {
 
                   <div class="event__field-group  event__field-group--destination">
                     <label class="event__label  event__type-output" for="event-destination-1">
-                      Flight
+                      ${points[0].point}
                     </label>
-                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="Geneva" list="destination-list-1">
+                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${points[points.length - 1].city}" list="destination-list-1">
                     <datalist id="destination-list-1">
-                      <option value="Amsterdam"></option>
-                      <option value="Geneva"></option>
-                      <option value="Chamonix"></option>
+                      ${cityList}
                     </datalist>
                   </div>
 
@@ -151,15 +158,11 @@ export const newPointTemplate = () => {
 
                   <section class="event__section  event__section--destination">
                     <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-                    <p class="event__destination-description">Geneva is a city in Switzerland that lies at the southern tip of expansive Lac Léman (Lake Geneva). Surrounded by the Alps and Jura mountains, the city has views of dramatic Mont Blanc.</p>
+                    <p class="event__destination-description">${points[points.length - 1].description}</p>
 
                     <div class="event__photos-container">
                       <div class="event__photos-tape">
-                        <img class="event__photo" src="img/photos/1.jpg" alt="Event photo">
-                        <img class="event__photo" src="img/photos/2.jpg" alt="Event photo">
-                        <img class="event__photo" src="img/photos/3.jpg" alt="Event photo">
-                        <img class="event__photo" src="img/photos/4.jpg" alt="Event photo">
-                        <img class="event__photo" src="img/photos/5.jpg" alt="Event photo">
+                        ${photosList}
                       </div>
                     </div>
                   </section>

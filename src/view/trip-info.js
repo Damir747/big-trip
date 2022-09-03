@@ -1,7 +1,7 @@
-export const tripInfo = () => {
+export const tripInfo = (points) => {
 	return `<section class="trip-main__trip-info  trip-info">
             <div class="trip-info__main">
-              <h1 class="trip-info__title">Amsterdam &mdash; Chamonix &mdash; Geneva</h1>
+              <h1 class="trip-info__title">${points[0].city} &mdash; ${points[1].city} &mdash; ${points[2].city}</h1>
 
               <p class="trip-info__dates">Mar 18&nbsp;&mdash;&nbsp;20</p>
             </div>
