@@ -11,6 +11,9 @@ export const findElement = (container, selector) => {
 };
 
 export const render = (container, template, position = 'beforeend') => {
+	console.log(container);
+	console.log(position);
+	console.log(template);
 	container.insertAdjacentHTML(position, template);
 };
 
