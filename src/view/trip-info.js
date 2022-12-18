@@ -1,13 +1,58 @@
-export const tripInfo = (points) => {
+import { DateFormat } from '../const.js';
+import { humanizeDate } from '../utils';
+import { createElement } from '../utils.js';
+
+const tripInfoTemplate = (points) => {
+	let way = '';
+	let cost = 0;
+	let minDate = Infinity;
+	let maxDate = 0;
+	points.forEach(element => {
+		if (way === '') {
+			way += element.city;
+		}
+		else {
+			way += ' &mdash; ' + element.city;
+		}
+		let sum = element.checkedOffer.reduce((sum, currentObj) => sum += currentObj.price, 0);
+		cost += element.price + sum;
+		if (element.start < minDate) {
+			minDate = element.start;
+		}
+		if (element.end > maxDate) {
+			maxDate = element.end;
+		}
+	});
+
+
 	return `<section class="trip-main__trip-info  trip-info">
             <div class="trip-info__main">
-              <h1 class="trip-info__title">${points[0].city} &mdash; ${points[1].city} &mdash; ${points[2].city}</h1>
+              <h1 class="trip-info__title">${way}</h1>
 
-              <p class="trip-info__dates">Mar 18&nbsp;&mdash;&nbsp;20</p>
+              <p class="trip-info__dates">${humanizeDate(minDate, DateFormat.FORMAT_SHORT_DATE)}&nbsp;&mdash;&nbsp;${humanizeDate(maxDate, DateFormat.FORMAT_SHORT_DATE)}</p>
             </div>
 
             <p class="trip-info__cost">
-              Total: &euro;&nbsp;<span class="trip-info__cost-value">1230</span>
+              Total: &euro;&nbsp;<span class="trip-info__cost-value">${cost}</span>
             </p>
           </section>`;
 };
+
+export default class TripInfo {
+	constructor(points = []) {
+		this._points = points;
+		this._element = null;
+	}
+	getTemplate() {
+		return tripInfoTemplate(this._points);
+	}
+	getElement() {
+		if (!this._element) {
+			this._element = createElement(this.getTemplate());
+		}
+		return this._element;
+	}
+	removeElement() {
+		this._element = null;
+	}
+}

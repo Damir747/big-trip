@@ -1,22 +1,25 @@
 {
-  "name": "big-trip",
-  "version": "1.0.0",
-  "private": true,
-  "description": "Проект «Большое путешествие» от HTML Academy",
-  "scripts": {
-    "build": "webpack --mode development",
-    "eslint": "eslint src/",
-    "start": "webpack-dev-server --open",
-    "test": "npm run eslint"
-  },
-  "devDependencies": {
-    "eslint": "7.13.0",
-    "eslint-config-htmlacademy": "3.0.0",
-    "webpack": "4.44.2",
-    "webpack-cli": "3.3.12",
-    "webpack-dev-server": "3.11.0"
-  },
-  "engines": {
-    "node": "10"
-  }
+	"name": "big-trip",
+	"version": "1.0.0",
+	"private": true,
+	"description": "Проект «Большое путешествие» от HTML Academy",
+	"scripts": {
+		"build": "webpack --mode development",
+		"eslint": "eslint src/",
+		"start": "webpack-dev-server --open",
+		"test": "npm run eslint"
+	},
+	"devDependencies": {
+		"eslint": "7.13.0",
+		"eslint-config-htmlacademy": "3.0.0",
+		"webpack": "4.44.2",
+		"webpack-cli": "3.3.12",
+		"webpack-dev-server": "^3.11.0"
+	},
+	"engines": {
+		"node": "10"
+	},
+	"dependencies": {
+		"dayjs": "^1.11.7"
+	}
 }

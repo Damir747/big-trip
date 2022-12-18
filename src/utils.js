@@ -1,7 +1,9 @@
-import { DIR_PICTURE, MAX_RANDOM_PICTURE } from "./const";
-import dayjs from "dayjs";
+import { DIR_PICTURE, MAX_RANDOM_PICTURE } from './const';
+import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 dayjs.extend(duration);
+
+export const humanizeDate = (date, format) => dayjs(date).format(format);
 
 export const findElement = (container, selector) => {
 	if (container === null) {
@@ -10,12 +12,27 @@ export const findElement = (container, selector) => {
 	return container.querySelector(selector);
 };
 
-export const render = (container, template, position = 'beforeend') => {
-	console.log(container);
-	console.log(position);
-	console.log(template);
-	container.insertAdjacentHTML(position, template);
+export const RenderPosition = {
+	AFTERBEGIN: 'afterbegin',
+	BEFOREEND: 'beforeend',
 };
+
+export const render = (container, element, place) => {
+	switch (place) {
+		case RenderPosition.AFTERBEGIN:
+			container.prepend(element);
+			break;
+		case RenderPosition.BEFOREEND:
+			container.append(element);
+			break;
+	}
+};
+
+export const createElement = (template) => {
+	const newElement = document.createElement('div');
+	newElement.innerHTML = template;
+	return newElement.firstChild;
+}
 
 const checkInteger = (number) => {
 	if (!Number.isInteger(number)) {
@@ -49,3 +66,7 @@ export const getRandomPositiveInteger = (min, max) => {
 export const getRandomPicture = () => DIR_PICTURE + getRandomPositiveInteger(0, MAX_RANDOM_PICTURE);
 
 export const getRandomElementFromArray = (array) => array[getRandomPositiveInteger(0, array.length - 1)];
+
+export const capitalizeFirstLetter = (str) => {
+	return str.at(0).toUpperCase() + str.slice(1);
+}
