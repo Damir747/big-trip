@@ -1,5 +1,5 @@
 import { TABS_NAMES, ACTIVE_TABS, ACTIVE_TABS_CLASS } from '../const.js';
-import { createElement } from '../utils.js';
+import Abstract from './abstract.js';
 
 const createTabsItem = (tabsName, isActive) => {
 	return `<a class="trip-tabs__btn  ${isActive ? ACTIVE_TABS_CLASS : ''}" href="#">${tabsName}</a>`
@@ -11,20 +11,8 @@ const mainMenuTemplate = () => {
               </nav>`;
 };
 
-export default class TabsMenu {
-	constructor() {
-		this._element = null;
-	}
+export default class TabsMenu extends Abstract {
 	getTemplate() {
 		return mainMenuTemplate();
-	}
-	getElement() {
-		if (!this._element) {
-			this._element = createElement(this.getTemplate());
-		}
-		return this._element;
-	}
-	removeElement() {
-		this._element = null;
 	}
 }

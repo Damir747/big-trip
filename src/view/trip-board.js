@@ -1,5 +1,5 @@
 import { SORT_NAMES, ACTIVE_SORT } from '../const.js';
-import { createElement } from '../utils.js';
+import Abstract from './abstract.js';
 
 const createSortItem = (sortName, isDisabled, isChecked) => {
 	return `            <div class="trip-sort__item  trip-sort__item--${sortName}">
@@ -14,20 +14,8 @@ const sortTemplate = () => {
                 ${sortItemsTemplate.join('')}
                 </form>`;
 };
-export default class SortMenu {
-	constructor() {
-		this._element = null;
-	}
+export default class SortMenu extends Abstract {
 	getTemplate() {
 		return sortTemplate();
-	}
-	getElement() {
-		if (!this._element) {
-			this._element = createElement(this.getTemplate());
-		}
-		return this._element;
-	}
-	removeElement() {
-		this._element = null;
 	}
 }

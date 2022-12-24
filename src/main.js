@@ -3,7 +3,9 @@ import { findElement, render } from './utils.js';
 import TabsMenu from './view/main-menu.js';
 import FilterMenu from './view/filter.js';
 import SortMenu from './view/trip-board.js';
+import PointList from './view/point-list.js';
 import Point from './view/point.js';
+import NoPoint from './view/no-point.js';
 import EditPoint from './view/edit-point.js';
 import TripInfo from './view/trip-info.js';
 
@@ -13,8 +15,6 @@ const tripInfo = new TripInfo(points);
 render(findElement(document, markup[0].container), tripInfo.getElement(), markup[0].position);
 const filterMenu = new FilterMenu();
 render(findElement(document, markup[2].container), filterMenu.getElement(), markup[2].position);
-const sortMenu = new SortMenu();
-render(findElement(document, markup[3].container), sortMenu.getElement(), markup[3].position);
 
 const renderPoints = function (pointListElement, point) {
 	const pointComponent = new Point(point);
@@ -25,16 +25,25 @@ const renderPoints = function (pointListElement, point) {
 	const replaceFormToCard = () => {
 		pointListElement.replaceChild(pointComponent.getElement(), pointEditComponent.getElement());
 	}
-
+	const onEscKeyDown = (evt) => {
+		if (evt.key === 'Escape' || evt.key === 'Esc') {
+			evt.preventDefault();
+			replaceFormToCard();
+			document.removeEventListener('keydown', onEscKeyDown);
+		}
+	}
 	pointComponent.getElement().querySelector('.event__rollup-btn').addEventListener('click', () => {
+		document.addEventListener('keydown', onEscKeyDown);
 		replaceCardToForm();
 	});
 
 	pointEditComponent.getElement().querySelector('.event__rollup-btn').addEventListener('click', () => {
 		replaceFormToCard();
+		document.removeEventListener('keydown', onEscKeyDown);
 	})
 	pointEditComponent.getElement().querySelector('.event__save-btn').addEventListener('click', () => {
 		replaceFormToCard();
+		document.removeEventListener('keydown', onEscKeyDown);
 	});
 	pointEditComponent.getElement().querySelector('.event__reset-btn').addEventListener('click', () => {
 		console.log('Нажата кнопка Delete/Reset');
@@ -43,10 +52,21 @@ const renderPoints = function (pointListElement, point) {
 	render(pointListElement, pointComponent.getElement(), markup[5].position);
 }
 // 3.1.7 Выделит показ задач в функцию. WIP Сделать загрузку дополнительных точек по нажатию кнопки Ещё
-const pointListComponent = new Point(points[0]);
-render(findElement(document, markup[4].container), pointListComponent.getElement(), markup[4].position);
-for (let i = 0; i <= markup[5].count; i++) {
-	renderPoints(pointListComponent.getElement(), points[i]);
+
+// if (points.every((points) => points.past))
+if (points.length === 0) {
+	const noPoint = new NoPoint();
+	render(findElement(document, markup[6].container), noPoint.getElement(), markup[6].position);
+}
+else {
+	const sortMenu = new SortMenu();
+	render(findElement(document, markup[3].container), sortMenu.getElement(), markup[3].position);
+	const pointListComponent = new PointList();
+	render(findElement(document, '.trip-events'), pointListComponent.getElement(), 'beforeend');
+	const min = Math.min(markup[5].count, points.length);
+	for (let i = 0; i < min; i++) {
+		renderPoints(pointListComponent.getElement(), points[i]);
+	}
 }
 
 const changeStat = (elem) => {

@@ -1,5 +1,5 @@
-export const POINTS_COUNT = 4;
-export const GENERATED_POINTS_COUNT = 20;
+export const POINTS_COUNT = 4;	//сколько точек показывать на экране
+export const GENERATED_POINTS_COUNT = 20;		// сколько точек генерировать
 export const DIR_PICTURE = 'http://picsum.photos/248/152?r=';
 export const DIR_ICONS = 'img/icons/';
 export const MAX_RANDOM_PICTURE = 9999;

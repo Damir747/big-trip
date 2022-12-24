@@ -1,7 +1,7 @@
 import { humanizeDate } from '../utils.js';
 import { DateFormat, DIR_ICONS } from '../const.js';
 import { selectedOffers } from '../mock/offer-data.js';
-import { createElement } from '../utils.js';
+import Abstract from './abstract.js';
 
 
 const pointTemplate = (point) => {
@@ -40,21 +40,12 @@ const pointTemplate = (point) => {
             </li>`;
 };
 
-export default class Point {
+export default class Point extends Abstract {
 	constructor(point) {
+		super();
 		this._point = point;
-		this._element = null;
 	}
 	getTemplate() {
 		return pointTemplate(this._point);
-	}
-	getElement() {
-		if (!this._element) {
-			this._element = createElement(this.getTemplate());
-		}
-		return this._element;
-	}
-	removeElement() {
-		this._element = null;
 	}
 }

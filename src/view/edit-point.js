@@ -1,7 +1,7 @@
 import { humanizeDate } from '../utils.js';
 import { createOffers } from '../mock/offer-data.js';
 import { DateFormat, DIR_ICONS } from '../const.js';
-import { createElement } from '../utils.js';
+import Abstract from './abstract.js';
 
 const editPointTemplate = (point) => {
 	let photosList = "";
@@ -129,21 +129,12 @@ const editPointTemplate = (point) => {
             </li>`;
 };
 
-export default class EditPoint {
+export default class EditPoint extends Abstract {
 	constructor(point) {
+		super();
 		this._point = point;
-		this._element = null;
 	}
 	getTemplate() {
 		return editPointTemplate(this._point);
-	}
-	getElement() {
-		if (!this._element) {
-			this._element = createElement(this.getTemplate());
-		}
-		return this._element;
-	}
-	removeElement() {
-		this._element = null;
 	}
 }

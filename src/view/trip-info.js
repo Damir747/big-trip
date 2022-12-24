@@ -1,6 +1,6 @@
 import { DateFormat } from '../const.js';
 import { humanizeDate } from '../utils';
-import { createElement } from '../utils.js';
+import Abstract from './abstract.js';
 
 const tripInfoTemplate = (points) => {
 	let way = '';
@@ -38,21 +38,12 @@ const tripInfoTemplate = (points) => {
           </section>`;
 };
 
-export default class TripInfo {
+export default class TripInfo extends Abstract {
 	constructor(points = []) {
+		super();
 		this._points = points;
-		this._element = null;
 	}
 	getTemplate() {
 		return tripInfoTemplate(this._points);
-	}
-	getElement() {
-		if (!this._element) {
-			this._element = createElement(this.getTemplate());
-		}
-		return this._element;
-	}
-	removeElement() {
-		this._element = null;
 	}
 }

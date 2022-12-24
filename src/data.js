@@ -61,6 +61,7 @@ export const generatePoint = () => {
 		'photos': generatePhotos(),
 		'checkedOffer': checkedOrders(),
 		'checkedFavorite': checkedFavorite(),
+		'isPast': date.start < new Date()
 	}
 }
 
@@ -98,5 +99,10 @@ export const markup = [
 		container: '.trip-events__list',
 		position: 'beforeend',
 		count: POINTS_COUNT,
-	}
+	},
+	{
+		container: '.trip-events',
+		position: 'beforeend',
+		count: 1,
+	},
 ];

@@ -1,5 +1,5 @@
 import { FILTER_NAMES, ACTIVE_FILTER } from '../const.js';
-import { createElement } from '../utils.js';
+import Abstract from './abstract.js';
 
 const createFilterItem = (filterName, isChecked) => {
 	return `<div class="trip-filters__filter">
@@ -14,20 +14,8 @@ const filterTemplate = () => {
                 <button class="visually-hidden" type="submit">Accept filter</button>
               </form>`;
 };
-export default class FilterMenu {
-	constructor() {
-		this._element = null;
-	}
+export default class FilterMenu extends Abstract {
 	getTemplate() {
 		return filterTemplate();
-	}
-	getElement() {
-		if (!this._element) {
-			this._element = createElement(this.getTemplate());
-		}
-		return this._element;
-	}
-	removeElement() {
-		this._element = null;
 	}
 }
