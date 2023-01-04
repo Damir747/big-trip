@@ -1,5 +1,5 @@
 import { FILTER_NAMES, ACTIVE_FILTER } from '../const.js';
-import Abstract from './abstract.js';
+import AbstractView from '../framework/abstract-view.js';
 
 const createFilterItem = (filterName, isChecked) => {
 	return `<div class="trip-filters__filter">
@@ -14,7 +14,7 @@ const filterTemplate = () => {
                 <button class="visually-hidden" type="submit">Accept filter</button>
               </form>`;
 };
-export default class FilterMenu extends Abstract {
+export default class FilterMenuView extends AbstractView {
 	getTemplate() {
 		return filterTemplate();
 	}

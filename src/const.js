@@ -217,3 +217,15 @@ export const ACTIVE_SORT = 0;
 export const TABS_NAMES = ['Table', 'Stats'];
 export const ACTIVE_TABS = 0;
 export const ACTIVE_TABS_CLASS = 'trip-tabs__btn--active';
+
+export const RenderPosition = {
+	AFTERBEGIN: 'afterbegin',
+	BEFOREEND: 'beforeend',
+};
+
+export const Mode = {
+	VIEW: 'view',
+	EDIT: 'edit',
+}
+
+export const EMPTY_POINT = {};

@@ -1,7 +1,7 @@
 import { humanizeDate } from '../utils.js';
 import { createOffers } from '../mock/offer-data.js';
-import { DateFormat, DIR_ICONS } from '../const.js';
-import Abstract from './abstract.js';
+import { DateFormat, DIR_ICONS, EMPTY_POINT } from '../const.js';
+import AbstractView from '../framework/abstract-view.js';
 
 const editPointTemplate = (point) => {
 	let photosList = "";
@@ -129,12 +129,39 @@ const editPointTemplate = (point) => {
             </li>`;
 };
 
-export default class EditPoint extends Abstract {
-	constructor(point) {
+export default class PointEditorView extends AbstractView {
+	constructor(point = EMPTY_POINT) {
 		super();
 		this._point = point;
+		this._editClikcHandler = this._editClikcHandler.bind(this);
+		this._editFormSubmit = this._editFormSubmit.bind(this);
+		this._editFormDelete = this._editFormDelete.bind(this);
 	}
 	getTemplate() {
 		return editPointTemplate(this._point);
+	}
+	_editClikcHandler(evt) {
+		evt.preventDefault();
+		this._callback.editClick();
+	}
+	setEditClickHandler(callback) {
+		this._callback.editClick = callback;
+		this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._editClikcHandler);
+	}
+	_editFormSubmit(evt) {
+		evt.preventDefault();
+		this._callback.submitFormClick();
+	}
+	setFormSubmitHandler(callback) {
+		this._callback.submitFormClick = callback;
+		this.getElement().querySelector('.event__save-btn').addEventListener('click', this._editFormSubmit);
+	}
+	_editFormDelete(evt) {
+		evt.preventDefault();
+		this._callback.deleteFormClick();
+	}
+	setFormDeleteHandler(callback) {
+		this._callback.deleteFormClick = callback;
+		this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._editFormDelete);
 	}
 }

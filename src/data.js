@@ -1,6 +1,8 @@
 import { getRandomPositiveInteger } from './utils.js';
 import dayjs from 'dayjs';
 import { POINTS_COUNT, GENERATED_POINTS_COUNT, DIR_PICTURE, TYPES, CITIES, PLACE_DESCRIPTION, COUNT_PICTURE, MAX_RANDOM_PICTURE, ADD_DATE, ADD_TIME } from './const.js'
+import { nanoid } from 'nanoid';
+import { RenderPosition } from './const.js';
 
 const generatePointTypes = () => TYPES[getRandomPositiveInteger(0, TYPES.length - 1)];
 const generateCity = () => CITIES[getRandomPositiveInteger(0, CITIES.length - 1)];
@@ -52,6 +54,7 @@ export const generatePoint = () => {
 	const date = generateDate();
 
 	return {
+		'id': nanoid(),
 		'type': point.title,
 		'price': point.price,
 		'city': generateCity(),
@@ -72,37 +75,37 @@ export const markup = [
 
 	{
 		container: '.trip-main',
-		position: 'afterbegin',
+		position: RenderPosition.AFTERBEGIN,
 		count: 1,
 	},
 	{
 		container: '.trip-controls__navigation',
-		position: 'beforeend',
+		position: RenderPosition.BEFOREEND,
 		count: 1,
 	},
 	{
 		container: '.trip-controls__filters',
-		position: 'beforeend',
+		position: RenderPosition.BEFOREEND,
 		count: 1,
 	},
 	{
 		container: '.trip-events',
-		position: 'afterbegin',
+		position: RenderPosition.AFTERBEGIN,
 		count: 1,
 	},
 	{
 		container: '.trip-events__list',
-		position: 'beforeend',
+		position: RenderPosition.BEFOREEND,
 		count: 1,
 	},
 	{
 		container: '.trip-events__list',
-		position: 'beforeend',
+		position: RenderPosition.BEFOREEND,
 		count: POINTS_COUNT,
 	},
 	{
 		container: '.trip-events',
-		position: 'beforeend',
+		position: RenderPosition.BEFOREEND,
 		count: 1,
 	},
 ];

@@ -1,4 +1,4 @@
-import Abstract from './abstract.js';
+import AbstractView from '../framework/abstract-view.js';
 // import FilterMenu from './view/filter.js';
 
 const createNoPointTemplate = () => {
@@ -9,7 +9,7 @@ const createNoPointTemplate = () => {
 	// 'There are no future events now'
 };
 
-export default class NoPoint extends Abstract {
+export default class NoPointView extends AbstractView {
 	getTemplate() {
 		return createNoPointTemplate();
 	}

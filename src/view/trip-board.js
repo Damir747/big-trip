@@ -1,5 +1,5 @@
 import { SORT_NAMES, ACTIVE_SORT } from '../const.js';
-import Abstract from './abstract.js';
+import AbstractView from '../framework/abstract-view.js';
 
 const createSortItem = (sortName, isDisabled, isChecked) => {
 	return `            <div class="trip-sort__item  trip-sort__item--${sortName}">
@@ -14,7 +14,7 @@ const sortTemplate = () => {
                 ${sortItemsTemplate.join('')}
                 </form>`;
 };
-export default class SortMenu extends Abstract {
+export default class SortMenuView extends AbstractView {
 	getTemplate() {
 		return sortTemplate();
 	}

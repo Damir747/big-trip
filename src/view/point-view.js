@@ -1,8 +1,7 @@
 import { humanizeDate } from '../utils.js';
 import { DateFormat, DIR_ICONS } from '../const.js';
 import { selectedOffers } from '../mock/offer-data.js';
-import Abstract from './abstract.js';
-
+import AbstractView from '../framework/abstract-view.js';
 
 const pointTemplate = (point) => {
 	return `<li class="trip-events__item">
@@ -40,12 +39,30 @@ const pointTemplate = (point) => {
             </li>`;
 };
 
-export default class Point extends Abstract {
+export default class PointView extends AbstractView {
 	constructor(point) {
 		super();
 		this._point = point;
+		this._onRollUpClick = this._onRollUpClick.bind(this);
+		this._onFavoriteClick = this._onFavoriteClick.bind(this);
 	}
 	getTemplate() {
 		return pointTemplate(this._point);
 	}
+	_onRollUpClick() {
+		this._callback.rollUpClick();
+	}
+	setRollUpClickListener(callback) {
+		this._callback.rollUpClick = callback;
+		this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._onRollUpClick);
+	}
+	_onFavoriteClick() {
+		this._callback.favoriteClick();
+	}
+	setFavoriteClickListener(callback) {
+		this._callback.favoriteClick = callback;
+		this.getElement().querySelector('.event__favorite-btn').addEventListener('click', this._onFavoriteClick);
+	}
+
+
 }
