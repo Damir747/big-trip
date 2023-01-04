@@ -108,4 +108,14 @@ export const markup = [
 		position: RenderPosition.BEFOREEND,
 		count: 1,
 	},
+	{
+		container: '.page-header__container',
+		position: RenderPosition.BEFOREEND,
+		count: 1,
+	},
+	{
+		container: '.page-body__container',
+		position: RenderPosition.AFTERBEGIN,
+		count: 1,
+	},
 ];

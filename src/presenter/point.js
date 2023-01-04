@@ -65,7 +65,7 @@ export default class Point extends AbstractView {
 	_changeModeToEdit() {
 		replace(this._pointEditorComponent, this._pointComponent);
 		document.addEventListener('keydown', this._escKeyDownHandler);
-		this._changeMode();	//?
+		this._changeMode();
 		this._pointMode = Mode.EDIT;
 	}
 
@@ -76,7 +76,7 @@ export default class Point extends AbstractView {
 	}
 
 	_escKeyDownHandler(evt) {
-		if (evt.key === 'Escape' || evt.key === 'Esc') {
+		if (isEscapeEvent(evt)) {
 			evt.preventDefault();
 			console.log('_onEditorPointEscdown')
 			this._changeModeToView();
@@ -91,7 +91,11 @@ export default class Point extends AbstractView {
 
 	_changeFavoriteStatus() {
 		this._changeData(
-			Object.assign({}, this._point, { 'checkedFavorite': this._point.checkedFavorite === '' ? 'event__favorite-btn--active' : '' }),
+			Object.assign(
+				{},
+				this._point,
+				{ 'checkedFavorite': this._point.checkedFavorite === '' ? 'event__favorite-btn--active' : '' }
+			),
 		);
 	}
 }
