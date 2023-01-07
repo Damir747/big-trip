@@ -6,9 +6,13 @@ const createTabsItem = (tabsName, isActive) => {
 }
 const mainMenuTemplate = () => {
 	const tabsItemsTemplate = TABS_NAMES.map((tabs, item) => createTabsItem(tabs, item === ACTIVE_TABS));
-	return `<nav class="trip-controls__trip-tabs  trip-tabs">
+	return `<div class="trip-controls__navigation">
+						<h2 class="visually-hidden">Switch trip view</h2>
+						<!-- Меню -->
+					<nav class="trip-controls__trip-tabs  trip-tabs">
                 ${tabsItemsTemplate.join('')}
-              </nav>`;
+              </nav>
+				</div>`;
 };
 
 export default class TabsMenuView extends AbstractView {

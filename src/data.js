@@ -79,12 +79,12 @@ export const markup = [
 		count: 1,
 	},
 	{
-		container: '.trip-controls__navigation',
+		container: '.trip-main__trip-controls',
 		position: RenderPosition.BEFOREEND,
 		count: 1,
 	},
 	{
-		container: '.trip-controls__filters',
+		container: '.trip-main__trip-controls',
 		position: RenderPosition.BEFOREEND,
 		count: 1,
 	},

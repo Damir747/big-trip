@@ -1,6 +1,8 @@
 import { createElement } from '../utils.js';
 
 export default class AbstractView {
+	// _element = null;
+	// _callback = {};
 	constructor() {
 		if (new.target === AbstractView) {
 			throw new Error('Can\'t instantiate AbstractView, only concrete one.');

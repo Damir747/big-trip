@@ -1,7 +1,10 @@
 import { humanizeDate } from '../utils.js';
 import { createOffers } from '../mock/offer-data.js';
 import { DateFormat, DIR_ICONS, EMPTY_POINT } from '../const.js';
-import AbstractView from '../framework/abstract-view.js';
+import SmartView from './smart.js';
+import flatpickr from 'flatpickr';
+import '../../node_modules/flatpickr/dist/flatpickr.min.css';
+import { isEscapeEvent } from '../utils/common.js';
 
 const editPointTemplate = (point) => {
 	let photosList = "";
@@ -129,39 +132,99 @@ const editPointTemplate = (point) => {
             </li>`;
 };
 
-export default class PointEditorView extends AbstractView {
+// ? Не работают:
+// Save и Delete - не удается найти id записи
+// Escape
+export default class PointEditorView extends SmartView {
 	constructor(point = EMPTY_POINT) {
 		super();
-		this._point = point;
+		this._pointState = PointEditorView.parsePointDataToState(point);
 		this._editClikcHandler = this._editClikcHandler.bind(this);
 		this._editFormSubmit = this._editFormSubmit.bind(this);
 		this._editFormDelete = this._editFormDelete.bind(this);
+		this._changeTypePoint = this._changeTypePoint.bind(this);
+		this._onPointInput = this._onPointInput.bind(this);
 	}
+	static parsePointDataToState(pointData) {
+		return Object.assign(
+			{},
+			pointData,
+		);
+	}
+	static parseStateToPointData(state) {
+		return Object.assign(
+			{},
+			state,
+		);
+	}
+
 	getTemplate() {
-		return editPointTemplate(this._point);
+		return editPointTemplate(this._pointState);
 	}
+	reset(point) {
+		this.updateElement(PointEditorView.parsePointDataToState(point));
+	}
+	resetInput(point) {
+		this.updateDate(PointEditorView.parsePointDataToState(point));	//? updateDate? может updateElement?
+	}
+	restoreListeners() {
+		this.getElement().querySelector('.event--edit').addEventListener('submit', this._onPointInput);
+		// setPointInputHandler(this._callback.onPointInput);
+		this.getElement().querySelector('.event__type-btn').addEventListener('change', this._changeTypePoint);
+		// setTypePointHandler(this._callback.changeTypePoint);
+		this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._editClikcHandler);
+		// setEditClickHandler(this._callback.editClick);
+		this.getElement().querySelector('.event__save-btn').addEventListener('click', this._editFormSubmit);
+	}
+	_onPointInput() {
+		this._callback.onPointInput();
+	}
+	setPointInputHandler(callback) {
+		this._callback.onPointInput = callback;
+		this.getElement().querySelector('.event--edit').addEventListener('submit', this._onPointInput);
+	}
+	_changeTypePoint(evt) {
+		// evt.preventDefault();
+		console.log('event__type-btn');
+		this._callback.changeTypePoint();
+	}
+
+	setTypePointHandler(callback) {
+		this._callback.changeTypePoint = callback;
+		this.getElement().querySelector('.event__type-btn').addEventListener('change', this._changeTypePoint);
+	}
+
 	_editClikcHandler(evt) {
 		evt.preventDefault();
 		this._callback.editClick();
 	}
-	setEditClickHandler(callback) {
+
+	setModeToViewClickHandler(callback) {
 		this._callback.editClick = callback;
 		this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._editClikcHandler);
 	}
+
 	_editFormSubmit(evt) {
 		evt.preventDefault();
-		this._callback.submitFormClick();
+		this._callback.submitFormClick(PointEditorView.parseStateToPointData(this._pointState));
 	}
+
 	setFormSubmitHandler(callback) {
 		this._callback.submitFormClick = callback;
 		this.getElement().querySelector('.event__save-btn').addEventListener('click', this._editFormSubmit);
 	}
+
 	_editFormDelete(evt) {
 		evt.preventDefault();
 		this._callback.deleteFormClick();
 	}
+
 	setFormDeleteHandler(callback) {
 		this._callback.deleteFormClick = callback;
 		this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._editFormDelete);
+	}
+
+	_setDatepicker() {
+
 	}
 }

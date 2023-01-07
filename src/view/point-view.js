@@ -40,6 +40,7 @@ const pointTemplate = (point) => {
 };
 
 export default class PointView extends AbstractView {
+	// _point = null;
 	constructor(point) {
 		super();
 		this._point = point;
@@ -52,14 +53,14 @@ export default class PointView extends AbstractView {
 	_onRollUpClick() {
 		this._callback.rollUpClick();
 	}
-	setRollUpClickListener(callback) {
+	setModeToEditClickHandler(callback) {
 		this._callback.rollUpClick = callback;
 		this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._onRollUpClick);
 	}
 	_onFavoriteClick() {
 		this._callback.favoriteClick();
 	}
-	setFavoriteClickListener(callback) {
+	setFavoriteClickHandler(callback) {
 		this._callback.favoriteClick = callback;
 		this.getElement().querySelector('.event__favorite-btn').addEventListener('click', this._onFavoriteClick);
 	}

@@ -24,9 +24,8 @@ const tripInfoTemplate = (points) => {
 		}
 	});
 
-
 	return `<section class="trip-main__trip-info  trip-info">
-            <div class="trip-info__main">
+				<div class="trip-info__main">
               <h1 class="trip-info__title">${way}</h1>
 
               <p class="trip-info__dates">${humanizeDate(minDate, DateFormat.FORMAT_SHORT_DATE)}&nbsp;&mdash;&nbsp;${humanizeDate(maxDate, DateFormat.FORMAT_SHORT_DATE)}</p>
@@ -35,7 +34,7 @@ const tripInfoTemplate = (points) => {
             <p class="trip-info__cost">
               Total: &euro;&nbsp;<span class="trip-info__cost-value">${cost}</span>
             </p>
-          </section>`;
+				</section>`;
 };
 
 export default class TripInfo extends AbstractView {

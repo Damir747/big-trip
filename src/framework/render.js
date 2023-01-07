@@ -1,5 +1,9 @@
 import AbstractView from './abstract-view.js';
 
+/**
+ * Функция для удаления компонента
+ * @param {AbstractView} component Компонент, который нужно удалить
+ */
 export const remove = (component) => {
 	if (component === null) {
 		return;
@@ -12,6 +16,12 @@ export const remove = (component) => {
 	component.removeElement();
 
 }
+
+/**
+ * Функция для замены одного компонента на другой
+ * @param {AbstractView} newComponent Компонент, который нужно показать
+ * @param {AbstractView} oldComponent Компонент, который нужно скрыть
+ */
 export const replace = (newComponent, oldComponent) => {
 	if (!(newComponent instanceof AbstractView && oldComponent instanceof AbstractView)) {
 		throw new Error('Can replace only components');
