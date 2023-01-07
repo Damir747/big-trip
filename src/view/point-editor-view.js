@@ -6,6 +6,13 @@ import flatpickr from 'flatpickr';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 import { generateCities } from '../data.js';
 
+const eventTypeTemplate = (eventType) => {
+	return `<div class="event__type-item">
+                          <input id="event-type-train-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="train">
+                          <label class="event__type-label  event__type-label--train" for="event-type-train-1">Train</label>
+                        </div>
+`
+}
 const editPointTemplate = (point) => {
 	let photosList = "";
 	point.photos.forEach((el) => photosList += `<img class="event__photo" src="${el}" alt="Event photo">`);
