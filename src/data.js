@@ -5,9 +5,9 @@ import { nanoid } from 'nanoid';
 import { RenderPosition } from './const.js';
 
 const generatePointTypes = () => TYPES[getRandomPositiveInteger(0, TYPES.length - 1)];
-const generateCity = () => CITIES[getRandomPositiveInteger(0, CITIES.length - 1)];
-const generateDescription = () => PLACE_DESCRIPTION[getRandomPositiveInteger(0, PLACE_DESCRIPTION.length - 1)];
-const generatePhotos = () => {
+const generateCityName = () => CITIES[getRandomPositiveInteger(0, CITIES.length - 1)];
+const generateCityDescription = () => PLACE_DESCRIPTION[getRandomPositiveInteger(0, PLACE_DESCRIPTION.length - 1)];
+const generateCityPhotos = () => {
 	const arr = [];
 	for (let i = 0; i < COUNT_PICTURE; i++) {
 		arr.push(DIR_PICTURE + getRandomPositiveInteger(0, MAX_RANDOM_PICTURE));
@@ -52,21 +52,32 @@ const checkedOrders = () => [
 export const generatePoint = () => {
 	const point = generatePointTypes();
 	const date = generateDate();
+	const town = generateCities[getRandomPositiveInteger(0, TYPES.length - 1)];
 
 	return {
 		'id': nanoid(),
 		'type': point.title,
 		'price': point.price,
-		'city': generateCity(),
+		'city': town.city,
 		'start': date.start,
 		'end': date.end,
-		'description': generateDescription(),
-		'photos': generatePhotos(),
+		'description': town.description,
+		'photos': town.photos,
 		'checkedOffer': checkedOrders(),
 		'checkedFavorite': checkedFavorite(),
 		'isPast': date.start < new Date()
 	}
 }
+
+const generateCity = () => {
+	return {
+		'city': generateCityName(),
+		'description': generateCityDescription(),
+		'photos': generateCityPhotos(),
+	}
+}
+
+export const generateCities = new Array(CITIES.length).fill().map(() => generateCity());
 
 export const points = new Array(GENERATED_POINTS_COUNT).fill().map(() => generatePoint());
 

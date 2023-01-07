@@ -4,7 +4,7 @@ import { DateFormat, DIR_ICONS, EMPTY_POINT } from '../const.js';
 import SmartView from './smart.js';
 import flatpickr from 'flatpickr';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
-import { isEscapeEvent } from '../utils/common.js';
+import { generateCities } from '../data.js';
 
 const editPointTemplate = (point) => {
 	let photosList = "";
@@ -133,13 +133,16 @@ const editPointTemplate = (point) => {
 };
 
 // ? Не работают:
-// Save и Delete - не удается найти id записи
+// Save и Delete - не удается найти id записи. Save вроде бы работает.
 // Escape
+// При открытии меню типа точки по умолчанию стоит на Flight, а не текущий тип
+// При смене типа точки опции не меняются
+
 export default class PointEditorView extends SmartView {
 	constructor(point = EMPTY_POINT) {
 		super();
 		this._pointState = PointEditorView.parsePointDataToState(point);
-		this._editClikcHandler = this._editClikcHandler.bind(this);
+		this._onRollUpClick = this._onRollUpClick.bind(this);
 		this._editFormSubmit = this._editFormSubmit.bind(this);
 		this._editFormDelete = this._editFormDelete.bind(this);
 		this._changeTypePoint = this._changeTypePoint.bind(this);
@@ -168,40 +171,49 @@ export default class PointEditorView extends SmartView {
 		this.updateDate(PointEditorView.parsePointDataToState(point));	//? updateDate? может updateElement?
 	}
 	restoreListeners() {
-		this.getElement().querySelector('.event--edit').addEventListener('submit', this._onPointInput);
-		// setPointInputHandler(this._callback.onPointInput);
-		this.getElement().querySelector('.event__type-btn').addEventListener('change', this._changeTypePoint);
+		this.getElement().querySelector('.event__type-group').addEventListener('change', this._changeTypePoint);
+		this.getElement().querySelector('.event__input--destination').addEventListener('change', this._onPointInput)
+
 		// setTypePointHandler(this._callback.changeTypePoint);
 		this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._editClikcHandler);
 		// setEditClickHandler(this._callback.editClick);
 		this.getElement().querySelector('.event__save-btn').addEventListener('click', this._editFormSubmit);
 	}
-	_onPointInput() {
-		this._callback.onPointInput();
+
+	_onPointInput(evt) {
+		// Проверить, что город есть в списке
+		evt.preventDefault();
+		this.updateDate({
+			'description': generateDescription(),
+			destination: 'Moscow',	//pickElementDependOnValue(evt.target, generatedDescriptions,true);
+		});
 	}
 	setPointInputHandler(callback) {
 		this._callback.onPointInput = callback;
 		this.getElement().querySelector('.event--edit').addEventListener('submit', this._onPointInput);
 	}
 	_changeTypePoint(evt) {
-		// evt.preventDefault();
-		console.log('event__type-btn');
-		this._callback.changeTypePoint();
+		evt.preventDefault();
+		if (evt.target.tagName !== 'INPUT') {
+			return;
+		}
+		this.updateDate({
+			type: evt.target.value,
+		});	// offers: pickElementDependOnValue(evt.target, generatedOffers)
 	}
 
 	setTypePointHandler(callback) {
 		this._callback.changeTypePoint = callback;
-		this.getElement().querySelector('.event__type-btn').addEventListener('change', this._changeTypePoint);
+		this.getElement().querySelector('.event__type-group').addEventListener('change', this._changeTypePoint);
 	}
 
-	_editClikcHandler(evt) {
-		evt.preventDefault();
-		this._callback.editClick();
+	_onRollUpClick(evt) {
+		this._callback.onRollUpClick();
 	}
 
 	setModeToViewClickHandler(callback) {
-		this._callback.editClick = callback;
-		this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._editClikcHandler);
+		this._callback.onRollUpClick = callback;
+		this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._onRollUpClick);
 	}
 
 	_editFormSubmit(evt) {
