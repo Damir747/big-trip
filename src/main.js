@@ -1,5 +1,5 @@
 import { markup, points } from './data.js';
-import { findElement } from './utils.js';
+import { findElement } from './utils/common.js';
 import { render } from './view/render.js';
 import TabsMenuView from './view/main-menu.js';
 import TripInfo from './view/trip-info.js';

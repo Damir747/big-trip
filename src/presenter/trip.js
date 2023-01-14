@@ -7,7 +7,7 @@ import { POINTS_COUNT, SORT_NAMES, FILTER_NAMES } from '../const.js';
 import { render } from '../view/render.js';
 import PointListView from '../view/point-list.js'
 import BoardView from '../view/board.js'
-import { updatePoint } from '../utils/common.js';
+import { updatePoint } from '../utils/point.js';
 import Point from './point-presenter.js';
 import { sortPointDateUp, sortPointDateDown, sortPointTimeUp, sortPointTimeDown, sortPointCostUp, sortPointCostDown } from '../utils/sort.js';
 import dayjs from 'dayjs';
@@ -126,6 +126,7 @@ export default class TripPresenter {
 		this._renderTripInfo();
 	}
 	_onPointChange(modifiedPoint) {
+		console.log(modifiedPoint);
 		this._tripPoints = updatePoint(this._tripPoints, modifiedPoint);
 		this._pointPresenter[modifiedPoint.id].init(modifiedPoint);
 	}

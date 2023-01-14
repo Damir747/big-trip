@@ -1,5 +1,5 @@
 import { DateFormat } from '../const.js';
-import { humanizeDate } from '../utils';
+import { humanizeDate } from '../utils/common.js';
 import AbstractView from '../framework/abstract-view.js';
 
 const tripInfoTemplate = (points) => {

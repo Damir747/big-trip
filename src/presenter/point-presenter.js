@@ -23,7 +23,7 @@ export default class Point extends AbstractView {
 		this._changeFavoriteStatus = this._changeFavoriteStatus.bind(this);
 		this._onSubmitForm = this._onSubmitForm.bind(this);
 		this._deletePoint = this._deletePoint.bind(this);
-		//?? Escape
+		this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
 	}
 
 	init(point) {
@@ -59,14 +59,6 @@ export default class Point extends AbstractView {
 		remove(previousPointEditorComponent);
 	}
 
-	_escKeyDownHandler(evt) {
-		if (isEscapeEvent(evt)) {
-			evt.preventDefault();
-			console.log(this._pointEditorComponent);	//undefined
-			this._pointEditorComponent.reset(this._point);	// надо будет сбросить элемент, чтобы введенные данные были сброшены
-			this._changeModeToView();
-		}
-	}
 	destroy() {
 		remove(this._pointComponent);
 		remove(this._pointEditorComponent);
@@ -76,18 +68,26 @@ export default class Point extends AbstractView {
 		this._changeModeToView();
 		this._changeData(point);
 	}
+
 	_changeModeToEdit() {
 		replace(this._pointEditorComponent, this._pointComponent);
-		document.addEventListener('keydown', this._escKeyDownHandler);
 		this._pointEditorComponent.restoreListeners();
+		document.addEventListener('keydown', this._escKeyDownHandler);
 		this._changeMode();
 		this._pointMode = Mode.EDIT;
 	}
 
 	_changeModeToView() {
-		replace(this._pointComponent, this._pointEditorComponent);
 		document.removeEventListener('keydown', this._escKeyDownHandler);
+		replace(this._pointComponent, this._pointEditorComponent);
 		this._pointMode = Mode.VIEW;
+	}
+
+	_escKeyDownHandler(evt) {
+		if (isEscapeEvent(evt)) {
+			evt.preventDefault();
+			this._changeModeToView();
+		}
 	}
 
 	resetView() {

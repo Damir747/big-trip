@@ -58,6 +58,7 @@ export const TRIP_STOP = [
 	}
 ];
 export const TYPES = TRANSPORT.concat(TRIP_STOP);
+
 export const TYPES_PICTURE = TYPES.map((el) => el.title.toLowerCase());
 
 export const NO_TRIP_STOP_MESSAGE = "Click New Event to create your first point";
@@ -119,26 +120,31 @@ const offer = {
 export const POSSIBLE_OFFERS = [
 	{
 		title: 'Add luggage',
+		short: 'luggage',
 		price: 50,
 		checked: false,
 	},
 	{
 		title: 'Switch to comfort',
+		short: 'comfort',
 		price: 80,
 		checked: false,
 	},
 	{
 		title: 'Add meal',
+		short: 'meal',
 		price: 15,
 		checked: false,
 	},
 	{
 		title: 'Choose seats',
+		short: 'seats',
 		price: 5,
 		checked: false,
 	},
 	{
 		title: 'Travel by train',
+		short: 'train',
 		price: 40,
 		checked: false,
 	}
@@ -173,7 +179,8 @@ const localPoint = {
 		{
 			"title": "Choose meal",
 			"price": 180
-		}, {
+		},
+		{
 			"title": "Upgrade to comfort class",
 			"price": 50
 		}
@@ -229,3 +236,5 @@ export const Mode = {
 }
 
 export const EMPTY_POINT = {};
+
+export const EVENT_TYPE = ['taxi', 'bus', 'train', 'ship', 'transport', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];

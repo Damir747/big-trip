@@ -1,4 +1,4 @@
-import { humanizeDate } from '../utils.js';
+import { humanizeDate } from '../utils/common.js';
 import { DateFormat, DIR_ICONS } from '../const.js';
 import { selectedOffers } from '../mock/offer-data.js';
 import AbstractView from '../framework/abstract-view.js';

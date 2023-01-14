@@ -1,21 +1,34 @@
-import { humanizeDate } from '../utils.js';
+import { humanizeDate } from '../utils/common.js';
 import { createOffers } from '../mock/offer-data.js';
-import { DateFormat, DIR_ICONS, EMPTY_POINT } from '../const.js';
+import { CITIES, DateFormat, DIR_ICONS, EMPTY_POINT, EVENT_TYPE } from '../const.js';
 import SmartView from './smart.js';
 import flatpickr from 'flatpickr';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
-import { generateCities } from '../data.js';
+import { firstLetterUpperCase } from '../utils/common.js'
+import { orderTypes, pickElementDependOnValue, generateCities, pickElementDependOnValue2, pickElementDependOnValue3 } from '../data.js';
 
-const eventTypeTemplate = (eventType) => {
+const datalistCity = (city) => {
+	return `<option value="${city}"></option>`
+}
+const datalistCities = (cities) => {
+	let citiesList = "";
+	cities.forEach((el) => citiesList += datalistCity(el));
+	return citiesList;
+}
+const eventPhotoTemplate = (el) => `<img class="event__photo" src="${el}" alt="Event photo">`;
+const eventTypeTemplate = (eventType, checkedType) => {
 	return `<div class="event__type-item">
-                          <input id="event-type-train-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="train">
-                          <label class="event__type-label  event__type-label--train" for="event-type-train-1">Train</label>
+                          <input id="event-type-${eventType}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${eventType}" ${checkedType ? 'checked' : ''}>
+                          <label class="event__type-label  event__type-label--${eventType}" for="event-type-${eventType}-1">${firstLetterUpperCase(eventType)}</label>
                         </div>
 `
 }
+
 const editPointTemplate = (point) => {
 	let photosList = "";
-	point.photos.forEach((el) => photosList += `<img class="event__photo" src="${el}" alt="Event photo">`);
+	point.photos.forEach((el) => photosList += eventPhotoTemplate(el));
+	let eventTypeList = "";
+	EVENT_TYPE.forEach((el) => eventTypeList += eventTypeTemplate(el, (el === point.type.toLowerCase())));
 	return `<li class="trip-events__item">
               <form class="event event--edit" action="#" method="post">
                 <header class="event__header">
@@ -30,55 +43,7 @@ const editPointTemplate = (point) => {
                       <fieldset class="event__type-group">
                         <legend class="visually-hidden">Event type</legend>
 
-                        <div class="event__type-item">
-                          <input id="event-type-taxi-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="taxi">
-                          <label class="event__type-label  event__type-label--taxi" for="event-type-taxi-1">Taxi</label>
-                        </div>
-
-                        <div class="event__type-item">
-                          <input id="event-type-bus-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="bus">
-                          <label class="event__type-label  event__type-label--bus" for="event-type-bus-1">Bus</label>
-                        </div>
-
-                        <div class="event__type-item">
-                          <input id="event-type-train-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="train">
-                          <label class="event__type-label  event__type-label--train" for="event-type-train-1">Train</label>
-                        </div>
-
-                        <div class="event__type-item">
-                          <input id="event-type-ship-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="ship">
-                          <label class="event__type-label  event__type-label--ship" for="event-type-ship-1">Ship</label>
-                        </div>
-
-                        <div class="event__type-item">
-                          <input id="event-type-transport-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="transport">
-                          <label class="event__type-label  event__type-label--transport" for="event-type-transport-1">Transport</label>
-                        </div>
-
-                        <div class="event__type-item">
-                          <input id="event-type-drive-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="drive">
-                          <label class="event__type-label  event__type-label--drive" for="event-type-drive-1">Drive</label>
-                        </div>
-
-                        <div class="event__type-item">
-                          <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" checked>
-                          <label class="event__type-label  event__type-label--flight" for="event-type-flight-1">Flight</label>
-                        </div>
-
-                        <div class="event__type-item">
-                          <input id="event-type-check-in-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="check-in">
-                          <label class="event__type-label  event__type-label--check-in" for="event-type-check-in-1">Check-in</label>
-                        </div>
-
-                        <div class="event__type-item">
-                          <input id="event-type-sightseeing-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="sightseeing">
-                          <label class="event__type-label  event__type-label--sightseeing" for="event-type-sightseeing-1">Sightseeing</label>
-                        </div>
-
-                        <div class="event__type-item">
-                          <input id="event-type-restaurant-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="restaurant">
-                          <label class="event__type-label  event__type-label--restaurant" for="event-type-restaurant-1">Restaurant</label>
-                        </div>
+                        ${eventTypeList}
                       </fieldset>
                     </div>
                   </div>
@@ -89,7 +54,7 @@ const editPointTemplate = (point) => {
                     </label>
                     <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${point.city}" list="destination-list-1">
                     <datalist id="destination-list-1">
-                      <option value="${point.city}"></option>
+                      ${datalistCities(CITIES)}
                     </datalist>
                   </div>
 
@@ -140,10 +105,8 @@ const editPointTemplate = (point) => {
 };
 
 // ? Не работают:
-// Save и Delete - не удается найти id записи. Save вроде бы работает.
-// Escape
-// При открытии меню типа точки по умолчанию стоит на Flight, а не текущий тип
-// При смене типа точки опции не меняются
+// Save - не сохраняются опции поездки, не изменяет Город
+// Delete - не удается найти id записи.
 
 export default class PointEditorView extends SmartView {
 	constructor(point = EMPTY_POINT) {
@@ -168,6 +131,10 @@ export default class PointEditorView extends SmartView {
 		);
 	}
 
+	init() {
+		console.log('Edit Component Init');
+	}
+
 	getTemplate() {
 		return editPointTemplate(this._pointState);
 	}
@@ -182,17 +149,26 @@ export default class PointEditorView extends SmartView {
 		this.getElement().querySelector('.event__input--destination').addEventListener('change', this._onPointInput)
 
 		// setTypePointHandler(this._callback.changeTypePoint);
-		this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._editClikcHandler);
+		this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._onRollUpClick);
 		// setEditClickHandler(this._callback.editClick);
 		this.getElement().querySelector('.event__save-btn').addEventListener('click', this._editFormSubmit);
+	}
+
+	destroy() {
+
+		this.getElement().querySelector('.event__type-group').removeEventListener('change', this._changeTypePoint);
+		this.getElement().querySelector('.event__input--destination').removeEventListener('change', this._onPointInput)
+		this.getElement().querySelector('.event__rollup-btn').removeEventListener('click', this._onRollUpClick);
+		this.getElement().querySelector('.event__save-btn').removeEventListener('click', this._editFormSubmit);
 	}
 
 	_onPointInput(evt) {
 		// Проверить, что город есть в списке
 		evt.preventDefault();
 		this.updateDate({
-			'description': generateDescription(),
-			destination: 'Moscow',	//pickElementDependOnValue(evt.target, generatedDescriptions,true);
+			city: evt.target.value,
+			description: pickElementDependOnValue2(evt.target.value, generateCities),
+			photos: pickElementDependOnValue3(evt.target.value, generateCities),
 		});
 	}
 	setPointInputHandler(callback) {
@@ -206,7 +182,8 @@ export default class PointEditorView extends SmartView {
 		}
 		this.updateDate({
 			type: evt.target.value,
-		});	// offers: pickElementDependOnValue(evt.target, generatedOffers)
+			checkedOffer: pickElementDependOnValue(evt.target.value, orderTypes),
+		});
 	}
 
 	setTypePointHandler(callback) {
