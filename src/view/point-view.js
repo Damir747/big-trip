@@ -2,8 +2,10 @@ import { humanizeDate } from '../utils/common.js';
 import { DateFormat, DIR_ICONS } from '../const.js';
 import { selectedOffers } from '../mock/offer-data.js';
 import AbstractView from '../framework/abstract-view.js';
+import dayjs from 'dayjs';
 
 const pointTemplate = (point) => {
+
 	return `<li class="trip-events__item">
               <div class="event">
                 <time class="event__date" datetime="${humanizeDate(point.start, DateFormat.FORMAT_DATE)}">${humanizeDate(point.start, DateFormat.FORMAT_SHORT_DATE)}</time>
@@ -17,7 +19,7 @@ const pointTemplate = (point) => {
                     &mdash;
                     <time class="event__end-time" datetime="${point.end}">${humanizeDate(point.end, DateFormat.FORMAT_HOUR)}</time>
                   </p>
-                  <p class="event__duration">${humanizeDate(point.end.diff(point.start), DateFormat.FORMAT_HOUR)}</p>
+                  <p class="event__duration">${humanizeDate(dayjs(point.end).diff(dayjs(point.start), ''), DateFormat.FORMAT_DIF)}</p>
                 </div>
                 <p class="event__price">
                   &euro;&nbsp;<span class="event__price-value">${point.price}</span>

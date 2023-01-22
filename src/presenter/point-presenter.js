@@ -1,22 +1,22 @@
 import AbstractView from '../framework/abstract-view.js';
 import PointView from '../view/point-view.js';
 import PointEditorView from '../view/point-editor-view.js';
-import { Mode } from '../const.js';
+import { Mode, UpdateType, UserAction } from '../const.js';
 import { render } from '../view/render.js';
 import { remove, replace } from '../framework/render.js';
 import { isEscapeEvent } from '../utils/common.js';
 
-export default class Point extends AbstractView {
+export default class PointPresenter extends AbstractView {
 	constructor(pointListContainer, changeData, changeMode) {
 		super();
-
-		this._pointListContainer = pointListContainer;
-		this._changeData = changeData;
-		this._changeMode = changeMode;
 
 		this._pointComponent = null;
 		this._pointEditorComponent = null;
 		this._pointMode = Mode.VIEW;
+
+		this._pointListContainer = pointListContainer;
+		this._changeData = changeData;
+		this._changeMode = changeMode;
 
 		this._changeModeToView = this._changeModeToView.bind(this);
 		this._changeModeToEdit = this._changeModeToEdit.bind(this);
@@ -39,7 +39,6 @@ export default class Point extends AbstractView {
 		this._pointEditorComponent.setModeToViewClickHandler(this._changeModeToView);
 		this._pointEditorComponent.setFormSubmitHandler(this._onSubmitForm);
 		this._pointEditorComponent.setFormDeleteHandler(this._deletePoint);
-
 		if (previousPointComponent === null || previousPointEditorComponent === null) {
 			render(this._pointListContainer, this._pointComponent);
 			return;
@@ -50,11 +49,12 @@ export default class Point extends AbstractView {
 				replace(this._pointComponent, previousPointComponent);
 				break;
 			case Mode.EDIT:
-				replace(this._pointComponent, previousPointEditorComponent);
+				replace(this._pointEditorComponent, previousPointEditorComponent);
 				break;
 			default:
 				throw new Error(`Неизвестный _pointMode: ${this._pointMode}`);
 		}
+
 		remove(previousPointComponent);
 		remove(previousPointEditorComponent);
 	}
@@ -66,20 +66,23 @@ export default class Point extends AbstractView {
 
 	_onSubmitForm(point) {
 		this._changeModeToView();
-		this._changeData(point);
+		this._changeData(
+			UserAction.UPDATE_POINT,
+			UpdateType.POINTS,
+			point);
 	}
 
 	_changeModeToEdit() {
 		replace(this._pointEditorComponent, this._pointComponent);
 		this._pointEditorComponent.restoreListeners();
 		document.addEventListener('keydown', this._escKeyDownHandler);
-		this._changeMode();
+		this._changeMode(UpdateType.PATCH, this._point);	//???
 		this._pointMode = Mode.EDIT;
 	}
 
 	_changeModeToView() {
-		document.removeEventListener('keydown', this._escKeyDownHandler);
 		replace(this._pointComponent, this._pointEditorComponent);
+		document.removeEventListener('keydown', this._escKeyDownHandler);
 		this._pointMode = Mode.VIEW;
 	}
 
@@ -99,6 +102,8 @@ export default class Point extends AbstractView {
 
 	_changeFavoriteStatus() {
 		this._changeData(
+			UserAction.UPDATE_POINT,
+			UpdateType.POINTS,
 			Object.assign(
 				{},
 				this._point,
@@ -107,6 +112,10 @@ export default class Point extends AbstractView {
 		);
 	}
 	_deletePoint(point) {
-		console.log(point);
+		this._changeData(
+			UserAction.DELETE_POINT,
+			UpdateType.FULL,
+			point,
+		)
 	}
 }

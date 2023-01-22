@@ -4,11 +4,23 @@ export const DIR_PICTURE = 'http://picsum.photos/248/152?r=';
 export const DIR_ICONS = 'img/icons/';
 export const MAX_RANDOM_PICTURE = 9999;
 export const COUNT_PICTURE = 4;
+export const UpdateType = {
+	FULL: 'FULL',
+	POINTS: 'POINTS',
+	PATCH: 'PATCH',
+};
+export const UserAction = {
+	UPDATE_POINT: 'UPDATE_POINT',
+	ADD_POINT: 'ADD_POINT',
+	DELETE_POINT: 'DELETE_POINT',
+}
 export const DateFormat = {
 	FORMAT_HOUR: 'HH:mm',
-	FORMAT_FULL_DATE: 'DD/MM/YYYY HH:MM',
+	FORMAT_FULL_DATE: 'DD/MM/YY HH:mm',
 	FORMAT_DATE: 'YYYY-MM-DD',
 	FORMAT_SHORT_DATE: 'MMM DD',
+	FORMAT_DIF: 'HH[H] mm[M]',
+	FORMAT_PICKER: 'd/m/y H:i',
 }
 export const ADD_DATE = 7 * 24;
 export const ADD_TIME = 600;

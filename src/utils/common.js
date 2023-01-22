@@ -60,3 +60,5 @@ export const getRandomElementFromArray = (array) => array[getRandomPositiveInteg
 export const capitalizeFirstLetter = (str) => {
 	return str.at(0).toUpperCase() + str.slice(1);
 }
+
+export const compareTwoDates = (start, end) => dayjs(end).diff(dayjs(start));

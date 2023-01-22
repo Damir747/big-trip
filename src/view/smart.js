@@ -13,7 +13,7 @@ export default class SmartView extends AbstractView {
 		const newElement = this.getElement();
 		parentElement.replaceChild(newElement, previousElement);
 	}
-	updateDate(update) {
+	updateData(update) {		// + justDataUpdate
 		if (!update) {
 			return;
 		}

@@ -5,14 +5,18 @@ import TabsMenuView from './view/main-menu.js';
 import TripInfo from './view/trip-info.js';
 import TripPresenter from './presenter/trip.js';
 import HeaderView from './view/header-view.js';
+import PointsModel from './model/points.js';
 
 const headerView = new HeaderView();	// Заголовок (header) для: Маршрут и стоимость, Меню, Фильтры
 render(findElement(document, markup[7].container), headerView.getElement(), markup[7].position);
 const tabsMenu = new TabsMenuView();	// Меню: Table/Stats
 render(findElement(document, markup[1].container), tabsMenu.getElement(), markup[1].position);
 
-const tripPresenter = new TripPresenter(findElement(document, '.page-body__container'), findElement(document, markup[0].container), findElement(document, markup[1].container));
-tripPresenter.init(points);
+const pointsModel = new PointsModel();
+pointsModel.setPoints(points);
+
+const tripPresenter = new TripPresenter(findElement(document, '.page-body__container'), findElement(document, markup[0].container), findElement(document, markup[1].container), pointsModel);
+tripPresenter.init();
 
 // Обработчики все вынести в классы
 const changeStat = (elem) => {

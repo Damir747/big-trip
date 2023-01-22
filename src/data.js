@@ -50,7 +50,6 @@ const generateOrderTypes = () => {
 }
 // Сохранить список маршрутов с возможными опциями
 export const orderTypes = generateOrderTypes();
-console.log(orderTypes);
 
 // Для типа маршрута включить из числа возможных опций те, которые выбраны
 const generateOrders = (type) => {

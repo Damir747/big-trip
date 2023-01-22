@@ -1,4 +1,4 @@
-import { humanizeDate } from '../utils/common.js';
+import { humanizeDate, compareTwoDates } from '../utils/common.js';
 import { createOffers } from '../mock/offer-data.js';
 import { CITIES, DateFormat, DIR_ICONS, EMPTY_POINT, EVENT_TYPE } from '../const.js';
 import SmartView from './smart.js';
@@ -6,6 +6,7 @@ import flatpickr from 'flatpickr';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 import { firstLetterUpperCase } from '../utils/common.js'
 import { orderTypes, pickElementDependOnValue, generateCities, pickElementDependOnValue2, pickElementDependOnValue3 } from '../data.js';
+import dayjs from 'dayjs';
 
 const datalistCity = (city) => {
 	return `<option value="${city}"></option>`
@@ -105,18 +106,26 @@ const editPointTemplate = (point) => {
 };
 
 // ? Не работают:
-// Save - не сохраняются опции поездки, не изменяет Город
+// Save - не сохраняются опции поездки
 // Delete - не удается найти id записи.
 
 export default class PointEditorView extends SmartView {
 	constructor(point = EMPTY_POINT) {
 		super();
+		this._dateStart = null;
+		this._dateEnd = null;
+
 		this._pointState = PointEditorView.parsePointDataToState(point);
 		this._onRollUpClick = this._onRollUpClick.bind(this);
 		this._editFormSubmit = this._editFormSubmit.bind(this);
 		this._editFormDelete = this._editFormDelete.bind(this);
 		this._changeTypePoint = this._changeTypePoint.bind(this);
 		this._onPointInput = this._onPointInput.bind(this);
+		this._onDateStartChange = this._onDateStartChange.bind(this);
+		this._onDateEndChange = this._onDateEndChange.bind(this);
+		this._setDatePicker(this._dateStart, true);
+		this._setDatePicker(this._dateEnd);
+		this._onCheckedOffers = this._onCheckedOffers.bind(this);
 	}
 	static parsePointDataToState(pointData) {
 		return Object.assign(
@@ -142,7 +151,7 @@ export default class PointEditorView extends SmartView {
 		this.updateElement(PointEditorView.parsePointDataToState(point));
 	}
 	resetInput(point) {
-		this.updateDate(PointEditorView.parsePointDataToState(point));	//? updateDate? может updateElement?
+		this.updateData(PointEditorView.parsePointDataToState(point));	//? updateDate? может updateElement?
 	}
 	restoreListeners() {
 		this.getElement().querySelector('.event__type-group').addEventListener('change', this._changeTypePoint);
@@ -152,6 +161,10 @@ export default class PointEditorView extends SmartView {
 		this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._onRollUpClick);
 		// setEditClickHandler(this._callback.editClick);
 		this.getElement().querySelector('.event__save-btn').addEventListener('click', this._editFormSubmit);
+		this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._editFormDelete);
+		this._setDatePicker(this._dateStart, true);
+		this._setDatePicker(this._dateEnd);
+		this.getElement().querySelector('.event__available-offers').addEventListener('change', this._onCheckedOffers);
 	}
 
 	destroy() {
@@ -160,12 +173,13 @@ export default class PointEditorView extends SmartView {
 		this.getElement().querySelector('.event__input--destination').removeEventListener('change', this._onPointInput)
 		this.getElement().querySelector('.event__rollup-btn').removeEventListener('click', this._onRollUpClick);
 		this.getElement().querySelector('.event__save-btn').removeEventListener('click', this._editFormSubmit);
+		this.getElement().querySelector('.event__reset-btn').removeEventListener('click', this._editFormDelete);
 	}
 
 	_onPointInput(evt) {
 		// Проверить, что город есть в списке
 		evt.preventDefault();
-		this.updateDate({
+		this.updateData({
 			city: evt.target.value,
 			description: pickElementDependOnValue2(evt.target.value, generateCities),
 			photos: pickElementDependOnValue3(evt.target.value, generateCities),
@@ -180,7 +194,7 @@ export default class PointEditorView extends SmartView {
 		if (evt.target.tagName !== 'INPUT') {
 			return;
 		}
-		this.updateDate({
+		this.updateData({
 			type: evt.target.value,
 			checkedOffer: pickElementDependOnValue(evt.target.value, orderTypes),
 		});
@@ -212,7 +226,7 @@ export default class PointEditorView extends SmartView {
 
 	_editFormDelete(evt) {
 		evt.preventDefault();
-		this._callback.deleteFormClick();
+		this._callback.deleteFormClick(PointEditorView.parseStateToPointData(this._pointState));
 	}
 
 	setFormDeleteHandler(callback) {
@@ -220,7 +234,72 @@ export default class PointEditorView extends SmartView {
 		this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._editFormDelete);
 	}
 
-	_setDatepicker() {
+	_setDatePicker(datePicker, flag) {
+		if (datePicker) {
+			datePicker.destroy();
+			datePicker = null;
+		}
+		if (flag) {
+			datePicker = flatpickr(this.getElement().querySelector('#event-start-time-1'),
+				{
+					dateFormat: DateFormat.FORMAT_PICKER,
+					defaultDate: this._pointState.start,
+					onChange: this._onDateStartChange,
+				},
+			);
+			return;
+		}
+		datePicker = flatpickr(this.getElement().querySelector('#event-end-time-1'),
+			{
+				dateFormat: DateFormat.FORMAT_PICKER,
+				defaultDate: this._pointState.end,
+				onChange: this._onDateEndChange,
+			},
+		);
+	}
+	_onDateStartChange(inputDate) {
+		if (compareTwoDates(inputDate, this._pointState.end) < 0) {
+			this.updateData(
+				{
+					start: inputDate,
+					end: inputDate,
+				}
+			);
+			return;
+		}
+		this.updateData(
+			{
+				start: inputDate,
+			}
+		);
+	}
+	_onDateEndChange(inputDate) {
+		if (compareTwoDates(this._pointState.start, inputDate) < 0) {
+			this.updateData(
+				{
+					start: inputDate,
+					end: inputDate,
+				}
+			);
+			return;
+		}
+		this.updateData(
+			{
+				end: inputDate,
+			}
+		);
+	}
 
+	_onCheckedOffers(evt) {
+		if (evt.target.tagName !== 'INPUT') {
+			return;
+		}
+		this._pointState.checkedOffer.filter((el) =>
+			el.short === evt.target.name.replace('event-offer-', ''))[0].checked = evt.target.checked;
+		// this.updateDate(
+		// 	{
+		// 		checkedOffer: this._pointState.checkedOffer,
+		// 	}
+		// );
 	}
 }
