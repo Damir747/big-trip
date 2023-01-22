@@ -51,7 +51,6 @@ export default class FilterMenuView extends AbstractView {
 	}
 	setFilterClickListener(callback) {
 		this._callback.filterTypeChangeHandle = callback;
-		console.log(this.getElement());
 		this.getElement().addEventListener('click', this._filterTypeChangeHandle);
 	}
 }

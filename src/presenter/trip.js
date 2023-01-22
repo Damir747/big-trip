@@ -1,7 +1,6 @@
 import BoardView from '../view/board.js'
 import PointListView from '../view/point-list.js'
 import NoPointView from '../view/no-point.js';
-import FilterMenuView from '../view/filter.js';
 import SortMenuView from '../view/sort-view.js';
 import TripInfo from '../view/trip-info.js';
 import TabsMenuView from '../view/main-menu.js';
@@ -26,7 +25,7 @@ export default class TripPresenter {
 		this._pointListComponent = new PointListView();	// точки маршрута
 
 		this._tripInfo = new TripInfo(this._getPoints());						// Информация - описание поездки
-		this._filterMenu = new FilterMenuView(this._getPoints());			// Фильтры: Everything, Future, Past
+		// this._filterMenu = new FilterMenuView(this._getPoints());			// Фильтры: Everything, Future, Past
 		this._sortMenu = new SortMenuView();				// Сортировка
 		this._noPoint = new NoPointView();					// Нет точек маршрута
 
@@ -34,7 +33,6 @@ export default class TripPresenter {
 
 		this._onPointModeChange = this._onPointModeChange.bind(this);
 		this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
-		this._handleFilterTypeChange = this._handleFilterTypeChange.bind(this);
 		this._handleViewAction = this._handleViewAction.bind(this);
 		this._handleModelEvent = this._handleModelEvent.bind(this);
 
@@ -73,10 +71,6 @@ export default class TripPresenter {
 	}
 	_renderTripInfo() {
 		render(this._tripInfoContainer, this._tripInfo, markup[0].position);
-	}
-	_renderFilter() {
-		render(this._tripDetailsContainer, this._filterMenu, markup[2].position);
-		this._filterMenu.setFilterClickListener(this._handleFilterTypeChange);
 	}
 	_renderPoint(point) {
 		const pointPresenter = new PointPresenter(this._pointListComponent, this._handleViewAction, this._handleModelEvent);
@@ -126,7 +120,7 @@ export default class TripPresenter {
 			return;
 		}
 		this._renderSortMenu();
-		this._renderFilter();
+		// this._renderFilter();
 		this._renderPointList();
 		this._renderTripInfo();
 	}
@@ -167,11 +161,6 @@ export default class TripPresenter {
 	_handleSortTypeChange(sortType) {
 		this._upSort = !(this._currentSortType === sortType);
 		this._currentSortType = sortType;
-		this._clearAllPoints();
-		this._renderBoard();
-	}
-	_handleFilterTypeChange(filterType) {
-		this._filterPoints(filterType);
 		this._clearAllPoints();
 		this._renderBoard();
 	}

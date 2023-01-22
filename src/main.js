@@ -6,6 +6,7 @@ import TripInfo from './view/trip-info.js';
 import TripPresenter from './presenter/trip.js';
 import HeaderView from './view/header-view.js';
 import PointsModel from './model/points.js';
+import FilterPresenter from './presenter/filter-presenter.js';
 
 const headerView = new HeaderView();	// Заголовок (header) для: Маршрут и стоимость, Меню, Фильтры
 render(findElement(document, markup[7].container), headerView.getElement(), markup[7].position);
@@ -17,6 +18,9 @@ pointsModel.setPoints(points);
 
 const tripPresenter = new TripPresenter(findElement(document, '.page-body__container'), findElement(document, markup[0].container), findElement(document, markup[1].container), pointsModel);
 tripPresenter.init();
+
+const filterPresenter = new FilterPresenter(findElement(document, '.page-body__container'));
+filterPresenter.init(points);
 
 // Обработчики все вынести в классы
 const changeStat = (elem) => {

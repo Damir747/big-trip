@@ -7,6 +7,7 @@ import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 import { firstLetterUpperCase } from '../utils/common.js'
 import { orderTypes, pickElementDependOnValue, generateCities, pickElementDependOnValue2, pickElementDependOnValue3 } from '../data.js';
 import dayjs from 'dayjs';
+import he from 'he';
 
 const datalistCity = (city) => {
 	return `<option value="${city}"></option>`
@@ -53,7 +54,7 @@ const editPointTemplate = (point) => {
                     <label class="event__label  event__type-output" for="event-destination-1">
                       ${point.type[0].toUpperCase() + point.type.slice(1)}
                     </label>
-                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${point.city}" list="destination-list-1">
+                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.decode(point.city)}" list="destination-list-1">
                     <datalist id="destination-list-1">
                       ${datalistCities(CITIES)}
                     </datalist>
