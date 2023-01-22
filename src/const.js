@@ -211,7 +211,7 @@ const notFoundError = {
 }
 
 export const FILTER_NAMES = ['everything', 'future', 'past'];
-export const ACTIVE_FILTER = 2;
+export const ACTIVE_FILTER = FILTER_NAMES[0];
 export const SORT_NAMES = [{
 	value: 'day',
 	disabled: false,
@@ -250,3 +250,5 @@ export const Mode = {
 export const EMPTY_POINT = {};
 
 export const EVENT_TYPE = ['taxi', 'bus', 'train', 'ship', 'transport', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
+
+export const CUT_FILTER_NAME = 'filter-';

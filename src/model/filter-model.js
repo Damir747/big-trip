@@ -1,10 +1,10 @@
-import { FILTER_NAMES } from "../const.js";
+import { ACTIVE_FILTER } from "../const.js";
 import Observer from "../utils/observer.js";
 
-export default class FilterModel extends Observer() {
+export default class FilterModel extends Observer {
 	constructor() {
 		super();
-		this._activeFilter = FILTER_NAMES[0];
+		this._activeFilter = ACTIVE_FILTER;
 	}
 
 	setActiveFilter(updateType, activeFilter) {
@@ -15,6 +15,5 @@ export default class FilterModel extends Observer() {
 	getActiveFilter() {
 		return this._activeFilter;
 	}
-
 
 }

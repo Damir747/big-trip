@@ -1,37 +1,47 @@
-import { FILTER_NAMES } from "../const.js";
+import { FILTER_NAMES, ACTIVE_FILTER, UpdateType } from "../const.js";
 import AbstractView from "../framework/abstract-view.js";
-import FilterMenuView from "../view/filter-view.js";
+import FilterView from "../view/filter-view.js";
 import { render } from "../view/render.js";
+import { remove, replace } from '../framework/render.js';
 import { markup } from "../data.js";
 
 export default class FilterPresenter extends AbstractView {
-	constructor(tripContainer) {
+	constructor(filterContainer, filterModel, pointsModel) {
 		super();
-		this._tripContainer = tripContainer;
-		this._activeFilter = null;
-	}
-	init(points) {
-		this._activeFilter = FILTER_NAMES[0];
-		this._filterView = new FilterMenuView(points);
+		this._filterComponent = null;
+
+		this._filterContainer = filterContainer;
+		this._filterModel = filterModel;
+		this._pointsModel = pointsModel;
+		this._activeFilter = ACTIVE_FILTER;
+
+		this._handleModelEvent = this._handleModelEvent.bind(this);
 		this._handleFilterTypeChange = this._handleFilterTypeChange.bind(this);
 
-		this._filterView.setFilterClickListener();
-		this._renderFilter();
+		this._filterModel.addObserver(this._handleModelEvent);
+		this._pointsModel.addObserver(this._handleModelEvent);
 	}
-	_renderFilter() {
-		render(this._tripContainer, this._filterView, markup[2].position);
-		this._filterView.setFilterClickListener(this._handleFilterTypeChange);
-	}
-	_changeFilter() {
+	init() {
+		const previousFilterComponent = this._filterComponent;
 
-	}
-	setFilterChangeHandler() {
+		this._filterComponent = new FilterView(FILTER_NAMES, this._filterModel.getActiveFilter(), this._pointsModel.getPoints());
+		this._filterComponent.setFilterClickListener(this._handleFilterTypeChange);
 
+		if (previousFilterComponent === null) {
+			render(this._filterContainer, this._filterComponent, markup[2].position);
+			return;
+		}
+		replace(this._filterComponent, previousFilterComponent);
+		remove(previousFilterComponent);
+	}
+
+	_handleModelEvent() {
+		this.init();
 	}
 	_handleFilterTypeChange(filterType) {
-		this._filterPoints(filterType);
-		this._clearAllPoints();
-		this._renderBoard();
+		if (this._filterModel.getActiveFilter() === filterType) {
+			return;
+		}
+		this._filterModel.setActiveFilter(UpdateType.FULL, filterType);
 	}
-
 }

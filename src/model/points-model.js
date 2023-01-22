@@ -12,7 +12,6 @@ export default class Points extends Observer {
 		return this._points;
 	}
 	updatePoint(updateType, modifiedPoint) {
-		console.log('Обновляем точку маршрута', modifiedPoint);
 		const index = this._points.findIndex((el) => el.id === modifiedPoint.id);
 		if (index === -1) {
 			throw new Error('Не удается обновить данную точку');
@@ -32,8 +31,6 @@ export default class Points extends Observer {
 		this._notify(updateType, point);
 	}
 	deletePoint(updateType, point) {
-		console.log(point);
-		console.log(point.id);
 		this._points = this._points.filter((el) => el.id !== point.id);
 		//? Ещё может быть такой способ: найти по id и сделать slice - как в updatePoint
 		this._notify(updateType);

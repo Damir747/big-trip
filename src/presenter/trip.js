@@ -5,27 +5,27 @@ import SortMenuView from '../view/sort-view.js';
 import TripInfo from '../view/trip-info.js';
 import TabsMenuView from '../view/main-menu.js';
 import PointPresenter from './point-presenter.js';
-import PointsModel from '../model/points.js';
 import { markup } from '../data.js';
-import { POINTS_COUNT, SORT_NAMES, FILTER_NAMES } from '../const.js';
+import { POINTS_COUNT, SORT_NAMES, FILTER_NAMES, ACTIVE_FILTER } from '../const.js';
 import { render } from '../view/render.js';
 import { sortPointDateUp, sortPointDateDown, sortPointTimeUp, sortPointTimeDown, sortPointCostUp, sortPointCostDown } from '../utils/sort.js';
 import { UserAction, UpdateType } from '../const.js';
+import { utilFilter } from '../utils/filter.js';
 
 export default class TripPresenter {
-	constructor(tripContainer, tripInfoContainer, tripDetailsContainer, pointsModel) {
+	constructor(tripContainer, tripInfoContainer, tripDetailsContainer, pointsModel, filterModel) {
 		this._pointsModel = pointsModel;
+		this._filterModel = filterModel;
 		this._tripContainer = tripContainer;				// Контейнер для точек маршрута
 		this._tripInfoContainer = tripInfoContainer;		// Контейнер для Инфо маршрута
 		this._tripDetailsContainer = tripDetailsContainer;	// Контейнер для Фильтр
 		this._currentSortType = SORT_NAMES[0].value;		// Начальная сортировка
 		this._upSort = true;										// Начальное направление сортировки: по возрастанию 
-		this._currentFilterType = FILTER_NAMES[0];		// Начальный фильтр
+		this._currentFilterType = ACTIVE_FILTER;			// Начальный фильтр
 		this._boardViewComponent = new BoardView();		// сортировка и контент
 		this._pointListComponent = new PointListView();	// точки маршрута
 
 		this._tripInfo = new TripInfo(this._getPoints());						// Информация - описание поездки
-		// this._filterMenu = new FilterMenuView(this._getPoints());			// Фильтры: Everything, Future, Past
 		this._sortMenu = new SortMenuView();				// Сортировка
 		this._noPoint = new NoPointView();					// Нет точек маршрута
 
@@ -37,6 +37,7 @@ export default class TripPresenter {
 		this._handleModelEvent = this._handleModelEvent.bind(this);
 
 		this._pointsModel.addObserver(this._handleModelEvent);
+		this._filterModel.addObserver(this._handleModelEvent);
 	}
 	init() {
 		// this._defaultSortPoints = tripPoints.slice();
@@ -45,7 +46,6 @@ export default class TripPresenter {
 		// render(this._tripDetailsContainer, this._tripInfo, markup[0].position);
 		render(this._tripContainer, this._boardViewComponent, markup[8].position);
 		render(this._boardViewComponent, this._pointListComponent, markup[5].position);	//? не надо?
-		this._filterPoints(this._currentFilterType);
 		this._renderBoard();
 	}
 	getModel() {
@@ -53,20 +53,23 @@ export default class TripPresenter {
 	}
 
 	_getPoints() {
+		const activeFilter = this._filterModel.getActiveFilter();
+		const points = this.getModel().getPoints();
+		const filteredPoints = utilFilter(points, activeFilter);
 		this._upSort = !this._upSort;
 		switch (this._currentSortType) {
 			case SORT_NAMES[0].value:
-				return this.getModel().getPoints().slice().sort(!this._upSort ? sortPointDateUp : sortPointDateDown);
+				return filteredPoints.slice().sort(!this._upSort ? sortPointDateUp : sortPointDateDown);
 			case SORT_NAMES[1].value:
 				return;
 			case SORT_NAMES[2].value:
-				return this.getModel().getPoints().slice().sort(!this._upSort ? sortPointTimeUp : sortPointTimeDown);
+				return filteredPoints.slice().sort(!this._upSort ? sortPointTimeUp : sortPointTimeDown);
 			case SORT_NAMES[3].value:
-				return this.getModel().getPoints().slice().sort(!this._upSort ? sortPointCostUp : sortPointCostDown);
+				return filteredPoints.slice().sort(!this._upSort ? sortPointCostUp : sortPointCostDown);
 			case SORT_NAMES[4].value:
 				return;
 			default:
-				return this.getModel().getPoints();
+				return filteredPoints;
 		}
 	}
 	_renderTripInfo() {
@@ -94,35 +97,15 @@ export default class TripPresenter {
 			console.log('Load More Button');
 		}
 	}
-	_filterPoints(filterType) {
-		switch (filterType) {
-			case FILTER_NAMES[0]:
-				this._getPoints();
-				break;
-			case 'filter-' + FILTER_NAMES[1]:
-				// elem => elem.data.dayjs(start).diff(dayjs()) > 0
-				console.log('Фильтр Future');
-				this._getPoints().filter(elem => !elem.isPast);
-				break;
-			case 'filter-' + FILTER_NAMES[2]:
-				console.log('Фильтр Past');
-				this._getPoints().filter(elem => elem.isPast);
-				break;
-			default:
-			// this._tripPoints = this._defaultSortPoints.slice();
-			// присвоить сортировку по умолчанию
-		}
-		this._currentFilterType = filterType;
-	}
 	_renderBoard() {
 		if (this._getPoints().length === 0) {
 			this._renderNoPoints();
 			return;
 		}
 		this._renderSortMenu();
-		// this._renderFilter();
 		this._renderPointList();
 		this._renderTripInfo();
+
 	}
 
 	_handleViewAction(actionType, updateType, update) {

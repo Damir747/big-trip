@@ -5,8 +5,10 @@ import TabsMenuView from './view/main-menu.js';
 import TripInfo from './view/trip-info.js';
 import TripPresenter from './presenter/trip.js';
 import HeaderView from './view/header-view.js';
-import PointsModel from './model/points.js';
+import PointsModel from './model/points-model.js';
 import FilterPresenter from './presenter/filter-presenter.js';
+import FilterModel from './model/filter-model.js';
+import { ACTIVE_FILTER, FILTER_NAMES } from './const.js';
 
 const headerView = new HeaderView();	// Заголовок (header) для: Маршрут и стоимость, Меню, Фильтры
 render(findElement(document, markup[7].container), headerView.getElement(), markup[7].position);
@@ -16,10 +18,13 @@ render(findElement(document, markup[1].container), tabsMenu.getElement(), markup
 const pointsModel = new PointsModel();
 pointsModel.setPoints(points);
 
-const tripPresenter = new TripPresenter(findElement(document, '.page-body__container'), findElement(document, markup[0].container), findElement(document, markup[1].container), pointsModel);
+// Фильтры: Everything, Future, Past
+const filterModel = new FilterModel();
+
+const tripPresenter = new TripPresenter(findElement(document, '.page-body__container'), findElement(document, markup[0].container), findElement(document, markup[1].container), pointsModel, filterModel);
 tripPresenter.init();
 
-const filterPresenter = new FilterPresenter(findElement(document, '.page-body__container'));
+const filterPresenter = new FilterPresenter(findElement(document, '.trip-main__trip-controls'), filterModel, pointsModel);
 filterPresenter.init(points);
 
 // Обработчики все вынести в классы

@@ -24,7 +24,6 @@ export default class SortMenuView extends AbstractView {
 		return sortTemplate();
 	}
 	_sortTypeChangeHandler(evt) {
-		console.log('Event сработал на сортировку');
 		if (evt.target.tagName !== 'INPUT') {
 			return;
 		}
@@ -32,7 +31,6 @@ export default class SortMenuView extends AbstractView {
 	}
 	setSortClickListener(callback) {
 		this._callback.sortTypeChangeHandler = callback;
-		console.log(this.getElement());
 		this.getElement().addEventListener('click', this._sortTypeChangeHandler);
 	}
 
