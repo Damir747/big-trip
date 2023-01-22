@@ -26,7 +26,7 @@ export default class TripPresenter {
 		this._pointListComponent = new PointListView();	// точки маршрута
 
 		this._tripInfo = new TripInfo(this._getPoints());						// Информация - описание поездки
-		this._filterMenu = new FilterMenuView();			// Фильтры: Everything, Future, Past
+		this._filterMenu = new FilterMenuView(this._getPoints());			// Фильтры: Everything, Future, Past
 		this._sortMenu = new SortMenuView();				// Сортировка
 		this._noPoint = new NoPointView();					// Нет точек маршрута
 
