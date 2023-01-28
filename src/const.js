@@ -210,6 +210,7 @@ const notFoundError = {
 	"message": "Not found"
 }
 
+export const FAVORITE_ACTIVE_CLASS = 'event__favorite-btn--active';
 export const FILTER_NAMES = ['everything', 'future', 'past'];
 export const ACTIVE_FILTER = FILTER_NAMES[0];
 export const SORT_NAMES = [{

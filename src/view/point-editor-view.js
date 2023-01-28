@@ -120,13 +120,16 @@ export default class PointEditorView extends SmartView {
 		this._onRollUpClick = this._onRollUpClick.bind(this);
 		this._editFormSubmit = this._editFormSubmit.bind(this);
 		this._editFormDelete = this._editFormDelete.bind(this);
+
 		this._changeTypePoint = this._changeTypePoint.bind(this);
 		this._onPointInput = this._onPointInput.bind(this);
 		this._onDateStartChange = this._onDateStartChange.bind(this);
 		this._onDateEndChange = this._onDateEndChange.bind(this);
+		this._onPriceChange = this._onPriceChange.bind(this);
+		this._onCheckedOffers = this._onCheckedOffers.bind(this);
+
 		this._setDatePicker(this._dateStart, true);
 		this._setDatePicker(this._dateEnd);
-		this._onCheckedOffers = this._onCheckedOffers.bind(this);
 	}
 	static parsePointDataToState(pointData) {
 		return Object.assign(
@@ -155,9 +158,7 @@ export default class PointEditorView extends SmartView {
 		this.updateData(PointEditorView.parsePointDataToState(point));	//? updateDate? может updateElement?
 	}
 	restoreListeners() {
-		this.getElement().querySelector('.event__type-group').addEventListener('change', this._changeTypePoint);
-		this.getElement().querySelector('.event__input--destination').addEventListener('change', this._onPointInput)
-
+		this._setInnerListeners();
 		// setTypePointHandler(this._callback.changeTypePoint);
 		this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._onRollUpClick);
 		// setEditClickHandler(this._callback.editClick);
@@ -165,9 +166,23 @@ export default class PointEditorView extends SmartView {
 		this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._editFormDelete);
 		this._setDatePicker(this._dateStart, true);
 		this._setDatePicker(this._dateEnd);
-		this.getElement().querySelector('.event__available-offers').addEventListener('change', this._onCheckedOffers);
 	}
 
+	_setInnerListeners() {
+		this.getElement().querySelector('.event__type-group').addEventListener('change', this._changeTypePoint);
+		this.getElement().querySelector('.event__input--destination').addEventListener('change', this._onPointInput)
+		this.getElement().querySelector('.event__available-offers').addEventListener('change', this._onCheckedOffers);
+		this.getElement().querySelector('.event__input--price').addEventListener('change', this._onPriceChange);
+	}
+	// removeElement() {
+	// 	this.removeElement();
+	// 	if (this._dateStart || this._dateEnd) {
+	// 		this._dateStart.destroy();
+	// 		this._dateStart = null;
+	// 		this._dateEnd.destroy();
+	// 		this._dateEnd = null;
+	// 	}
+	// }
 	destroy() {
 
 		this.getElement().querySelector('.event__type-group').removeEventListener('change', this._changeTypePoint);
@@ -291,6 +306,17 @@ export default class PointEditorView extends SmartView {
 		);
 	}
 
+	_onPriceChange(evt) {
+		if (evt.target.tagName !== 'INPUT') {
+			return;
+		}
+		// ? нужна проверка на корректное значение числа
+		this.updateData(
+			{
+				price: evt.target.value
+			}
+		);
+	}
 	_onCheckedOffers(evt) {
 		if (evt.target.tagName !== 'INPUT') {
 			return;

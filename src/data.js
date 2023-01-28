@@ -19,7 +19,7 @@ const generateDate = () => {
 	return { start, end };
 }
 
-const checkedFavorite = () => Boolean(getRandomPositiveInteger(0, 1)) ? 'event__favorite-btn--active' : '';
+const checkedFavorite = () => Boolean(getRandomPositiveInteger(0, 1));
 
 // Генерация опций (для типов маршрутов)
 const generateOrderType = () => {
