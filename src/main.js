@@ -15,6 +15,8 @@ render(findElement(document, markup[7].container), headerView.getElement(), mark
 const tabsMenu = new TabsMenuView();	// Меню: Table/Stats
 render(findElement(document, markup[1].container), tabsMenu.getElement(), markup[1].position);
 
+//? offersModel инициализировать 36:31
+
 const pointsModel = new PointsModel();
 pointsModel.setPoints(points);
 
@@ -27,6 +29,12 @@ tripPresenter.init();
 const filterPresenter = new FilterPresenter(findElement(document, '.trip-main__trip-controls'), filterModel, pointsModel);
 filterPresenter.init(points);
 
+const btnAddEvent = document.querySelector('.trip-main__event-add-btn');
+btnAddEvent.addEventListener('click', (evt) => {
+	evt.preventDefault();
+	tripPresenter.createPoint();
+});
+
 // Обработчики все вынести в классы
 const changeStat = (elem) => {
 	console.log(`Сработал addEventListener для статистики Stat ${elem}`)
@@ -37,10 +45,5 @@ btnStat.forEach((elem) =>
 		changeStat(elem);
 	})
 );
-
-const btnAddEvent = document.querySelector('.trip-main__event-add-btn');
-btnAddEvent.addEventListener('click', (evt) => {
-	console.log('Click по кнопке + New Event');
-})
 
 

@@ -24,6 +24,7 @@ export default class PointPresenter extends AbstractView {
 		this._onSubmitForm = this._onSubmitForm.bind(this);
 		this._deletePoint = this._deletePoint.bind(this);
 		this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
+
 	}
 
 	init(point) {
@@ -39,6 +40,8 @@ export default class PointPresenter extends AbstractView {
 		this._pointEditorComponent.setModeToViewClickHandler(this._changeModeToView);
 		this._pointEditorComponent.setFormSubmitHandler(this._onSubmitForm);
 		this._pointEditorComponent.setFormDeleteHandler(this._deletePoint);
+
+
 		if (previousPointComponent === null || previousPointEditorComponent === null) {
 			render(this._pointListContainer, this._pointComponent);
 			return;
@@ -66,6 +69,7 @@ export default class PointPresenter extends AbstractView {
 
 	_onSubmitForm(point) {
 		this._changeModeToView();
+		// ? здесь ещё можно проверить, насколько крупное изменение, см. видео 7.1 28:05
 		this._changeData(
 			UserAction.UPDATE_POINT,
 			UpdateType.POINTS,
@@ -99,7 +103,6 @@ export default class PointPresenter extends AbstractView {
 			this._changeModeToView();
 		}
 	}
-
 	_changeFavoriteStatus() {
 		this._changeData(
 			UserAction.UPDATE_POINT,
@@ -107,14 +110,14 @@ export default class PointPresenter extends AbstractView {
 			Object.assign(
 				{},
 				this._point,
-				{ 'checkedFavorite': this._point.checkedFavorite === '' ? 'event__favorite-btn--active' : '' }
+				{ 'checkedFavorite': !this._point.checkedFavorite }
 			),
 		);
 	}
 	_deletePoint(point) {
 		this._changeData(
 			UserAction.DELETE_POINT,
-			UpdateType.FULL,
+			UpdateType.POINTS,		// PATCH не обновляет, остается открытая форма редактирования
 			point,
 		)
 	}

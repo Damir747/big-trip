@@ -11,6 +11,8 @@ import { render } from '../view/render.js';
 import { sortPointDateUp, sortPointDateDown, sortPointTimeUp, sortPointTimeDown, sortPointCostUp, sortPointCostDown } from '../utils/sort.js';
 import { UserAction, UpdateType } from '../const.js';
 import { utilFilter } from '../utils/filter.js';
+import PointNewPresenter from './point-new-presenter.js';
+import { remove } from '../framework/render.js';
 
 export default class TripPresenter {
 	constructor(tripContainer, tripInfoContainer, tripDetailsContainer, pointsModel, filterModel) {
@@ -25,7 +27,7 @@ export default class TripPresenter {
 		this._boardViewComponent = new BoardView();		// сортировка и контент
 		this._pointListComponent = new PointListView();	// точки маршрута
 
-		this._tripInfo = new TripInfo(this._getPoints());						// Информация - описание поездки
+		this._tripInfo = new TripInfo(this._getPoints());	// Информация - описание поездки
 		this._sortMenu = new SortMenuView();				// Сортировка
 		this._noPoint = new NoPointView();					// Нет точек маршрута
 
@@ -38,6 +40,8 @@ export default class TripPresenter {
 
 		this._pointsModel.addObserver(this._handleModelEvent);
 		this._filterModel.addObserver(this._handleModelEvent);
+
+		this._pointNewPresenter = new PointNewPresenter(this._pointListComponent, this._handleViewAction);
 	}
 	init() {
 		// this._defaultSortPoints = tripPoints.slice();
@@ -78,10 +82,11 @@ export default class TripPresenter {
 	_renderPoint(point) {
 		const pointPresenter = new PointPresenter(this._pointListComponent, this._handleViewAction, this._handleModelEvent);
 		pointPresenter.init(point);
-		this._pointPresenter[point.id] = pointPresenter;	//?
+		this._pointPresenter[point.id] = pointPresenter;	// Для сохранения ссылки на презентер
 	}
 	_renderPoints(from, to) {
 		this._getPoints().slice(from, to).forEach((tripPoint) => this._renderPoint(tripPoint));
+		//? надо переделать на параметр points (вместо from / to) и работу с ним
 
 	}
 	_renderNoPoints() {
@@ -105,7 +110,11 @@ export default class TripPresenter {
 		this._renderSortMenu();
 		this._renderPointList();
 		this._renderTripInfo();
-
+		// Теперь, когда _renderBoard рендерит доску не только на старте,
+		// но и по ходу работы приложения, нужно заменить
+		// константу TASK_COUNT_PER_STEP на свойство _renderedTaskCount,
+		// чтобы в случае перерисовки сохранить N-показанных карточек
+		// Load More Button
 	}
 
 	_handleViewAction(actionType, updateType, update) {
@@ -124,13 +133,14 @@ export default class TripPresenter {
 		}
 	}
 	_handleModelEvent(updateType, data) {
+		this._onPointModeChange();
 		switch (updateType) {
 			case UpdateType.FULL:
-				this._clearAllPoints(true);
+				this._clearBoard(true);
 				this._renderBoard();
 				break;
 			case UpdateType.POINTS:
-				this._clearAllPoints();
+				this._clearBoard();
 				this._renderBoard();
 				break;
 			case UpdateType.PATCH:
@@ -144,18 +154,42 @@ export default class TripPresenter {
 	_handleSortTypeChange(sortType) {
 		this._upSort = !(this._currentSortType === sortType);
 		this._currentSortType = sortType;
-		this._clearAllPoints();
+		this._clearBoard();
 		this._renderBoard();
 	}
 	_onPointModeChange() {
-		// this._pointPresenter.destroy();
-		//this._pointPresenter.forEach((pointPresenter) => pointPresenter.resetView());
+		this._pointNewPresenter.destroy();
+		//? это она сбрасывает все редакторы к просмотру
 		Object
 			.values(this._pointPresenter)
 			.forEach((pointPresenter) => pointPresenter.resetView());
 	}
-	_clearAllPoints() {
+	_clearBoard(resetSort = false) {
+		this._pointNewPresenter.destroy();
+		Object
+			.values(this._pointPresenter)
+			.forEach((pointPresenter) => pointPresenter.resetView());
 		Object.values(this._pointPresenter).forEach((pointPresenter) => pointPresenter.destroy());
 		this._pointPresenter = {};
+
+		remove(this._sortMenu);
+		remove(this._tripInfo);
+		// remove Empty
+		// remove Cost
+		if (resetSort) {
+			this._currentSortType = SORT_NAMES[0].value;
+		}
+	}
+
+	_onChangeSort() {
+
+	}
+	_renderTripSort() {
+
+	}
+	createPoint() {
+		this._currentSortType = SORT_NAMES[0].value;
+		this._filterModel.setActiveFilter(UpdateType.FULL, ACTIVE_FILTER);
+		this._pointNewPresenter.init();
 	}
 }

@@ -4,10 +4,11 @@ import { CITIES, DateFormat, DIR_ICONS, EMPTY_POINT, EVENT_TYPE } from '../const
 import SmartView from './smart.js';
 import flatpickr from 'flatpickr';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
-import { firstLetterUpperCase } from '../utils/common.js'
+import { firstLetterUpperCase } from '../utils/common.js';
 import { orderTypes, pickElementDependOnValue, generateCities, pickElementDependOnValue2, pickElementDependOnValue3 } from '../data.js';
 import dayjs from 'dayjs';
 import he from 'he';
+import { checkCityInList } from '../data.js';
 
 const datalistCity = (city) => {
 	return `<option value="${city}"></option>`
@@ -106,20 +107,16 @@ const editPointTemplate = (point) => {
             </li>`;
 };
 
-// ? Не работают:
-// Save - не сохраняются опции поездки
-// Delete - не удается найти id записи.
-
 export default class PointEditorView extends SmartView {
 	constructor(point = EMPTY_POINT) {
 		super();
-		this._dateStart = null;
-		this._dateEnd = null;
+		this._dateStart = point.start;
+		this._dateEnd = point.end;
 
 		this._pointState = PointEditorView.parsePointDataToState(point);
 		this._onRollUpClick = this._onRollUpClick.bind(this);
-		this._editFormSubmit = this._editFormSubmit.bind(this);
-		this._editFormDelete = this._editFormDelete.bind(this);
+		this._onFormSubmit = this._onFormSubmit.bind(this);
+		this._onFormDelete = this._onFormDelete.bind(this);
 
 		this._changeTypePoint = this._changeTypePoint.bind(this);
 		this._onPointInput = this._onPointInput.bind(this);
@@ -127,6 +124,7 @@ export default class PointEditorView extends SmartView {
 		this._onDateEndChange = this._onDateEndChange.bind(this);
 		this._onPriceChange = this._onPriceChange.bind(this);
 		this._onCheckedOffers = this._onCheckedOffers.bind(this);
+		// this.destroy = this.destroy.bind(this);
 
 		this._setDatePicker(this._dateStart, true);
 		this._setDatePicker(this._dateEnd);
@@ -159,17 +157,18 @@ export default class PointEditorView extends SmartView {
 	}
 	restoreListeners() {
 		this._setInnerListeners();
-		// setTypePointHandler(this._callback.changeTypePoint);
-		this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._onRollUpClick);
-		// setEditClickHandler(this._callback.editClick);
-		this.getElement().querySelector('.event__save-btn').addEventListener('click', this._editFormSubmit);
-		this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._editFormDelete);
+		this.setTypePointHandler(this._callback.changeTypePoint);
+		this.setModeToViewClickHandler(this._callback.onRollUpClick);
+		this.setFormSubmitHandler(this._callback.onFormSubmit);
+		this.setFormDeleteHandler(this._callback.onFormDelete);
+		// console.log(this._dateStart);
 		this._setDatePicker(this._dateStart, true);
 		this._setDatePicker(this._dateEnd);
 	}
+	// ? что-то сломалось: не работает сброс при открытии нескольких форм редактирования
+	// ? не закрывает форму после удаления
 
 	_setInnerListeners() {
-		this.getElement().querySelector('.event__type-group').addEventListener('change', this._changeTypePoint);
 		this.getElement().querySelector('.event__input--destination').addEventListener('change', this._onPointInput)
 		this.getElement().querySelector('.event__available-offers').addEventListener('change', this._onCheckedOffers);
 		this.getElement().querySelector('.event__input--price').addEventListener('change', this._onPriceChange);
@@ -188,13 +187,15 @@ export default class PointEditorView extends SmartView {
 		this.getElement().querySelector('.event__type-group').removeEventListener('change', this._changeTypePoint);
 		this.getElement().querySelector('.event__input--destination').removeEventListener('change', this._onPointInput)
 		this.getElement().querySelector('.event__rollup-btn').removeEventListener('click', this._onRollUpClick);
-		this.getElement().querySelector('.event__save-btn').removeEventListener('click', this._editFormSubmit);
-		this.getElement().querySelector('.event__reset-btn').removeEventListener('click', this._editFormDelete);
+		this.getElement().querySelector('form').removeEventListener('submit', this._onFormSubmit);
+		this.getElement().querySelector('.event__reset-btn').removeEventListener('click', this._onFormDelete);
 	}
 
 	_onPointInput(evt) {
-		// Проверить, что город есть в списке
 		evt.preventDefault();
+		if (!checkCityInList(evt.target.value)) {
+			return;
+		}
 		this.updateData({
 			city: evt.target.value,
 			description: pickElementDependOnValue2(evt.target.value, generateCities),
@@ -205,6 +206,7 @@ export default class PointEditorView extends SmartView {
 		this._callback.onPointInput = callback;
 		this.getElement().querySelector('.event--edit').addEventListener('submit', this._onPointInput);
 	}
+
 	_changeTypePoint(evt) {
 		evt.preventDefault();
 		if (evt.target.tagName !== 'INPUT') {
@@ -230,32 +232,34 @@ export default class PointEditorView extends SmartView {
 		this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._onRollUpClick);
 	}
 
-	_editFormSubmit(evt) {
+	_onFormSubmit(evt) {
 		evt.preventDefault();
-		this._callback.submitFormClick(PointEditorView.parseStateToPointData(this._pointState));
+		this._callback.onFormSubmit(PointEditorView.parseStateToPointData(this._pointState));
 	}
 
 	setFormSubmitHandler(callback) {
-		this._callback.submitFormClick = callback;
-		this.getElement().querySelector('.event__save-btn').addEventListener('click', this._editFormSubmit);
+		this._callback.onFormSubmit = callback;
+		this.getElement().querySelector('form').addEventListener('submit', this._onFormSubmit);
 	}
 
-	_editFormDelete(evt) {
+	_onFormDelete(evt) {
 		evt.preventDefault();
-		this._callback.deleteFormClick(PointEditorView.parseStateToPointData(this._pointState));
+		this._callback.onFormDelete(PointEditorView.parseStateToPointData(this._pointState));
 	}
 
 	setFormDeleteHandler(callback) {
-		this._callback.deleteFormClick = callback;
-		this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._editFormDelete);
+		this._callback.onFormDelete = callback;
+		this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._onFormDelete);
 	}
 
 	_setDatePicker(datePicker, flag) {
 		if (datePicker) {
-			datePicker.destroy();
+			// datePicker.destroy();
 			datePicker = null;
 		}
+		return;
 		if (flag) {
+			console.log(DateFormat.FORMAT_PICKER, this._pointState.start, this._onDateStartChange);
 			datePicker = flatpickr(this.getElement().querySelector('#event-start-time-1'),
 				{
 					dateFormat: DateFormat.FORMAT_PICKER,
