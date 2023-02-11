@@ -133,7 +133,7 @@ export default class PointNewView extends SmartView {
 
 	setModeToEditClickHandler(callback) {
 		this._callback.onNewEventClick = callback;
-		// ? надо будет сделать в Board или в более глобальном
+		//? надо будет сделать в Board или в более глобальном
 		document.querySelector('.trip-main__event-add-btn').addEventListener('click', this._onNewEventClick);
 	}
 

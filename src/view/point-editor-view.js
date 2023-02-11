@@ -165,8 +165,6 @@ export default class PointEditorView extends SmartView {
 		this._setDatePicker(this._dateStart, true);
 		this._setDatePicker(this._dateEnd);
 	}
-	// ? что-то сломалось: не работает сброс при открытии нескольких форм редактирования
-	// ? не закрывает форму после удаления
 
 	_setInnerListeners() {
 		this.getElement().querySelector('.event__input--destination').addEventListener('change', this._onPointInput)
@@ -314,10 +312,10 @@ export default class PointEditorView extends SmartView {
 		if (evt.target.tagName !== 'INPUT') {
 			return;
 		}
-		// ? нужна проверка на корректное значение числа
+		//? нужна проверка на корректное значение числа
 		this.updateData(
 			{
-				price: evt.target.value
+				price: +evt.target.value
 			}
 		);
 	}

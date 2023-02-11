@@ -69,7 +69,7 @@ export default class PointPresenter extends AbstractView {
 
 	_onSubmitForm(point) {
 		this._changeModeToView();
-		// ? здесь ещё можно проверить, насколько крупное изменение, см. видео 7.1 28:05
+		//? здесь ещё можно проверить, насколько крупное изменение, см. видео 7.1 28:05
 		this._changeData(
 			UserAction.UPDATE_POINT,
 			UpdateType.POINTS,

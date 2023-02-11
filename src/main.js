@@ -2,13 +2,11 @@ import { markup, points } from './data.js';
 import { findElement } from './utils/common.js';
 import { render } from './view/render.js';
 import TabsMenuView from './view/main-menu.js';
-import TripInfo from './view/trip-info.js';
 import TripPresenter from './presenter/trip.js';
 import HeaderView from './view/header-view.js';
 import PointsModel from './model/points-model.js';
 import FilterPresenter from './presenter/filter-presenter.js';
 import FilterModel from './model/filter-model.js';
-import { ACTIVE_FILTER, FILTER_NAMES } from './const.js';
 
 const headerView = new HeaderView();	// Заголовок (header) для: Маршрут и стоимость, Меню, Фильтры
 render(findElement(document, markup[7].container), headerView.getElement(), markup[7].position);

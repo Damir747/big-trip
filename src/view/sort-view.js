@@ -15,6 +15,8 @@ const sortTemplate = () => {
                 </form>`;
 };
 
+//? сортировка перестала работать (меняться), даже переключаться на выбранный столбец сортировки. А так сортирует.
+
 export default class SortMenuView extends AbstractView {
 	constructor() {
 		super();

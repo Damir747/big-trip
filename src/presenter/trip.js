@@ -27,7 +27,6 @@ export default class TripPresenter {
 		this._boardViewComponent = new BoardView();		// сортировка и контент
 		this._pointListComponent = new PointListView();	// точки маршрута
 
-		this._tripInfo = new TripInfo(this._getPoints());	// Информация - описание поездки
 		this._sortMenu = new SortMenuView();				// Сортировка
 		this._noPoint = new NoPointView();					// Нет точек маршрута
 
@@ -45,7 +44,6 @@ export default class TripPresenter {
 	}
 	init() {
 		// this._defaultSortPoints = tripPoints.slice();
-		// this._tripInfo = new TripInfo(tripPoints);	// Информация - описание поездки
 		// render(findElement(document, markup[0].container), tripInfo.getElement(), markup[0].position);
 		// render(this._tripDetailsContainer, this._tripInfo, markup[0].position);
 		render(this._tripContainer, this._boardViewComponent, markup[8].position);
@@ -60,7 +58,7 @@ export default class TripPresenter {
 		const activeFilter = this._filterModel.getActiveFilter();
 		const points = this.getModel().getPoints();
 		const filteredPoints = utilFilter(points, activeFilter);
-		this._upSort = !this._upSort;
+		this._upSort = false;
 		switch (this._currentSortType) {
 			case SORT_NAMES[0].value:
 				return filteredPoints.slice().sort(!this._upSort ? sortPointDateUp : sortPointDateDown);
@@ -77,6 +75,7 @@ export default class TripPresenter {
 		}
 	}
 	_renderTripInfo() {
+		this._tripInfo = new TripInfo(this._getPoints());	// Информация - описание поездки
 		render(this._tripInfoContainer, this._tripInfo, markup[0].position);
 	}
 	_renderPoint(point) {

@@ -105,7 +105,7 @@ export const generatePoint = () => {
 
 export const points = new Array(GENERATED_POINTS_COUNT).fill().map(() => generatePoint());
 
-// ?контейнеры надо для каждой функции
+//?контейнеры надо для каждой функции
 export const markup = [
 
 	{
