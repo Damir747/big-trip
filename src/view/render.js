@@ -12,11 +12,9 @@ export const render = (container, element, place = 'beforeend') => {
 	if (container instanceof AbstractView) {
 		container = container.getElement();
 	}
-
 	if (element instanceof AbstractView) {
 		element = element.getElement();
 	}
-
 	switch (place) {
 		case RenderPosition.AFTERBEGIN:
 			container.prepend(element);

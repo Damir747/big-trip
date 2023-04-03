@@ -1,65 +1,73 @@
 import BoardView from '../view/board.js'
 import PointListView from '../view/point-list.js'
 import NoPointView from '../view/no-point.js';
-import SortMenuView from '../view/sort-view.js';
 import TripInfo from '../view/trip-info.js';
 import TabsMenuView from '../view/main-menu.js';
 import PointPresenter from './point-presenter.js';
 import { markup } from '../data.js';
-import { POINTS_COUNT, SORT_NAMES, FILTER_NAMES, ACTIVE_FILTER } from '../const.js';
+import { POINTS_COUNT, SORT_NAMES, DEFAULT_FILTER, DEFAULT_SORT } from '../const.js';
 import { render } from '../view/render.js';
 import { sortPointDateUp, sortPointDateDown, sortPointTimeUp, sortPointTimeDown, sortPointCostUp, sortPointCostDown } from '../utils/sort.js';
 import { UserAction, UpdateType } from '../const.js';
 import { utilFilter } from '../utils/filter.js';
 import PointNewPresenter from './point-new-presenter.js';
 import { remove } from '../framework/render.js';
+import { RenderPosition } from '../const.js';
 
 export default class TripPresenter {
-	constructor(tripContainer, tripInfoContainer, tripDetailsContainer, pointsModel, filterModel) {
+	constructor(tripContainer, tripInfoContainer, tripDetailsContainer, pointsModel, filterModel, sortModel) {
 		this._pointsModel = pointsModel;
 		this._filterModel = filterModel;
-		this._tripContainer = tripContainer;				// Контейнер для точек маршрута
-		this._tripInfoContainer = tripInfoContainer;		// Контейнер для Инфо маршрута
+		this._sortModel = sortModel;
+		this._tripContainer = tripContainer;					// Контейнер для точек маршрута
+		this._tripInfoContainer = tripInfoContainer;			// Контейнер для Инфо маршрута
 		this._tripDetailsContainer = tripDetailsContainer;	// Контейнер для Фильтр
-		this._currentSortType = SORT_NAMES[0].value;		// Начальная сортировка
-		this._upSort = true;										// Начальное направление сортировки: по возрастанию 
-		this._currentFilterType = ACTIVE_FILTER;			// Начальный фильтр
-		this._boardViewComponent = new BoardView();		// сортировка и контент
-		this._pointListComponent = new PointListView();	// точки маршрута
+		// this._currentSortType = DEFAULT_SORT;					// Начальная сортировка
+		this._upSort = true;											// Начальное направление сортировки: по возрастанию 
+		// this._currentFilterType = DEFAULT_FILTER;				// Начальный фильтр
+		this._sortModel.setActiveSort(UpdateType.FULL, DEFAULT_SORT);
+		this._filterModel.setActiveFilter(UpdateType.FULL, DEFAULT_FILTER);
 
-		this._sortMenu = new SortMenuView();				// Сортировка
-		this._noPoint = new NoPointView();					// Нет точек маршрута
+		this._boardViewComponent = new BoardView();			// сортировка и контент
+		this._pointListComponent = new PointListView();		// точки маршрута
+		this._noPoint = new NoPointView();						// Нет точек маршрута
 
 		this._pointPresenter = {};
 
 		this._onPointModeChange = this._onPointModeChange.bind(this);
-		this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 		this._handleViewAction = this._handleViewAction.bind(this);
 		this._handleModelEvent = this._handleModelEvent.bind(this);
 
 		this._pointsModel.addObserver(this._handleModelEvent);
+		this._sortModel.addObserver(this._handleModelEvent);
 		this._filterModel.addObserver(this._handleModelEvent);
 
 		this._pointNewPresenter = new PointNewPresenter(this._pointListComponent, this._handleViewAction);
 	}
 	init() {
 		// this._defaultSortPoints = tripPoints.slice();
-		// render(findElement(document, markup[0].container), tripInfo.getElement(), markup[0].position);
-		// render(this._tripDetailsContainer, this._tripInfo, markup[0].position);
-		render(this._tripContainer, this._boardViewComponent, markup[8].position);
-		render(this._boardViewComponent, this._pointListComponent, markup[5].position);	//? не надо?
+		// render(findElement(document, markup[0].container), tripInfo.getElement(), RenderPosition.AFTERBEGIN);
+		// render(this._tripDetailsContainer, this._tripInfo, RenderPosition.AFTERBEGIN);
+		render(this._tripContainer, this._boardViewComponent, RenderPosition.AFTERBEGIN);
+		render(this._boardViewComponent, this._pointListComponent, RenderPosition.BEFOREEND);	//? не надо?
 		this._renderBoard();
 	}
 	getModel() {
 		return this._pointsModel;
 	}
-
+	getFilterModel() {
+		return this._filterModel;
+	}
+	getSortModel() {
+		return this._sortModel;
+	}
 	_getPoints() {
-		const activeFilter = this._filterModel.getActiveFilter();
+		const activeFilter = this.getFilterModel().getActiveFilter();
+		const activeSort = this.getSortModel().getActiveSort();
 		const points = this.getModel().getPoints();
 		const filteredPoints = utilFilter(points, activeFilter);
 		this._upSort = false;
-		switch (this._currentSortType) {
+		switch (activeSort) {
 			case SORT_NAMES[0].value:
 				return filteredPoints.slice().sort(!this._upSort ? sortPointDateUp : sortPointDateDown);
 			case SORT_NAMES[1].value:
@@ -76,7 +84,7 @@ export default class TripPresenter {
 	}
 	_renderTripInfo() {
 		this._tripInfo = new TripInfo(this._getPoints());	// Информация - описание поездки
-		render(this._tripInfoContainer, this._tripInfo, markup[0].position);
+		render(this._tripInfoContainer, this._tripInfo, RenderPosition.AFTERBEGIN);
 	}
 	_renderPoint(point) {
 		const pointPresenter = new PointPresenter(this._pointListComponent, this._handleViewAction, this._handleModelEvent);
@@ -89,24 +97,21 @@ export default class TripPresenter {
 
 	}
 	_renderNoPoints() {
-		render(this._boardViewComponent, this._noPoint, markup[6].position);
+		render(this._boardViewComponent, this._noPoint, RenderPosition.BEFOREEND);
 	}
-	_renderSortMenu() {
-		render(this._boardViewComponent, this._sortMenu, markup[3].position);
-		this._sortMenu.setSortClickListener(this._handleSortTypeChange);
-	}
+
 	_renderPointList() {
 		this._renderPoints(0, Math.min(this._getPoints().length, POINTS_COUNT));
 		if (this._getPoints().length > POINTS_COUNT) {
 			console.log('Load More Button');
 		}
 	}
+
 	_renderBoard() {
 		if (this._getPoints().length === 0) {
 			this._renderNoPoints();
 			return;
 		}
-		this._renderSortMenu();
 		this._renderPointList();
 		this._renderTripInfo();
 		// Теперь, когда _renderBoard рендерит доску не только на старте,
@@ -150,12 +155,6 @@ export default class TripPresenter {
 		}
 	}
 
-	_handleSortTypeChange(sortType) {
-		this._upSort = !(this._currentSortType === sortType);
-		this._currentSortType = sortType;
-		this._clearBoard();
-		this._renderBoard();
-	}
 	_onPointModeChange() {
 		this._pointNewPresenter.destroy();
 		//? это она сбрасывает все редакторы к просмотру
@@ -163,6 +162,7 @@ export default class TripPresenter {
 			.values(this._pointPresenter)
 			.forEach((pointPresenter) => pointPresenter.resetView());
 	}
+
 	_clearBoard(resetSort = false) {
 		this._pointNewPresenter.destroy();
 		Object
@@ -170,13 +170,12 @@ export default class TripPresenter {
 			.forEach((pointPresenter) => pointPresenter.resetView());
 		Object.values(this._pointPresenter).forEach((pointPresenter) => pointPresenter.destroy());
 		this._pointPresenter = {};
-
-		remove(this._sortMenu);
 		remove(this._tripInfo);
 		// remove Empty
 		// remove Cost
 		if (resetSort) {
-			this._currentSortType = SORT_NAMES[0].value;
+			// this._sortModel.setActiveSort(UpdateType.FULL, DEFAULT_SORT);
+			// this._filterModel.setActiveFilter(UpdateType.FULL, DEFAULT_FILTER);
 		}
 	}
 
@@ -186,9 +185,9 @@ export default class TripPresenter {
 	_renderTripSort() {
 
 	}
+
 	createPoint() {
-		this._currentSortType = SORT_NAMES[0].value;
-		this._filterModel.setActiveFilter(UpdateType.FULL, ACTIVE_FILTER);
+		this._filterModel.setActiveFilter(UpdateType.FULL, DEFAULT_FILTER);	// сбрасывается фильтрация, как следствие, сбрасывается сортировка
 		this._pointNewPresenter.init();
 	}
 }

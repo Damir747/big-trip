@@ -1,5 +1,5 @@
 import AbstractView from '../framework/abstract-view.js';
-import { SORT_NAMES, ACTIVE_SORT } from '../const.js';
+import { SORT_NAMES } from '../const.js';
 
 const createSortItem = (sortName, isDisabled, isChecked) => {
 	return `<div class="trip-sort__item  trip-sort__item--${sortName}">
@@ -8,22 +8,25 @@ const createSortItem = (sortName, isDisabled, isChecked) => {
             </div>
 `;
 }
-const sortTemplate = () => {
-	const sortItemsTemplate = SORT_NAMES.map((sort, item) => createSortItem(sort.value, sort.disabled, item === ACTIVE_SORT));
+const sortTemplate = (activeSort) => {
+	const sortItemsTemplate = SORT_NAMES.map((sort, item) => createSortItem(sort.value, sort.disabled, sort.value === activeSort));
 	return `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
                 ${sortItemsTemplate.join('')}
                 </form>`;
 };
 
-//? сортировка перестала работать (меняться), даже переключаться на выбранный столбец сортировки. А так сортирует.
+//? сортировка перестала работать (меняться), стала переключаться на выбранный столбец сортировки после повторного клика. А так не сортирует.
 
 export default class SortMenuView extends AbstractView {
-	constructor() {
+	constructor(activeSort, points) {
 		super();
+
+		this._activeSort = activeSort;
+		this._points = points;
 		this._sortTypeChangeHandler = this._sortTypeChangeHandler.bind(this);
 	}
 	getTemplate() {
-		return sortTemplate();
+		return sortTemplate(this._activeSort);
 	}
 	_sortTypeChangeHandler(evt) {
 		if (evt.target.tagName !== 'INPUT') {
@@ -35,5 +38,4 @@ export default class SortMenuView extends AbstractView {
 		this._callback.sortTypeChangeHandler = callback;
 		this.getElement().addEventListener('click', this._sortTypeChangeHandler);
 	}
-
 }

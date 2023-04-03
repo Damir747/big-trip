@@ -6,6 +6,7 @@ import SmartView from './smart.js';
 import { firstLetterUpperCase } from '../utils/common.js';
 import he from 'he';
 import dayjs from 'dayjs';
+import { orderTypes, pickElementDependOnValue } from '../data.js';
 
 const datalistCity = (city) => {
 	return `<option value="${city}"></option>`
@@ -23,6 +24,8 @@ const eventTypeTemplate = (eventType, checkedType) => {
                         </div>
 `
 }
+
+//? По идее создание и редактирование точки - одинаковые операции, меняется только кнопка Delete/Cancel
 const newPointTemplate = (point) => {
 	let photosList = "";
 	point.photos.forEach((el) => photosList += eventPhotoTemplate(el));
@@ -74,7 +77,7 @@ const newPointTemplate = (point) => {
                   </div>
 
                   <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-                  <button class="event__reset-btn" type="reset">Delete</button>
+                  <button class="event__reset-btn" type="reset">Cancel</button>
                   <button class="event__rollup-btn" type="button">
                     <span class="visually-hidden">Open event</span>
                   </button>
@@ -107,9 +110,13 @@ export default class PointNewView extends SmartView {
 	constructor(point) {
 		super();
 		this._pointState = PointNewView.parsePointDataToState(point);
+
 		this._onNewEventClick = this._onNewEventClick.bind(this);
+		this._changeTypePoint = this._changeTypePoint.bind(this);
 		this._onFormSubmit = this._onFormSubmit.bind(this);
 		this._onFormDelete = this._onFormDelete.bind(this);
+
+		this.setTypePointHandler(this._callback.changeTypePoint);
 	}
 	static parsePointDataToState(pointData) {
 		return Object.assign(
@@ -137,6 +144,49 @@ export default class PointNewView extends SmartView {
 		document.querySelector('.trip-main__event-add-btn').addEventListener('click', this._onNewEventClick);
 	}
 
+	restoreListeners() {
+		// this._setInnerListeners();
+		// this.setTypePointHandler(this._callback.changeTypePoint);
+		// this.setModeToViewClickHandler(this._callback.onRollUpClick);
+		// this.setFormSubmitHandler(this._callback.onFormSubmit);
+		// this.setFormDeleteHandler(this._callback.onFormDelete);
+		// // console.log(this._dateStart);
+		// this._setDatePicker(this._dateStart, true);
+		// this._setDatePicker(this._dateEnd);
+	}
+	_setInnerListeners() {
+		// this.getElement().querySelector('.event__input--destination').addEventListener('change', this._onPointInput)
+		// this.getElement().querySelector('.event__input--price').addEventListener('change', this._onPriceChange);
+		// this.getElement().querySelector('.event__available-offers').addEventListener('change', this._onCheckedOffers);
+	}
+	destroy() {
+
+		// this.getElement().querySelector('.event__input--destination').removeEventListener('change', this._onPointInput)
+		// this.getElement().querySelector('.event__input--price').removeEventListener('change', this._onPriceChange);
+
+		// this.getElement().querySelector('.event__type-group').removeEventListener('change', this._changeTypePoint);
+		// this.getElement().querySelector('.event__rollup-btn').removeEventListener('click', this._onRollUpClick);
+		// this.getElement().querySelector('form').removeEventListener('submit', this._onFormSubmit);
+		// this.getElement().querySelector('.event__reset-btn').removeEventListener('click', this._onFormDelete);
+
+	}
+
+	_changeTypePoint(evt) {
+		evt.preventDefault();
+		if (evt.target.tagName !== 'INPUT') {
+			return;
+		}
+		this.updateData({
+			type: evt.target.value,
+			checkedOffer: pickElementDependOnValue(evt.target.value, orderTypes),
+		});
+	}
+
+	setTypePointHandler(callback) {
+		this._callback.changeTypePoint = callback;
+		this.getElement().querySelector('.event__type-group').addEventListener('change', this._changeTypePoint);
+	}
+
 	_onFormSubmit(evt) {
 		evt.preventDefault();
 		this._callback.onFormSubmit(PointNewView.parseStateToPointData(this._pointState));
@@ -156,5 +206,4 @@ export default class PointNewView extends SmartView {
 		this._callback.onFormDelete = callback;
 		this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._onFormDelete);
 	}
-
 }

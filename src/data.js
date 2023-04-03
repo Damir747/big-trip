@@ -82,6 +82,7 @@ export const generateCities = new Array(CITIES.length).fill().map((_, index) => 
 export const pickElementDependOnValue2 = (city, generateCities) => generateCities.filter((el) => el.city === city)[0].description;
 export const pickElementDependOnValue3 = (city, generateCities) => generateCities.filter((el) => el.city === city)[0].photos;
 export const checkCityInList = (checkedCity) => generateCities.filter((el) => el.city === checkedCity).length > 0;
+export const checkPriceIsNumber = (checkedPrice) => /^\d+$/.test(checkedPrice);
 
 export const generatePoint = () => {
 	const point = generatePointTypes();

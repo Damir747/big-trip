@@ -7,6 +7,10 @@ import { generatePoint } from '../data.js';
 import PointNewView from '../view/point-new-view.js';
 import { nanoid } from 'nanoid';
 
+//? Вопрос опций по умолчанию для новой точки. Город какой по умолчанию? Опции надо все выключить?
+//? не дает выбрать тип точки маршрута. Вообще поработать с формой новой точки
+//? дальше разобраться с разделом "Безопасность превыше всего"
+
 export default class PointNewPresenter extends AbstractView {
 	constructor(pointListContainer, changeData) {	// offers?
 		super();
@@ -15,6 +19,7 @@ export default class PointNewPresenter extends AbstractView {
 		this._changeData = changeData;
 		this._pointEditorComponent = null;
 		// this._offers = offers;
+
 		this._onSubmitForm = this._onSubmitForm.bind(this);
 		this._deletePoint = this._deletePoint.bind(this);
 		this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
@@ -27,6 +32,7 @@ export default class PointNewPresenter extends AbstractView {
 		}
 
 		this._pointEditorComponent = new PointNewView(this._point);
+		// this._pointEditorComponent.restoreListeners();		//? а куда ещё его вписать?
 
 		this._pointEditorComponent.setFormSubmitHandler(this._onSubmitForm);
 		this._pointEditorComponent.setFormDeleteHandler(this._deletePoint);
@@ -34,7 +40,7 @@ export default class PointNewPresenter extends AbstractView {
 		render(this._pointListContainer, this._pointEditorComponent, RenderPosition.AFTERBEGIN);
 
 		document.addEventListener('keydown', this._escKeyDownHandler);
-
+		console.log('при попытке пользователя добавить новую точку маршрута...');
 	}
 
 	destroy() {
@@ -81,4 +87,5 @@ export default class PointNewPresenter extends AbstractView {
 	_deletePoint() {
 		this.destroy();
 	}
+
 }

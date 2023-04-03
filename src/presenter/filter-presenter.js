@@ -1,9 +1,10 @@
-import { FILTER_NAMES, ACTIVE_FILTER, UpdateType } from "../const.js";
+import { FILTER_NAMES, UpdateType } from "../const.js";
 import AbstractView from "../framework/abstract-view.js";
 import FilterView from "../view/filter-view.js";
 import { render } from "../view/render.js";
 import { remove, replace } from '../framework/render.js';
 import { markup } from "../data.js";
+import { RenderPosition } from '../const.js';
 
 export default class FilterPresenter extends AbstractView {
 	constructor(filterContainer, filterModel, pointsModel) {
@@ -13,13 +14,12 @@ export default class FilterPresenter extends AbstractView {
 		this._filterContainer = filterContainer;
 		this._filterModel = filterModel;
 		this._pointsModel = pointsModel;
-		this._activeFilter = ACTIVE_FILTER;
 
 		this._handleModelEvent = this._handleModelEvent.bind(this);
 		this._handleFilterTypeChange = this._handleFilterTypeChange.bind(this);
 
-		this._filterModel.addObserver(this._handleModelEvent);
-		this._pointsModel.addObserver(this._handleModelEvent);
+		this._pointsModel.addObserver(this._handleModelEvent);	// При изменении точек обновляет цифры в фильтре
+		this._filterModel.addObserver(this._handleModelEvent);	// при попытке создать новую точку вызывается filterModel, как следствие, перерисовывается filterView
 	}
 	init() {
 		const previousFilterComponent = this._filterComponent;
@@ -28,7 +28,7 @@ export default class FilterPresenter extends AbstractView {
 		this._filterComponent.setFilterClickListener(this._handleFilterTypeChange);
 
 		if (previousFilterComponent === null) {
-			render(this._filterContainer, this._filterComponent, markup[2].position);
+			render(this._filterContainer, this._filterComponent, RenderPosition.BEFOREEND);
 			return;
 		}
 		replace(this._filterComponent, previousFilterComponent);
@@ -38,6 +38,7 @@ export default class FilterPresenter extends AbstractView {
 	_handleModelEvent() {
 		this.init();
 	}
+
 	_handleFilterTypeChange(filterType) {
 		if (this._filterModel.getActiveFilter() === filterType) {
 			return;

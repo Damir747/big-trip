@@ -68,5 +68,4 @@ export default class PointView extends AbstractView {
 		this.getElement().querySelector('.event__favorite-btn').addEventListener('click', this._onFavoriteClick);
 	}
 
-
 }

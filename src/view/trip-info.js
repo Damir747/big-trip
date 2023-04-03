@@ -3,6 +3,7 @@ import { humanizeDate } from '../utils/common.js';
 import AbstractView from '../framework/abstract-view.js';
 
 //? сумму неправильно считает. Наверное, складывает строки ;-)
+//? да, при удалении точки каким-то своим способом пересчитывает сумму
 const tripInfoTemplate = (points) => {
 	let way = '';
 	let cost = 0;

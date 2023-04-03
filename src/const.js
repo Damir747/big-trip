@@ -212,7 +212,7 @@ const notFoundError = {
 
 export const FAVORITE_ACTIVE_CLASS = 'event__favorite-btn--active';
 export const FILTER_NAMES = ['everything', 'future', 'past'];
-export const ACTIVE_FILTER = FILTER_NAMES[0];
+export const DEFAULT_FILTER = FILTER_NAMES[0];
 export const SORT_NAMES = [{
 	value: 'day',
 	disabled: false,
@@ -233,7 +233,7 @@ export const SORT_NAMES = [{
 	value: 'offer',
 	disabled: true,
 }];
-export const ACTIVE_SORT = 0;
+export const DEFAULT_SORT = SORT_NAMES[0].value;
 export const TABS_NAMES = ['Table', 'Stats'];
 export const ACTIVE_TABS = 0;
 export const ACTIVE_TABS_CLASS = 'trip-tabs__btn--active';

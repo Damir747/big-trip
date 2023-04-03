@@ -5,13 +5,13 @@ import SmartView from './smart.js';
 import flatpickr from 'flatpickr';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 import { firstLetterUpperCase } from '../utils/common.js';
-import { orderTypes, pickElementDependOnValue, generateCities, pickElementDependOnValue2, pickElementDependOnValue3 } from '../data.js';
+import { orderTypes, pickElementDependOnValue, generateCities, pickElementDependOnValue2, pickElementDependOnValue3, checkPriceIsNumber } from '../data.js';
 import dayjs from 'dayjs';
 import he from 'he';
 import { checkCityInList } from '../data.js';
 
 const datalistCity = (city) => {
-	return `<option value="${city}"></option>`
+	return `<option value="${city}">`;
 }
 const datalistCities = (cities) => {
 	let citiesList = "";
@@ -124,11 +124,12 @@ export default class PointEditorView extends SmartView {
 		this._onDateEndChange = this._onDateEndChange.bind(this);
 		this._onPriceChange = this._onPriceChange.bind(this);
 		this._onCheckedOffers = this._onCheckedOffers.bind(this);
-		// this.destroy = this.destroy.bind(this);
+		this.destroy = this.destroy.bind(this);
 
 		this._setDatePicker(this._dateStart, true);
 		this._setDatePicker(this._dateEnd);
 	}
+	// эти два метода нужны будут при работе с backend
 	static parsePointDataToState(pointData) {
 		return Object.assign(
 			{},
@@ -168,30 +169,36 @@ export default class PointEditorView extends SmartView {
 
 	_setInnerListeners() {
 		this.getElement().querySelector('.event__input--destination').addEventListener('change', this._onPointInput)
-		this.getElement().querySelector('.event__available-offers').addEventListener('change', this._onCheckedOffers);
 		this.getElement().querySelector('.event__input--price').addEventListener('change', this._onPriceChange);
+		this.getElement().querySelector('.event__available-offers').addEventListener('change', this._onCheckedOffers);
 	}
-	// removeElement() {
-	// 	this.removeElement();
-	// 	if (this._dateStart || this._dateEnd) {
-	// 		this._dateStart.destroy();
-	// 		this._dateStart = null;
-	// 		this._dateEnd.destroy();
-	// 		this._dateEnd = null;
-	// 	}
-	// }
+
+	removeElement() {
+		super.removeElement();
+		if (this._dateStart || this._dateEnd) {
+			// this._dateStart.destroy();
+			// this._dateStart = null;
+			// this._dateEnd.destroy();
+			// this._dateEnd = null;
+		}
+	}
+	//? отображает только 20 точек. Надо бы сделать: или все, или с кнопкой "загрузить ещё"
+
 	destroy() {
+		this.getElement().querySelector('.event__input--destination').removeEventListener('change', this._onPointInput)
+		this.getElement().querySelector('.event__input--price').removeEventListener('change', this._onPriceChange);
 
 		this.getElement().querySelector('.event__type-group').removeEventListener('change', this._changeTypePoint);
-		this.getElement().querySelector('.event__input--destination').removeEventListener('change', this._onPointInput)
 		this.getElement().querySelector('.event__rollup-btn').removeEventListener('click', this._onRollUpClick);
 		this.getElement().querySelector('form').removeEventListener('submit', this._onFormSubmit);
 		this.getElement().querySelector('.event__reset-btn').removeEventListener('click', this._onFormDelete);
+
 	}
 
 	_onPointInput(evt) {
 		evt.preventDefault();
 		if (!checkCityInList(evt.target.value)) {
+			evt.target.setCustomValidity(`Города ${evt.target.value} нет в списке`);
 			return;
 		}
 		this.updateData({
@@ -200,9 +207,21 @@ export default class PointEditorView extends SmartView {
 			photos: pickElementDependOnValue3(evt.target.value, generateCities),
 		});
 	}
-	setPointInputHandler(callback) {
-		this._callback.onPointInput = callback;
-		this.getElement().querySelector('.event--edit').addEventListener('submit', this._onPointInput);
+
+	_onPriceChange(evt) {
+		if (evt.target.tagName !== 'INPUT') {
+			return;
+		}
+		evt.preventDefault();
+		if (!checkPriceIsNumber(evt.target.value)) {
+			evt.target.setCustomValidity('Цена должна быть цифрой');
+			return;
+		}
+		this.updateData(
+			{
+				price: +evt.target.value
+			}
+		);
 	}
 
 	_changeTypePoint(evt) {
@@ -255,13 +274,11 @@ export default class PointEditorView extends SmartView {
 			// datePicker.destroy();
 			datePicker = null;
 		}
-		return;
 		if (flag) {
-			console.log(DateFormat.FORMAT_PICKER, this._pointState.start, this._onDateStartChange);
 			datePicker = flatpickr(this.getElement().querySelector('#event-start-time-1'),
 				{
 					dateFormat: DateFormat.FORMAT_PICKER,
-					defaultDate: this._pointState.start,
+					defaultDate: new Date(this._pointState.start),
 					onChange: this._onDateStartChange,
 				},
 			);
@@ -270,12 +287,14 @@ export default class PointEditorView extends SmartView {
 		datePicker = flatpickr(this.getElement().querySelector('#event-end-time-1'),
 			{
 				dateFormat: DateFormat.FORMAT_PICKER,
-				defaultDate: this._pointState.end,
+				defaultDate: new Date(this._pointState.end),
 				onChange: this._onDateEndChange,
 			},
 		);
+
 	}
 	_onDateStartChange(inputDate) {
+		console.log(inputDate, this._pointState.end);
 		if (compareTwoDates(inputDate, this._pointState.end) < 0) {
 			this.updateData(
 				{
@@ -292,6 +311,7 @@ export default class PointEditorView extends SmartView {
 		);
 	}
 	_onDateEndChange(inputDate) {
+		console.log(this._pointState.start, inputDate);
 		if (compareTwoDates(this._pointState.start, inputDate) < 0) {
 			this.updateData(
 				{
@@ -308,17 +328,6 @@ export default class PointEditorView extends SmartView {
 		);
 	}
 
-	_onPriceChange(evt) {
-		if (evt.target.tagName !== 'INPUT') {
-			return;
-		}
-		//? нужна проверка на корректное значение числа
-		this.updateData(
-			{
-				price: +evt.target.value
-			}
-		);
-	}
 	_onCheckedOffers(evt) {
 		if (evt.target.tagName !== 'INPUT') {
 			return;
