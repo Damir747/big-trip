@@ -1,8 +1,7 @@
 import Observer from "../utils/observer.js";
+import { utilFilterSort } from '../utils/filter.js';
 
 //? Обратите внимание, что, если вы следовали нашим рекомендациям и выделили дополнительные опции в отдельную структуру, для них нужно завести отдельную модель и провести похожие манипуляции.
-
-//? при изменении модели с данными, получите новый список и пересчитайте стоимость маршрута (если выполняете доп.задание).
 
 export default class Points extends Observer {
 	constructor() {
@@ -12,8 +11,8 @@ export default class Points extends Observer {
 	setPoints(points) {
 		this._points = points.slice();
 	}
-	getPoints() {
-		return this._points;
+	getPoints(activeFilter, activeSort, upSort) {
+		return utilFilterSort(this._points, activeFilter, activeSort, upSort);
 	}
 	updatePoint(updateType, modifiedPoint) {
 		const index = this._points.findIndex((el) => el.id === modifiedPoint.id);
@@ -36,7 +35,7 @@ export default class Points extends Observer {
 	}
 	deletePoint(updateType, point) {
 		this._points = this._points.filter((el) => el.id !== point.id);
-		//? Ещё может быть такой способ: найти по id и сделать slice - как в updatePoint
+		// Ещё может быть такой способ: найти по id и сделать slice - как в updatePoint
 		this._notify(updateType);
 	}
 }

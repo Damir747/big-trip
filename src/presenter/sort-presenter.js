@@ -3,11 +3,10 @@ import AbstractView from "../framework/abstract-view.js";
 import SortMenuView from '../view/sort-view.js';
 import { render } from "../view/render.js";
 import { remove, replace } from '../framework/render.js';
-import { markup } from "../data.js";
 import { RenderPosition, DEFAULT_SORT } from '../const.js';
 
 export default class SortPresenter extends AbstractView {
-	constructor(sortContainer, sortModel, filterModel) {
+	constructor(sortContainer, filterModel, sortModel) {
 		super();
 		this._sortComponent = null;
 		this._sortContainer = sortContainer;

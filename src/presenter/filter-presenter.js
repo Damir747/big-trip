@@ -1,13 +1,12 @@
-import { FILTER_NAMES, UpdateType } from "../const.js";
+import { UpdateType } from "../const.js";
 import AbstractView from "../framework/abstract-view.js";
 import FilterView from "../view/filter-view.js";
 import { render } from "../view/render.js";
 import { remove, replace } from '../framework/render.js';
-import { markup } from "../data.js";
 import { RenderPosition } from '../const.js';
 
 export default class FilterPresenter extends AbstractView {
-	constructor(filterContainer, filterModel, pointsModel) {
+	constructor(filterContainer, pointsModel, filterModel) {
 		super();
 		this._filterComponent = null;
 
@@ -24,7 +23,7 @@ export default class FilterPresenter extends AbstractView {
 	init() {
 		const previousFilterComponent = this._filterComponent;
 
-		this._filterComponent = new FilterView(FILTER_NAMES, this._filterModel.getActiveFilter(), this._pointsModel.getPoints());
+		this._filterComponent = new FilterView(this._filterModel.getActiveFilter(), this._pointsModel.getPoints());
 		this._filterComponent.setFilterClickListener(this._handleFilterTypeChange);
 
 		if (previousFilterComponent === null) {

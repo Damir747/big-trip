@@ -6,7 +6,6 @@ import flatpickr from 'flatpickr';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 import { firstLetterUpperCase } from '../utils/common.js';
 import { orderTypes, pickElementDependOnValue, generateCities, pickElementDependOnValue2, pickElementDependOnValue3, checkPriceIsNumber } from '../data.js';
-import dayjs from 'dayjs';
 import he from 'he';
 import { checkCityInList } from '../data.js';
 
@@ -311,7 +310,6 @@ export default class PointEditorView extends SmartView {
 		);
 	}
 	_onDateEndChange(inputDate) {
-		console.log(this._pointState.start, inputDate);
 		if (compareTwoDates(this._pointState.start, inputDate) < 0) {
 			this.updateData(
 				{
@@ -332,12 +330,13 @@ export default class PointEditorView extends SmartView {
 		if (evt.target.tagName !== 'INPUT') {
 			return;
 		}
+		//? работает ли?
 		this._pointState.checkedOffer.filter((el) =>
 			el.short === evt.target.name.replace('event-offer-', ''))[0].checked = evt.target.checked;
-		// this.updateDate(
-		// 	{
-		// 		checkedOffer: this._pointState.checkedOffer,
-		// 	}
-		// );
+		this.updateData(
+			{
+				checkedOffer: this._pointState.checkedOffer,
+			}
+		);
 	}
 }

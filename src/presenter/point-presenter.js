@@ -24,7 +24,6 @@ export default class PointPresenter extends AbstractView {
 		this._onSubmitForm = this._onSubmitForm.bind(this);
 		this._deletePoint = this._deletePoint.bind(this);
 		this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
-
 	}
 
 	init(point) {

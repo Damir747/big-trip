@@ -1,11 +1,10 @@
-import { humanizeDate } from '../utils/common.js';
+import { humanizeDate, compareTwoDates } from '../utils/common.js';
 import { CITIES, DateFormat, DIR_ICONS, EVENT_TYPE } from '../const.js';
 import { createOffers } from '../mock/offer-data.js';
-import { selectedOffers } from '../mock/offer-data.js';
 import SmartView from './smart.js';
+import flatpickr from 'flatpickr';
 import { firstLetterUpperCase } from '../utils/common.js';
 import he from 'he';
-import dayjs from 'dayjs';
 import { orderTypes, pickElementDependOnValue } from '../data.js';
 
 const datalistCity = (city) => {
@@ -26,6 +25,7 @@ const eventTypeTemplate = (eventType, checkedType) => {
 }
 
 //? По идее создание и редактирование точки - одинаковые операции, меняется только кнопка Delete/Cancel
+//? не работает корректно. После выбора даты в datepicker слетают обработчики, больше нет datepicker, не работает кнопка RollUp
 const newPointTemplate = (point) => {
 	let photosList = "";
 	point.photos.forEach((el) => photosList += eventPhotoTemplate(el));
@@ -107,16 +107,29 @@ const newPointTemplate = (point) => {
 };
 
 export default class PointNewView extends SmartView {
-	constructor(point) {
+	constructor(point = EMPTY_POINT) {
 		super();
+		this._dateStart = point.start;
+		this._dateEnd = point.end;
+
 		this._pointState = PointNewView.parsePointDataToState(point);
 
 		this._onNewEventClick = this._onNewEventClick.bind(this);
 		this._changeTypePoint = this._changeTypePoint.bind(this);
+		this._onRollUpClick = this._onRollUpClick.bind(this);
 		this._onFormSubmit = this._onFormSubmit.bind(this);
 		this._onFormDelete = this._onFormDelete.bind(this);
 
 		this.setTypePointHandler(this._callback.changeTypePoint);
+
+		this._onPointInput = this._onPointInput.bind(this);
+		this._onDateStartChange = this._onDateStartChange.bind(this);
+		this._onDateEndChange = this._onDateEndChange.bind(this);
+		this._onPriceChange = this._onPriceChange.bind(this);
+		this._onCheckedOffers = this._onCheckedOffers.bind(this);
+
+		this._setDatePicker(this._dateStart, true);
+		this._setDatePicker(this._dateEnd);
 	}
 	static parsePointDataToState(pointData) {
 		return Object.assign(
@@ -171,6 +184,35 @@ export default class PointNewView extends SmartView {
 
 	}
 
+	_onPointInput(evt) {
+		evt.preventDefault();
+		if (!checkCityInList(evt.target.value)) {
+			evt.target.setCustomValidity(`Города ${evt.target.value} нет в списке`);
+			return;
+		}
+		this.updateData({
+			city: evt.target.value,
+			description: pickElementDependOnValue2(evt.target.value, generateCities),
+			photos: pickElementDependOnValue3(evt.target.value, generateCities),
+		});
+	}
+
+	_onPriceChange(evt) {
+		if (evt.target.tagName !== 'INPUT') {
+			return;
+		}
+		evt.preventDefault();
+		if (!checkPriceIsNumber(evt.target.value)) {
+			evt.target.setCustomValidity('Цена должна быть цифрой');
+			return;
+		}
+		this.updateData(
+			{
+				price: +evt.target.value
+			}
+		);
+	}
+
 	_changeTypePoint(evt) {
 		evt.preventDefault();
 		if (evt.target.tagName !== 'INPUT') {
@@ -185,6 +227,15 @@ export default class PointNewView extends SmartView {
 	setTypePointHandler(callback) {
 		this._callback.changeTypePoint = callback;
 		this.getElement().querySelector('.event__type-group').addEventListener('change', this._changeTypePoint);
+	}
+
+	_onRollUpClick() {
+		this._callback.rollUpClick();
+	}
+
+	setModeToViewClickHandler(callback) {
+		this._callback.rollUpClick = callback;
+		this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._onRollUpClick);
 	}
 
 	_onFormSubmit(evt) {
@@ -205,5 +256,76 @@ export default class PointNewView extends SmartView {
 	setFormDeleteHandler(callback) {
 		this._callback.onFormDelete = callback;
 		this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._onFormDelete);
+	}
+	_setDatePicker(datePicker, flag) {
+		if (datePicker) {
+			// datePicker.destroy();
+			datePicker = null;
+		}
+		if (flag) {
+			datePicker = flatpickr(this.getElement().querySelector('#event-start-time-1'),
+				{
+					dateFormat: DateFormat.FORMAT_PICKER,
+					defaultDate: new Date(this._pointState.start),
+					onChange: this._onDateStartChange,
+				},
+			);
+			return;
+		}
+		datePicker = flatpickr(this.getElement().querySelector('#event-end-time-1'),
+			{
+				dateFormat: DateFormat.FORMAT_PICKER,
+				defaultDate: new Date(this._pointState.end),
+				onChange: this._onDateEndChange,
+			},
+		);
+
+	}
+	_onDateStartChange(inputDate) {
+		console.log(inputDate, this._pointState.end);
+		if (compareTwoDates(inputDate, this._pointState.end) < 0) {
+			this.updateData(
+				{
+					start: inputDate,
+					end: inputDate,
+				}
+			);
+			return;
+		}
+		this.updateData(
+			{
+				start: inputDate,
+			}
+		);
+	}
+	_onDateEndChange(inputDate) {
+		if (compareTwoDates(this._pointState.start, inputDate) < 0) {
+			this.updateData(
+				{
+					start: inputDate,
+					end: inputDate,
+				}
+			);
+			return;
+		}
+		this.updateData(
+			{
+				end: inputDate,
+			}
+		);
+	}
+
+	_onCheckedOffers(evt) {
+		if (evt.target.tagName !== 'INPUT') {
+			return;
+		}
+		//? работает ли?
+		this._pointState.checkedOffer.filter((el) =>
+			el.short === evt.target.name.replace('event-offer-', ''))[0].checked = evt.target.checked;
+		this.updateData(
+			{
+				checkedOffer: this._pointState.checkedOffer,
+			}
+		);
 	}
 }

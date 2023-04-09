@@ -5,14 +5,14 @@ import TripInfo from '../view/trip-info.js';
 import TabsMenuView from '../view/main-menu.js';
 import PointPresenter from './point-presenter.js';
 import { markup } from '../data.js';
-import { POINTS_COUNT, SORT_NAMES, DEFAULT_FILTER, DEFAULT_SORT } from '../const.js';
+import { POINTS_COUNT, DEFAULT_FILTER, DEFAULT_SORT } from '../const.js';
 import { render } from '../view/render.js';
-import { sortPointDateUp, sortPointDateDown, sortPointTimeUp, sortPointTimeDown, sortPointCostUp, sortPointCostDown } from '../utils/sort.js';
 import { UserAction, UpdateType } from '../const.js';
-import { utilFilter } from '../utils/filter.js';
 import PointNewPresenter from './point-new-presenter.js';
 import { remove } from '../framework/render.js';
 import { RenderPosition } from '../const.js';
+
+//? разобраться с ценами на дополнительные услуги offers
 
 export default class TripPresenter {
 	constructor(tripContainer, tripInfoContainer, tripDetailsContainer, pointsModel, filterModel, sortModel) {
@@ -62,25 +62,8 @@ export default class TripPresenter {
 		return this._sortModel;
 	}
 	_getPoints() {
-		const activeFilter = this.getFilterModel().getActiveFilter();
-		const activeSort = this.getSortModel().getActiveSort();
-		const points = this.getModel().getPoints();
-		const filteredPoints = utilFilter(points, activeFilter);
-		this._upSort = false;
-		switch (activeSort) {
-			case SORT_NAMES[0].value:
-				return filteredPoints.slice().sort(!this._upSort ? sortPointDateUp : sortPointDateDown);
-			case SORT_NAMES[1].value:
-				return;
-			case SORT_NAMES[2].value:
-				return filteredPoints.slice().sort(!this._upSort ? sortPointTimeUp : sortPointTimeDown);
-			case SORT_NAMES[3].value:
-				return filteredPoints.slice().sort(!this._upSort ? sortPointCostUp : sortPointCostDown);
-			case SORT_NAMES[4].value:
-				return;
-			default:
-				return filteredPoints;
-		}
+		this._upSort = false;		//? надо менять направление сортировки
+		return this.getModel().getPoints(this.getFilterModel().getActiveFilter(), this.getSortModel().getActiveSort(), this._upSort);
 	}
 	_renderTripInfo() {
 		this._tripInfo = new TripInfo(this._getPoints());	// Информация - описание поездки
@@ -170,7 +153,15 @@ export default class TripPresenter {
 			.forEach((pointPresenter) => pointPresenter.resetView());
 		Object.values(this._pointPresenter).forEach((pointPresenter) => pointPresenter.destroy());
 		this._pointPresenter = {};
-		remove(this._tripInfo);
+		// Надо ли отображать маршрут полностью (и расчет цены)? Или с учетом фильтра (как сейчас)?
+		//? если в фильтре удалить точки, будет отображаться NoPoints, и tripInfo будет null
+		if (this._tripInfo._element !== null) {
+			remove(this._tripInfo);
+		}
+		//?проверка работает. Но оформлена криво
+		if (this._noPoint._element !== null) {
+			remove(this._noPoint);
+		}
 		// remove Empty
 		// remove Cost
 		if (resetSort) {

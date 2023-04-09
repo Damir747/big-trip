@@ -2,8 +2,6 @@ import { DateFormat } from '../const.js';
 import { humanizeDate } from '../utils/common.js';
 import AbstractView from '../framework/abstract-view.js';
 
-//? сумму неправильно считает. Наверное, складывает строки ;-)
-//? да, при удалении точки каким-то своим способом пересчитывает сумму
 const tripInfoTemplate = (points) => {
 	let way = '';
 	let cost = 0;
@@ -17,7 +15,7 @@ const tripInfoTemplate = (points) => {
 			way += ' &mdash; ' + element.city;
 		}
 
-		let sum = element.checkedOffer.reduce((sum, currentObj) => sum += currentObj.price, 0);
+		let sum = element.checkedOffer.reduce((sum, currentObj) => sum += currentObj.checked ? currentObj.price : 0, 0);
 		cost += element.price + sum;
 		if (element.start < minDate) {
 			minDate = element.start;

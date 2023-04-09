@@ -1,16 +1,15 @@
 import AbstractView from '../framework/abstract-view.js';
-
-import { CUT_FILTER_NAME } from '../const.js';
-import { utilFilter } from '../utils/filter.js';
+import { CUT_FILTER_NAME, FILTER_NAMES } from '../const.js';
+import { filterCount } from '../utils/filter.js';
 
 const createFilterItem = (filterName, isChecked, points) => {
 	return `<div class="trip-filters__filter">
                   <input id="filter-${filterName}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" data-filter-type="${filterName}" value="${filterName}" ${isChecked ? 'checked' : ''}>
-                  <label class="trip-filters__filter-label" for="filter-${filterName}">${filterName.toUpperCase()} ${utilFilter(points, filterName).length}</label>
+                  <label class="trip-filters__filter-label" for="filter-${filterName}">${filterName.toUpperCase()} ${filterCount(points, filterName)}</label>
                 </div>`
 }
-const filterTemplate = (filtersArray, activeFilter, points) => {
-	const filterItemsTemplate = filtersArray.map((filter) => createFilterItem(filter, filter === activeFilter, points));
+const filterTemplate = (activeFilter, points) => {
+	const filterItemsTemplate = FILTER_NAMES.map((filter) => createFilterItem(filter, filter === activeFilter, points));
 	return `<div class="trip-controls__filters">
 						<h2 class="visually-hidden">Filter events</h2>
 						<!-- Фильтры -->
@@ -21,15 +20,14 @@ const filterTemplate = (filtersArray, activeFilter, points) => {
 				</div>`;
 };
 export default class FilterView extends AbstractView {
-	constructor(filtersArray, activeFilter, points) {
+	constructor(activeFilter, points) {
 		super();
-		this._filtersArray = filtersArray;
 		this._activeFilter = activeFilter;
 		this._points = points;
 		this._filterTypeChangeHandle = this._filterTypeChangeHandle.bind(this);
 	}
 	getTemplate() {
-		return filterTemplate(this._filtersArray, this._activeFilter, this._points);
+		return filterTemplate(this._activeFilter, this._points);
 	}
 
 	_filterTypeChangeHandle(evt) {
