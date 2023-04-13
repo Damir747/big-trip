@@ -20,17 +20,17 @@ const utilFilter = (points, filterName) => {
 export const filterCount = (points, filterName) => {
 	return utilFilter(points, filterName).length;
 }
-export const utilFilterSort = (points, filterName = DEFAULT_FILTER, sortName = sortPointDateUp) => {
+export const utilFilterSort = (points, filterName = DEFAULT_FILTER, sortName = sortPointDateUp, upSort = true) => {
 	const filteredPoints = utilFilter(points, filterName);
 	switch (sortName) {
 		case SORT_NAMES[0].value:
-			return filteredPoints.sort(sortName ? sortPointDateUp : sortPointDateDown);
+			return filteredPoints.sort(upSort ? sortPointDateUp : sortPointDateDown);
 		case SORT_NAMES[1].value:
 			return filteredPoints;
 		case SORT_NAMES[2].value:
-			return filteredPoints.sort(sortName ? sortPointTimeUp : sortPointTimeDown);
+			return filteredPoints.sort(upSort ? sortPointTimeUp : sortPointTimeDown);
 		case SORT_NAMES[3].value:
-			return filteredPoints.sort(sortName ? sortPointCostUp : sortPointCostDown);
+			return filteredPoints.sort(upSort ? sortPointCostUp : sortPointCostDown);
 		case SORT_NAMES[4].value:
 			return filteredPoints;
 		default:

@@ -2,6 +2,8 @@ import Observer from "../utils/observer.js";
 import { utilFilterSort } from '../utils/filter.js';
 
 //? Обратите внимание, что, если вы следовали нашим рекомендациям и выделили дополнительные опции в отдельную структуру, для них нужно завести отдельную модель и провести похожие манипуляции.
+//? New Event опции считает неверно. Не учитывает отключенные опции
+
 
 export default class Points extends Observer {
 	constructor() {

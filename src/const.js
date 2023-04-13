@@ -1,5 +1,5 @@
 export const POINTS_COUNT = 20;	//сколько точек показывать на экране
-export const GENERATED_POINTS_COUNT = 4;		// сколько точек генерировать
+export const GENERATED_POINTS_COUNT = 5;		// сколько точек генерировать
 export const DIR_PICTURE = 'http://picsum.photos/248/152?r=';
 export const DIR_ICONS = 'img/icons/';
 export const MAX_RANDOM_PICTURE = 9999;
@@ -247,8 +247,12 @@ export const Mode = {
 	VIEW: 'view',
 	EDIT: 'edit',
 }
+export const EditMode = {
+	NEW: 'new',
+	EDIT: 'edit',
+}
 
-export const EMPTY_POINT = {};
+export const EMPTY_POINT = 'EMPTY';
 
 export const EVENT_TYPE = ['taxi', 'bus', 'train', 'ship', 'transport', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 

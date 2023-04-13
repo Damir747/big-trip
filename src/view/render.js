@@ -8,7 +8,7 @@ import AbstractView from '../framework/abstract-view.js';
  * @param {AbstractView} element Элемент, который должен был отрисован
  * @param {string} place Позиция компонента относительно контейнера. По умолчанию - `beforeend`
  */
-export const render = (container, element, place = 'beforeend') => {
+export const render = (container, element, place = RenderPosition.BEFOREEND) => {
 	if (container instanceof AbstractView) {
 		container = container.getElement();
 	}

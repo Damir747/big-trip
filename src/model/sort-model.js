@@ -5,6 +5,7 @@ export default class SortModel extends Observer {
 	constructor() {
 		super();
 		this._activeSort = DEFAULT_SORT;
+		this._upSort = true;
 	}
 
 	setActiveSort(updateType, activeSort) {
@@ -16,4 +17,14 @@ export default class SortModel extends Observer {
 		return this._activeSort;
 	}
 
+	setDefaultUpSort(flag = true) {
+		this._upSort = flag;
+	}
+	changeUpSort() {
+		this._upSort = !this._upSort;
+	}
+
+	getUpSort() {
+		return this._upSort;
+	}
 }

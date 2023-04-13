@@ -1,6 +1,6 @@
 import { humanizeDate, compareTwoDates } from '../utils/common.js';
 import { createOffers } from '../mock/offer-data.js';
-import { CITIES, DateFormat, DIR_ICONS, EMPTY_POINT, EVENT_TYPE } from '../const.js';
+import { CITIES, DateFormat, DIR_ICONS, EMPTY_POINT, EVENT_TYPE, EditMode } from '../const.js';
 import SmartView from './smart.js';
 import flatpickr from 'flatpickr';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
@@ -26,7 +26,7 @@ const eventTypeTemplate = (eventType, checkedType) => {
 `
 }
 
-const editPointTemplate = (point) => {
+const editPointTemplate = (point, editMode) => {
 	let photosList = "";
 	point.photos.forEach((el) => photosList += eventPhotoTemplate(el));
 	let eventTypeList = "";
@@ -77,7 +77,7 @@ const editPointTemplate = (point) => {
                   </div>
 
                   <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-                  <button class="event__reset-btn" type="reset">Delete</button>
+                  <button class="event__reset-btn" type="reset">${editMode === EditMode.EDIT ? 'Delete' : 'Cancel'}</button>
                   <button class="event__rollup-btn" type="button">
                     <span class="visually-hidden">Open event</span>
                   </button>
@@ -107,12 +107,13 @@ const editPointTemplate = (point) => {
 };
 
 export default class PointEditorView extends SmartView {
-	constructor(point = EMPTY_POINT) {
+	constructor(point = EMPTY_POINT, editMode = EditMode.EDIT) {
 		super();
 		this._dateStart = point.start;
 		this._dateEnd = point.end;
 
 		this._pointState = PointEditorView.parsePointDataToState(point);
+		this._editMode = editMode;
 		this._onRollUpClick = this._onRollUpClick.bind(this);
 		this._onFormSubmit = this._onFormSubmit.bind(this);
 		this._onFormDelete = this._onFormDelete.bind(this);
@@ -147,7 +148,7 @@ export default class PointEditorView extends SmartView {
 	}
 
 	getTemplate() {
-		return editPointTemplate(this._pointState);
+		return editPointTemplate(this._pointState, this._editMode);
 	}
 	reset(point) {
 		this.updateElement(PointEditorView.parsePointDataToState(point));
@@ -293,7 +294,6 @@ export default class PointEditorView extends SmartView {
 
 	}
 	_onDateStartChange(inputDate) {
-		console.log(inputDate, this._pointState.end);
 		if (compareTwoDates(inputDate, this._pointState.end) < 0) {
 			this.updateData(
 				{

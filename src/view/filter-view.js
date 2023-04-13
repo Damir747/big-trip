@@ -3,9 +3,10 @@ import { CUT_FILTER_NAME, FILTER_NAMES } from '../const.js';
 import { filterCount } from '../utils/filter.js';
 
 const createFilterItem = (filterName, isChecked, points) => {
+	const count = filterCount(points, filterName);
 	return `<div class="trip-filters__filter">
-                  <input id="filter-${filterName}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" data-filter-type="${filterName}" value="${filterName}" ${isChecked ? 'checked' : ''}>
-                  <label class="trip-filters__filter-label" for="filter-${filterName}">${filterName.toUpperCase()} ${filterCount(points, filterName)}</label>
+                  <input id="filter-${filterName}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" data-filter-type="${filterName}" value="${filterName}" ${isChecked ? 'checked' : ''} ${count > 0 ? '' : 'disabled'}>
+                  <label class="trip-filters__filter-label" for="filter-${filterName}">${filterName.toUpperCase()} ${count}</label>
                 </div>`
 }
 const filterTemplate = (activeFilter, points) => {

@@ -5,10 +5,9 @@ import TripInfo from '../view/trip-info.js';
 import TabsMenuView from '../view/main-menu.js';
 import PointPresenter from './point-presenter.js';
 import { markup } from '../data.js';
-import { POINTS_COUNT, DEFAULT_FILTER, DEFAULT_SORT } from '../const.js';
+import { POINTS_COUNT, DEFAULT_FILTER, DEFAULT_SORT, EMPTY_POINT } from '../const.js';
 import { render } from '../view/render.js';
 import { UserAction, UpdateType } from '../const.js';
-import PointNewPresenter from './point-new-presenter.js';
 import { remove } from '../framework/render.js';
 import { RenderPosition } from '../const.js';
 
@@ -23,7 +22,7 @@ export default class TripPresenter {
 		this._tripInfoContainer = tripInfoContainer;			// Контейнер для Инфо маршрута
 		this._tripDetailsContainer = tripDetailsContainer;	// Контейнер для Фильтр
 		// this._currentSortType = DEFAULT_SORT;					// Начальная сортировка
-		this._upSort = true;											// Начальное направление сортировки: по возрастанию 
+		this._previousSort = null;									// Предыдущая сортировка
 		// this._currentFilterType = DEFAULT_FILTER;				// Начальный фильтр
 		this._sortModel.setActiveSort(UpdateType.FULL, DEFAULT_SORT);
 		this._filterModel.setActiveFilter(UpdateType.FULL, DEFAULT_FILTER);
@@ -42,7 +41,7 @@ export default class TripPresenter {
 		this._sortModel.addObserver(this._handleModelEvent);
 		this._filterModel.addObserver(this._handleModelEvent);
 
-		this._pointNewPresenter = new PointNewPresenter(this._pointListComponent, this._handleViewAction);
+		this._pointNewPresenter = new PointPresenter(this._pointListComponent, this._handleViewAction, this._handleModelEvent);
 	}
 	init() {
 		// this._defaultSortPoints = tripPoints.slice();
@@ -62,8 +61,14 @@ export default class TripPresenter {
 		return this._sortModel;
 	}
 	_getPoints() {
-		this._upSort = false;		//? надо менять направление сортировки
-		return this.getModel().getPoints(this.getFilterModel().getActiveFilter(), this.getSortModel().getActiveSort(), this._upSort);
+		if (this._previousSort === this.getSortModel().getActiveSort()) {
+			this.getSortModel().changeUpSort();
+		}
+		else {
+			this._previousSort = this.getSortModel().getActiveSort();
+			this.getSortModel().setDefaultUpSort();
+		}
+		return this.getModel().getPoints(this.getFilterModel().getActiveFilter(), this.getSortModel().getActiveSort(), this.getSortModel().getUpSort());
 	}
 	_renderTripInfo() {
 		this._tripInfo = new TripInfo(this._getPoints());	// Информация - описание поездки
@@ -165,6 +170,7 @@ export default class TripPresenter {
 		// remove Empty
 		// remove Cost
 		if (resetSort) {
+			// this._upSort = false;
 			// this._sortModel.setActiveSort(UpdateType.FULL, DEFAULT_SORT);
 			// this._filterModel.setActiveFilter(UpdateType.FULL, DEFAULT_FILTER);
 		}

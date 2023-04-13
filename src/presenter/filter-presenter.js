@@ -4,6 +4,7 @@ import FilterView from "../view/filter-view.js";
 import { render } from "../view/render.js";
 import { remove, replace } from '../framework/render.js';
 import { RenderPosition } from '../const.js';
+import { filterCount } from '../utils/filter.js';
 
 export default class FilterPresenter extends AbstractView {
 	constructor(filterContainer, pointsModel, filterModel) {
@@ -40,6 +41,9 @@ export default class FilterPresenter extends AbstractView {
 
 	_handleFilterTypeChange(filterType) {
 		if (this._filterModel.getActiveFilter() === filterType) {
+			return;
+		}
+		if (filterCount(this._pointsModel.getPoints(), filterType) === 0) {
 			return;
 		}
 		this._filterModel.setActiveFilter(UpdateType.FULL, filterType);

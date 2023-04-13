@@ -34,11 +34,14 @@ export default class SortPresenter extends AbstractView {
 	}
 
 	_handleModelEvent() {
+		this._sortModel.setDefaultUpSort(this._sortModel.getActiveSort() !== DEFAULT_SORT);
+		this._sortModel.setActiveSort(UpdateType.FULL, DEFAULT_SORT);
 		this.init();
 	}
 
 	_handleSortTypeChange(sortType) {
 		if (this._sortModel.getActiveSort() === sortType) {
+			this._sortModel.setActiveSort(UpdateType.FULL, sortType);
 			return;
 		}
 		this._sortModel.setActiveSort(UpdateType.FULL, sortType);
