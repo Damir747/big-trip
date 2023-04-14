@@ -8,7 +8,7 @@ export default class Observer {
 	removeObsever(observer) {
 		this._observers = this._observers.filter((observerItem) => observerItem !== observer);
 	}
-	_notify(event, payload) {
-		this._observers.forEach((observer) => observer(event, payload));
+	_notify(event, payload, upSort) {
+		this._observers.forEach((observer) => observer(event, payload, upSort));
 	}
 }

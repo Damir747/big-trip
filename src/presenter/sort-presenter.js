@@ -4,6 +4,7 @@ import SortMenuView from '../view/sort-view.js';
 import { render } from "../view/render.js";
 import { remove, replace } from '../framework/render.js';
 import { RenderPosition, DEFAULT_SORT } from '../const.js';
+// ? При изменении Favorites меняется порядок-направление сортировки
 
 export default class SortPresenter extends AbstractView {
 	constructor(sortContainer, filterModel, sortModel) {
@@ -22,6 +23,8 @@ export default class SortPresenter extends AbstractView {
 		const previousSortComponent = this._sortComponent;
 
 		this._points = points;
+		this._sortModel.setDefaultUpSort(true);
+		this._sortModel.setActiveSort(UpdateType.FULL, DEFAULT_SORT);
 		this._sortComponent = new SortMenuView(DEFAULT_SORT, this._points);
 		this._sortComponent.setSortClickListener(this._handleSortTypeChange);
 
@@ -34,15 +37,15 @@ export default class SortPresenter extends AbstractView {
 	}
 
 	_handleModelEvent() {
-		this._sortModel.setDefaultUpSort(this._sortModel.getActiveSort() !== DEFAULT_SORT);
-		this._sortModel.setActiveSort(UpdateType.FULL, DEFAULT_SORT);
 		this.init();
 	}
 
 	_handleSortTypeChange(sortType) {
 		if (this._sortModel.getActiveSort() === sortType) {
-			this._sortModel.setActiveSort(UpdateType.FULL, sortType);
-			return;
+			this._sortModel.changeUpSort();		// изменение направления сортировки
+		}
+		else {
+			this._sortModel.setDefaultUpSort();
 		}
 		this._sortModel.setActiveSort(UpdateType.FULL, sortType);
 	}

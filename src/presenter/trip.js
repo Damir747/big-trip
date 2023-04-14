@@ -61,13 +61,6 @@ export default class TripPresenter {
 		return this._sortModel;
 	}
 	_getPoints() {
-		if (this._previousSort === this.getSortModel().getActiveSort()) {
-			this.getSortModel().changeUpSort();
-		}
-		else {
-			this._previousSort = this.getSortModel().getActiveSort();
-			this.getSortModel().setDefaultUpSort();
-		}
 		return this.getModel().getPoints(this.getFilterModel().getActiveFilter(), this.getSortModel().getActiveSort(), this.getSortModel().getUpSort());
 	}
 	_renderTripInfo() {
@@ -124,7 +117,7 @@ export default class TripPresenter {
 				throw new error('UserAction is not found');
 		}
 	}
-	_handleModelEvent(updateType, data) {
+	_handleModelEvent(updateType, data, upSort = true) {
 		this._onPointModeChange();
 		switch (updateType) {
 			case UpdateType.FULL:
@@ -186,5 +179,6 @@ export default class TripPresenter {
 	createPoint() {
 		this._filterModel.setActiveFilter(UpdateType.FULL, DEFAULT_FILTER);	// сбрасывается фильтрация, как следствие, сбрасывается сортировка
 		this._pointNewPresenter.init();
+
 	}
 }

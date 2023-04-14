@@ -10,7 +10,7 @@ export default class SortModel extends Observer {
 
 	setActiveSort(updateType, activeSort) {
 		this._activeSort = activeSort;
-		this._notify(updateType, activeSort);
+		this._notify(updateType, activeSort, this._upSort);
 	}
 
 	getActiveSort() {

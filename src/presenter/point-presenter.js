@@ -6,7 +6,6 @@ import { isEscapeEvent } from '../utils/common.js';
 import PointView from '../view/point-view.js';
 import PointEditorView from '../view/point-editor-view.js';
 import { generatePoint } from '../data.js';
-import { nanoid } from 'nanoid';
 
 export default class PointPresenter extends AbstractView {
 	constructor(pointListContainer, changeData, changeMode) {
@@ -53,7 +52,8 @@ export default class PointPresenter extends AbstractView {
 
 		if (this._emptyPoint) {
 			render(this._pointListContainer, this._pointEditorComponent, RenderPosition.AFTERBEGIN);
-			document.addEventListener('keydown', this._escKeyDownHandler);
+			this._pointEditorComponent.restoreListeners();
+			// document.addEventListener('keydown', this._escKeyDownHandler);
 			return;
 		}
 		if (previousPointComponent === null || previousPointEditorComponent === null) {
@@ -98,12 +98,7 @@ export default class PointPresenter extends AbstractView {
 			this._changeData(
 				UserAction.ADD_POINT,
 				UpdateType.POINTS,
-				Object.assign(
-					{
-						id: nanoid()
-					},
-					point
-				)
+				point
 			);
 			this.destroy();
 		}
