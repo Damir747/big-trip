@@ -4,7 +4,6 @@ import SortMenuView from '../view/sort-view.js';
 import { render } from "../view/render.js";
 import { remove, replace } from '../framework/render.js';
 import { RenderPosition, DEFAULT_SORT } from '../const.js';
-// ? При изменении Favorites меняется порядок-направление сортировки
 
 export default class SortPresenter extends AbstractView {
 	constructor(sortContainer, filterModel, sortModel) {

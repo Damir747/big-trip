@@ -15,9 +15,6 @@ const sortTemplate = (activeSort) => {
                 </form>`;
 };
 
-// ? сортировка перестала работать (меняться) Хочу менять порядок сортировки. 
-// ? При переключении сортировки не сбрасывается порядок сортировки
-
 export default class SortMenuView extends AbstractView {
 	constructor(activeSort, points) {
 		super();

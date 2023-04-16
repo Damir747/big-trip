@@ -12,10 +12,6 @@ export const createOffers = (checkedOffer) => {
 }
 
 export const selectedOffers = (checkedOffer) => {
-	//? проверка на ошибку с опциями - такой ситуации не бывает
-	// if (checkedOffer === undefined) {
-	// 	return;
-	// };
 	let offersList = "";
 	checkedOffer.forEach((el) => {
 		if (el.checked) {

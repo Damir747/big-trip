@@ -330,7 +330,6 @@ export default class PointEditorView extends SmartView {
 		if (evt.target.tagName !== 'INPUT') {
 			return;
 		}
-		//? работает ли?
 		this._pointState.checkedOffer.filter((el) =>
 			el.short === evt.target.name.replace('event-offer-', ''))[0].checked = evt.target.checked;
 		this.updateData(

@@ -1,5 +1,5 @@
 export const POINTS_COUNT = 20;	//сколько точек показывать на экране
-export const GENERATED_POINTS_COUNT = 5;		// сколько точек генерировать
+export const GENERATED_POINTS_COUNT = 20;		// сколько точек генерировать
 export const DIR_PICTURE = 'http://picsum.photos/248/152?r=';
 export const DIR_ICONS = 'img/icons/';
 export const MAX_RANDOM_PICTURE = 9999;
@@ -234,9 +234,9 @@ export const SORT_NAMES = [{
 	disabled: true,
 }];
 export const DEFAULT_SORT = SORT_NAMES[0].value;
-export const TABS_NAMES = ['Table', 'Stats'];
-export const ACTIVE_TABS = 0;
-export const ACTIVE_TABS_CLASS = 'trip-tabs__btn--active';
+export const TAB_NAMES = ['Table', 'Stats'];
+export const DEFAULT_TAB = TAB_NAMES[0];
+export const ACTIVE_TAB_CLASS = 'trip-tabs__btn--active';
 
 export const RenderPosition = {
 	AFTERBEGIN: 'afterbegin',

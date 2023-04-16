@@ -2,16 +2,14 @@ import BoardView from '../view/board.js'
 import PointListView from '../view/point-list.js'
 import NoPointView from '../view/no-point.js';
 import TripInfo from '../view/trip-info.js';
-import TabsMenuView from '../view/main-menu.js';
 import PointPresenter from './point-presenter.js';
-import { markup } from '../data.js';
-import { POINTS_COUNT, DEFAULT_FILTER, DEFAULT_SORT, EMPTY_POINT } from '../const.js';
+import { POINTS_COUNT, DEFAULT_FILTER, DEFAULT_SORT } from '../const.js';
 import { render } from '../view/render.js';
 import { UserAction, UpdateType } from '../const.js';
 import { remove } from '../framework/render.js';
 import { RenderPosition } from '../const.js';
 
-//? разобраться с ценами на дополнительные услуги offers
+//? Надо ли отображать маршрут полностью (и расчет цены)? Или с учетом фильтра (как сейчас)?
 
 export default class TripPresenter {
 	constructor(tripContainer, tripInfoContainer, tripDetailsContainer, pointsModel, filterModel, sortModel) {
@@ -21,9 +19,6 @@ export default class TripPresenter {
 		this._tripContainer = tripContainer;					// Контейнер для точек маршрута
 		this._tripInfoContainer = tripInfoContainer;			// Контейнер для Инфо маршрута
 		this._tripDetailsContainer = tripDetailsContainer;	// Контейнер для Фильтр
-		// this._currentSortType = DEFAULT_SORT;					// Начальная сортировка
-		this._previousSort = null;									// Предыдущая сортировка
-		// this._currentFilterType = DEFAULT_FILTER;				// Начальный фильтр
 		this._sortModel.setActiveSort(UpdateType.FULL, DEFAULT_SORT);
 		this._filterModel.setActiveFilter(UpdateType.FULL, DEFAULT_FILTER);
 
@@ -42,6 +37,7 @@ export default class TripPresenter {
 		this._filterModel.addObserver(this._handleModelEvent);
 
 		this._pointNewPresenter = new PointPresenter(this._pointListComponent, this._handleViewAction, this._handleModelEvent);
+		this._setHandleNewPointButton();
 	}
 	init() {
 		// this._defaultSortPoints = tripPoints.slice();
@@ -138,7 +134,7 @@ export default class TripPresenter {
 
 	_onPointModeChange() {
 		this._pointNewPresenter.destroy();
-		//? это она сбрасывает все редакторы к просмотру
+		// сбрасывает все редакторы к просмотру
 		Object
 			.values(this._pointPresenter)
 			.forEach((pointPresenter) => pointPresenter.resetView());
@@ -151,15 +147,11 @@ export default class TripPresenter {
 			.forEach((pointPresenter) => pointPresenter.resetView());
 		Object.values(this._pointPresenter).forEach((pointPresenter) => pointPresenter.destroy());
 		this._pointPresenter = {};
-		// Надо ли отображать маршрут полностью (и расчет цены)? Или с учетом фильтра (как сейчас)?
-		//? если в фильтре удалить точки, будет отображаться NoPoints, и tripInfo будет null
-		if (this._tripInfo._element !== null) {
-			remove(this._tripInfo);
-		}
-		//?проверка работает. Но оформлена криво
-		if (this._noPoint._element !== null) {
-			remove(this._noPoint);
-		}
+		// Если в фильтре удалить точки, будет отображаться NoPoints, и tripInfo будет null
+		this._tripInfo.getElement();
+		remove(this._tripInfo);
+		this._noPoint.getElement();
+		remove(this._noPoint);
 		// remove Empty
 		// remove Cost
 		if (resetSort) {
@@ -176,9 +168,16 @@ export default class TripPresenter {
 
 	}
 
-	createPoint() {
+	_createPoint() {
 		this._filterModel.setActiveFilter(UpdateType.FULL, DEFAULT_FILTER);	// сбрасывается фильтрация, как следствие, сбрасывается сортировка
 		this._pointNewPresenter.init();
 
+	}
+	_setHandleNewPointButton() {
+		const btnAddEvent = document.querySelector('.trip-main__event-add-btn');
+		btnAddEvent.addEventListener('click', (evt) => {
+			evt.preventDefault();
+			this._createPoint();
+		});
 	}
 }
