@@ -2,12 +2,8 @@
 import AbstractView from "../framework/abstract-view.js";
 
 const statTemplate = () => {
-	// visually-hidden trip-events--hidden
-	return `<section class="trip-events  ">
-          <h2 class="">Trip events</h2>
-        </section>
-
-        <section class="statistics">
+	//  <h2 class="visually-hidden">Trip statistics</h2>
+	return `<section class="statistics">
           <h2 class="">Trip statistics</h2>
 
           <div class="statistics__item">
@@ -26,7 +22,6 @@ const statTemplate = () => {
 
 export default class StatView extends AbstractView {
 	getTemplate() {
-		console.log(statTemplate());
 		return statTemplate();
 	}
 }

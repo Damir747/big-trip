@@ -22,4 +22,13 @@ export default class AbstractView {
 	removeElement() {
 		this._element = null;
 	}
+	show() {
+		this.getElement().classList.remove('visually-hidden');
+	}
+	hide() {
+		this.getElement().classList.add('visually-hidden');
+	}
+	toggle() {
+		this.getElement().classList.toggle('visually-hidden');
+	}
 }

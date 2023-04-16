@@ -28,18 +28,19 @@ const filterModel = new FilterModel();
 // Сортировки
 const sortModel = new SortModel();
 
-const tripPresenter = new TripPresenter(findElement(document, '.page-body__container'), findElement(document, markup[0].container), findElement(document, markup[1].container), pointsModel, filterModel, sortModel);
+// Statistics
+const statView = new StatView();
+render(findElement(document, '.page-body__container'), statView.getElement(), RenderPosition.BEFOREEND);
+
+const tripPresenter = new TripPresenter(findElement(document, '.page-body__container'), findElement(document, markup[0].container), findElement(document, markup[1].container), pointsModel, filterModel, sortModel, statView);
 tripPresenter.init();
 
-const tabPresenter = new TabPresenter(findElement(document, '.trip-main__trip-controls'), tabModel);
-tabPresenter.init();
+const tabPresenter = new TabPresenter(findElement(document, '.trip-main__trip-controls'), tabModel, tripPresenter);
+tabPresenter.init(tripPresenter);
 
 const filterPresenter = new FilterPresenter(findElement(document, '.trip-main__trip-controls'), pointsModel, filterModel);
 filterPresenter.init();
 
-const sortPresenter = new SortPresenter(findElement(document, '.trip-events'), filterModel, sortModel);
+const sortPresenter = new SortPresenter(findElement(document, '.trip-events'), filterModel, sortModel, tabModel);
 sortPresenter.init(points);
 
-// Statistics
-const statView = new StatView();
-render(findElement(document, '.page-body__container'), statView.getElement(), RenderPosition.AFTERBEGIN);

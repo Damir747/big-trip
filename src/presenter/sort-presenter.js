@@ -6,17 +6,19 @@ import { remove, replace } from '../framework/render.js';
 import { RenderPosition, DEFAULT_SORT } from '../const.js';
 
 export default class SortPresenter extends AbstractView {
-	constructor(sortContainer, filterModel, sortModel) {
+	constructor(sortContainer, filterModel, sortModel, tabModel) {
 		super();
 		this._sortComponent = null;
 		this._sortContainer = sortContainer;
 		this._sortModel = sortModel;
 		this._filterModel = filterModel;
+		this._tabModel = tabModel;
 
 		this._handleModelEvent = this._handleModelEvent.bind(this);
 		this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
 		this._filterModel.addObserver(this._handleModelEvent);	// при переключении фильтров должна сбрасываться сортировка.
+		this._tabModel.addObserver(this._handleModelEvent);		// при переключении на экран статистики и обратно сбрасывается выбранная сортировка.
 	}
 	init(points) {
 		const previousSortComponent = this._sortComponent;

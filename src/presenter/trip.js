@@ -12,10 +12,11 @@ import { RenderPosition } from '../const.js';
 //? Надо ли отображать маршрут полностью (и расчет цены)? Или с учетом фильтра (как сейчас)?
 
 export default class TripPresenter {
-	constructor(tripContainer, tripInfoContainer, tripDetailsContainer, pointsModel, filterModel, sortModel) {
+	constructor(tripContainer, tripInfoContainer, tripDetailsContainer, pointsModel, filterModel, sortModel, statView) {
 		this._pointsModel = pointsModel;
 		this._filterModel = filterModel;
 		this._sortModel = sortModel;
+		this._statView = statView;
 		this._tripContainer = tripContainer;					// Контейнер для точек маршрута
 		this._tripInfoContainer = tripInfoContainer;			// Контейнер для Инфо маршрута
 		this._tripDetailsContainer = tripDetailsContainer;	// Контейнер для Фильтр
@@ -46,6 +47,19 @@ export default class TripPresenter {
 		render(this._tripContainer, this._boardViewComponent, RenderPosition.AFTERBEGIN);
 		render(this._boardViewComponent, this._pointListComponent, RenderPosition.BEFOREEND);	//? не надо?
 		this._renderBoard();
+	}
+	//? Неидеальное расположение. Вероятно, можно сделать красивее
+	toggle() {
+		this._boardViewComponent.toggle();
+		this._statView.toggle();
+	}
+	show() {
+		this._boardViewComponent.show();
+		this._statView.hide();
+	}
+	hide() {
+		this._boardViewComponent.hide();
+		this._statView.show();
 	}
 	getModel() {
 		return this._pointsModel;
