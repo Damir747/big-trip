@@ -31,6 +31,7 @@ export default class FilterPresenter extends AbstractView {
 			render(this._filterContainer, this._filterComponent, RenderPosition.BEFOREEND);
 			return;
 		}
+
 		replace(this._filterComponent, previousFilterComponent);
 		remove(previousFilterComponent);
 	}

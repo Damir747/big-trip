@@ -40,6 +40,21 @@ export default class TripPresenter {
 		this._pointNewPresenter = new PointPresenter(this._pointListComponent, this._handleViewAction, this._handleModelEvent);
 		this._setHandleNewPointButton();
 	}
+	// initStat() {
+	// 	const previousStatComponent = this._statComponent;
+	// 	this._statComponent = new StatView(this._pointsModel.getPoints());
+
+	// 	if (previousStatComponent === null) {
+	// 		console.log(this._statContainer);
+	// 		console.log(this._statComponent);
+	// 		render(this._statContainer, this._statComponent, RenderPosition.BEFOREEND);
+	// 		return;
+	// 	}
+	// 	replace(this._statComponent, previousStatComponent);
+	// 	remove(previousStatComponent);
+	// 	this._setChart();
+	// }
+
 	init() {
 		// this._defaultSortPoints = tripPoints.slice();
 		// render(findElement(document, markup[0].container), tripInfo.getElement(), RenderPosition.AFTERBEGIN);
@@ -47,6 +62,8 @@ export default class TripPresenter {
 		render(this._tripContainer, this._boardViewComponent, RenderPosition.AFTERBEGIN);
 		render(this._boardViewComponent, this._pointListComponent, RenderPosition.BEFOREEND);	//? не надо?
 		this._renderBoard();
+		this._statView.init();
+
 	}
 	//? Неидеальное расположение. Вероятно, можно сделать красивее
 	toggle() {
@@ -60,6 +77,7 @@ export default class TripPresenter {
 	hide() {
 		this._boardViewComponent.hide();
 		this._statView.show();
+		this._statView.init();
 	}
 	getModel() {
 		return this._pointsModel;

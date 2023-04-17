@@ -5,8 +5,14 @@ import { getSortedData, arrUniqueTypes } from '../utils/stat.js';
 import { ChartMode, BAR_HEIGHT, TYPE_HORIZONTAL_BAR, BACKGROUND_COLOR, HOVER_BACKGROUND_COLOR, ANCHOR_START, ANCHOR_END } from "../const.js";
 import { findElement } from '../utils/common.js';
 import { humanizeDateDuration } from '../utils/point.js';
+import StatView from '../view/stat-view.js';
+import { render } from "../view/render.js";
+import { replace, remove } from "../framework/render.js";
+import { RenderPosition } from '../const.js';
 
 const moneyChart = (moneyCtx, points, types) => {
+	console.log(points);
+	console.log(points.reduce((s, i) => s + i.price, 0));
 	const moneyData = getSortedData(points, types, ChartMode.MONEY);
 	return new Chart(moneyCtx, {
 		plugins: [ChartDataLabels],
@@ -209,80 +215,27 @@ const timeChart = (timeCtx, points, types) => {
 	});
 }
 
-const statTemplate = () => {
-	return `<section class="statistics">
-          <h2 class="visually-hidden">Trip statistics</h2>
-
-          <div class="statistics__item">
-            <canvas class="statistics__chart--money" id="money" width="900"></canvas>
-          </div>
-
-          <div class="statistics__item">
-            <canvas class="statistics__chart--type" id="type" width="900"></canvas>
-          </div>
-
-          <div class="statistics__item">
-            <canvas class="statistics__chart--time" id="time-spend" width="900"></canvas>
-          </div>
-        </section>`;
-}
-
-export default class StatView extends AbstractView {
-	constructor(pointsModel) {
+export default class StatPresenter extends AbstractView {
+	constructor(statContainer, pointsModel) {
 		super();
-
+		this._statComponent = null;
+		this._statContainer = statContainer;
 		this._pointsModel = pointsModel;
 		// this._points = this._pointsModel.getPoints();
 		this._moneyChart = null;
 		this._typeChart = null;
 		this._timeChart = null;
-
-		this._setChart = this._setChart.bind(this);
-		// this._pointsModel.addObserver(this._setChart);	// При изменении точек обновляет цифры в статистике - только не работает
-
+		this._refreshCharts = this._refreshCharts.bind(this);
+		this._pointsModel.addObserver(this._refreshCharts);
 	}
 	init() {
-		this._setChart();
+		this._statComponent = new StatView(this._pointsModel);
+		render(this._statContainer, this._statComponent, RenderPosition.BEFOREEND);
 	}
-	getTemplate() {
-		return statTemplate();
+	getStatView() {
+		return this._statComponent;
 	}
-	_resetCharts() {
-		if (this._moneyChart !== null || this._typeChart !== null || this._timeChart !== null) {
-			this._moneyChart = null;
-			this._typeChart = null;
-			this._timeChart = null;
-		}
-	}
-	removeElement() {
-		super.removeElement();
-		this._resetCharts();
-	}
-	_resetCharts() {
-		if (this._moneyChart !== null || this._typeChart !== null || this._timeChart !== null) {
-			this._moneyChart = null;
-			this._typeChart = null;
-			this._timeChart = null;
-		}
-	}
-	_setChart() {
-		this._resetCharts();
-
-		const moneyCtx = findElement(document, '.statistics__chart--money');
-		const typeCtx = findElement(document, '.statistics__chart--type');
-		const timeCtx = findElement(document, '.statistics__chart--time');
-
-		this._points = this._pointsModel.getPoints();
-
-		const uniqueTypes = arrUniqueTypes(this._pointsModel.getPoints());
-		this._moneyChart = moneyChart(moneyCtx, this._pointsModel.getPoints(), uniqueTypes);
-		this._typeChart = typeChart(typeCtx, this._pointsModel.getPoints(), uniqueTypes);
-		this._timeChart = timeChart(timeCtx, this._pointsModel.getPoints(), uniqueTypes);
-
-		// Расчет высоты канваса в зависимости от того, сколько данных в него будет передаваться
-		moneyCtx.height = BAR_HEIGHT * 5;
-		typeCtx.height = BAR_HEIGHT * 5;
-		timeCtx.height = BAR_HEIGHT * 5;
-
+	_refreshCharts() {
+		this.init();
 	}
 }

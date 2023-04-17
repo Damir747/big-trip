@@ -10,8 +10,8 @@ import SortPresenter from './presenter/sort-presenter.js';
 import SortModel from './model/sort-model.js';
 import TabPresenter from './presenter/tab-presenter.js';
 import TabModel from './model/tab-model.js';
-import StatView from './view/stat-view.js'
 import { RenderPosition } from './const.js';
+import StatPresenter from './presenter/stat-presenter.js';
 
 const headerView = new HeaderView();	// Заголовок (header) для: Маршрут и стоимость, Меню, Фильтры
 render(findElement(document, markup[7].container), headerView.getElement(), RenderPosition.BEFOREEND);
@@ -28,11 +28,10 @@ const filterModel = new FilterModel();
 // Сортировки
 const sortModel = new SortModel();
 
-// Statistics
-const statView = new StatView();
-render(findElement(document, '.page-body__container'), statView.getElement(), RenderPosition.BEFOREEND);
+const statPresenter = new StatPresenter(findElement(document, '.page-body__container'), pointsModel);
+statPresenter.init();
 
-const tripPresenter = new TripPresenter(findElement(document, '.page-body__container'), findElement(document, markup[0].container), findElement(document, markup[1].container), pointsModel, filterModel, sortModel, statView);
+const tripPresenter = new TripPresenter(findElement(document, '.page-body__container'), findElement(document, markup[0].container), findElement(document, markup[1].container), pointsModel, filterModel, sortModel, statPresenter.getStatView());
 tripPresenter.init();
 
 const tabPresenter = new TabPresenter(findElement(document, '.trip-main__trip-controls'), tabModel, tripPresenter);

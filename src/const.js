@@ -257,3 +257,16 @@ export const EMPTY_POINT = 'EMPTY';
 export const EVENT_TYPE = ['taxi', 'bus', 'train', 'ship', 'transport', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
 export const CUT_FILTER_NAME = 'filter-';
+
+export const ChartMode = {
+	MONEY: 'money',
+	TYPE: 'type',
+	TIME: 'time',
+};
+
+export const BAR_HEIGHT = 55;
+export const BACKGROUND_COLOR = '#ffffff';
+export const HOVER_BACKGROUND_COLOR = '#ffffff';
+export const ANCHOR_START = 'start';
+export const ANCHOR_END = 'end';
+export const TYPE_HORIZONTAL_BAR = 'horizontalBar';

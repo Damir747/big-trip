@@ -20,7 +20,7 @@ export default class SortPresenter extends AbstractView {
 		this._filterModel.addObserver(this._handleModelEvent);	// при переключении фильтров должна сбрасываться сортировка.
 		this._tabModel.addObserver(this._handleModelEvent);		// при переключении на экран статистики и обратно сбрасывается выбранная сортировка.
 	}
-	init(points) {
+	init(points) {		//? points не всегда передаются. Не нужны?
 		const previousSortComponent = this._sortComponent;
 
 		this._points = points;
