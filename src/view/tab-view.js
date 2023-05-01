@@ -24,6 +24,7 @@ export default class TabView extends AbstractView {
 	getTemplate() {
 		return tabTemplate(this._activeTab);
 	}
+
 	_tabChangeHandle(evt) {
 		this._callback.tabChangeHandle(evt.target.attributes.for.value);
 	}

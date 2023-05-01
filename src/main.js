@@ -28,13 +28,13 @@ const filterModel = new FilterModel();
 // Сортировки
 const sortModel = new SortModel();
 
+const tripPresenter = new TripPresenter(findElement(document, '.page-body__container'), findElement(document, markup[0].container), findElement(document, markup[1].container), pointsModel, filterModel, sortModel);
+tripPresenter.init();
+
 const statPresenter = new StatPresenter(findElement(document, '.page-body__container'), pointsModel);
 statPresenter.init();
 
-const tripPresenter = new TripPresenter(findElement(document, '.page-body__container'), findElement(document, markup[0].container), findElement(document, markup[1].container), pointsModel, filterModel, sortModel, statPresenter.getStatView());
-tripPresenter.init();
-
-const tabPresenter = new TabPresenter(findElement(document, '.trip-main__trip-controls'), tabModel, tripPresenter);
+const tabPresenter = new TabPresenter(findElement(document, '.trip-main__trip-controls'), findElement(document, '.statistics'), tabModel, pointsModel, tripPresenter, statPresenter);
 tabPresenter.init(tripPresenter);
 
 const filterPresenter = new FilterPresenter(findElement(document, '.trip-main__trip-controls'), pointsModel, filterModel);

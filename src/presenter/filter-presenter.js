@@ -12,8 +12,8 @@ export default class FilterPresenter extends AbstractView {
 		this._filterComponent = null;
 
 		this._filterContainer = filterContainer;
-		this._filterModel = filterModel;
 		this._pointsModel = pointsModel;
+		this._filterModel = filterModel;
 
 		this._handleModelEvent = this._handleModelEvent.bind(this);
 		this._handleFilterTypeChange = this._handleFilterTypeChange.bind(this);

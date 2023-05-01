@@ -232,13 +232,13 @@ export default class StatView extends AbstractView {
 		super();
 
 		this._pointsModel = pointsModel;
-		// this._points = this._pointsModel.getPoints();
+		this._points = this._pointsModel.getPoints();
 		this._moneyChart = null;
 		this._typeChart = null;
 		this._timeChart = null;
 
 		this._setChart = this._setChart.bind(this);
-		// this._pointsModel.addObserver(this._setChart);	// При изменении точек обновляет цифры в статистике - только не работает
+		this._pointsModel.addObserver(this._setChart);	// При изменении точек обновляет цифры в статистике - только не работает
 
 	}
 	init() {
@@ -246,13 +246,6 @@ export default class StatView extends AbstractView {
 	}
 	getTemplate() {
 		return statTemplate();
-	}
-	_resetCharts() {
-		if (this._moneyChart !== null || this._typeChart !== null || this._timeChart !== null) {
-			this._moneyChart = null;
-			this._typeChart = null;
-			this._timeChart = null;
-		}
 	}
 	removeElement() {
 		super.removeElement();
@@ -267,22 +260,24 @@ export default class StatView extends AbstractView {
 	}
 	_setChart() {
 		this._resetCharts();
+		const moneyCtx = findElement(this.getElement(), '.statistics__chart--money');
+		const typeCtx = findElement(this.getElement(), '.statistics__chart--type');
+		const timeCtx = findElement(this.getElement(), '.statistics__chart--time');
 
-		const moneyCtx = findElement(document, '.statistics__chart--money');
-		const typeCtx = findElement(document, '.statistics__chart--type');
-		const timeCtx = findElement(document, '.statistics__chart--time');
-
-		this._points = this._pointsModel.getPoints();
-
-		const uniqueTypes = arrUniqueTypes(this._pointsModel.getPoints());
-		this._moneyChart = moneyChart(moneyCtx, this._pointsModel.getPoints(), uniqueTypes);
-		this._typeChart = typeChart(typeCtx, this._pointsModel.getPoints(), uniqueTypes);
-		this._timeChart = timeChart(timeCtx, this._pointsModel.getPoints(), uniqueTypes);
+		const uniqueTypes = arrUniqueTypes(this._points);
+		this._moneyChart = moneyChart(moneyCtx, this._points, uniqueTypes);
+		this._typeChart = typeChart(typeCtx, this._points, uniqueTypes);
+		this._timeChart = timeChart(timeCtx, this._points, uniqueTypes);
 
 		// Расчет высоты канваса в зависимости от того, сколько данных в него будет передаваться
 		moneyCtx.height = BAR_HEIGHT * 5;
 		typeCtx.height = BAR_HEIGHT * 5;
 		timeCtx.height = BAR_HEIGHT * 5;
-
 	}
+
+	setStatClickListener(callback) {
+		this._callback.setChart = callback;
+		this.getElement().addEventListener('click', this._setChart);
+	}
+
 }
