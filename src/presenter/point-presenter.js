@@ -7,8 +7,13 @@ import PointView from '../view/point-view.js';
 import PointEditorView from '../view/point-editor-view.js';
 import { generatePoint } from '../data.js';
 
+export const State = {
+	SAVING: 'SAVING',
+	DELETING: 'DELETING',
+	ABORTING: 'ABORTING',
+}
 export default class PointPresenter extends AbstractView {
-	constructor(pointListContainer, changeData, changeMode) {
+	constructor(pointListContainer, changeData, changeMode, destinationsModel, pointsModel) {
 		super();
 
 		this._pointComponent = null;
@@ -19,6 +24,8 @@ export default class PointPresenter extends AbstractView {
 		this._pointListContainer = pointListContainer;
 		this._changeData = changeData;
 		this._changeMode = changeMode;
+		this._destinationsModel = destinationsModel;
+		this._pointsModel = pointsModel;
 
 		this._changeModeToView = this._changeModeToView.bind(this);
 		this._changeModeToEdit = this._changeModeToEdit.bind(this);
@@ -34,15 +41,15 @@ export default class PointPresenter extends AbstractView {
 
 		this._emptyPoint = (point === EMPTY_POINT);
 		if (this._emptyPoint) {
-			this._point = generatePoint();
+			this._point = generatePoint();	//? генерация точки по умолчанию - надо поправить
 			this._pointMode = Mode.EDIT;
 			this._pointComponent = new PointView(this._point);
-			this._pointEditorComponent = new PointEditorView(this._point, EditMode.NEW);
+			this._pointEditorComponent = new PointEditorView(this._point, EditMode.NEW, this._destinationsModel, this._pointsModel);
 		}
 		else {
 			this._point = point;
 			this._pointComponent = new PointView(this._point);
-			this._pointEditorComponent = new PointEditorView(this._point, EditMode.EDIT);
+			this._pointEditorComponent = new PointEditorView(this._point, EditMode.EDIT, this._destinationsModel, this._pointsModel);
 		}
 		this._pointComponent.setModeToEditClickHandler(this._changeModeToEdit);
 		this._pointComponent.setFavoriteClickHandler(this._changeFavoriteStatus);
@@ -61,13 +68,15 @@ export default class PointPresenter extends AbstractView {
 			return;
 		}
 
-
 		switch (this._pointMode) {
 			case Mode.VIEW:
 				replace(this._pointComponent, previousPointComponent);
 				break;
 			case Mode.EDIT:
+				//? тут надо как-то по-другому написать 1:22:10
 				replace(this._pointEditorComponent, previousPointEditorComponent);
+				// replace(this._pointComponent, previousPointEditorComponent);
+				// this._pointMode = Mode.VIEW;
 				break;
 			default:
 				throw new Error(`Неизвестный _pointMode: ${this._pointMode}`);
@@ -91,6 +100,51 @@ export default class PointPresenter extends AbstractView {
 		this._pointComponent = null;
 	}
 
+	setViewState(state) {
+		console.log('setViewState', state);
+		const resetFormState = () => {
+			this._pointEditorComponent.updateData({
+				isDisabled: false,
+				isSaving: false,
+				isDeleting: false,
+			})
+		}
+		switch (state) {
+			case State.SAVING:
+				this._pointEditorComponent.updateData({
+					isDisabled: true,
+					isSaving: true,
+				});
+				break;
+			case State.DELETING:
+				this._pointEditorComponent.updateData({
+					isDisabled: true,
+					isDeleting: true,
+				});
+				break;
+			case State.ABORTING:
+				this._pointComponent.shake(resetFormState);
+				this._pointEditorComponent.shake(resetFormState);
+				break;
+		}
+	}
+	setSaving() {
+		this._pointEditorComponent.updateData({
+			isDisabled: true,
+			isSaving: true,
+		});
+	}
+	setAborting() {
+		const resetFormState = () => {
+			this._pointEditorComponent.updateData({
+				isDisabled: false,
+				isSaving: false,
+				isDeleting: false,
+			});
+		};
+		this._pointEditorComponent.shake(resetFormState);
+	}
+
 	_onSubmitForm(point) {
 		this._changeModeToView();
 		//? здесь ещё можно проверить, насколько крупное изменение, см. видео 7.1 28:05
@@ -100,7 +154,7 @@ export default class PointPresenter extends AbstractView {
 				UpdateType.POINTS,
 				point
 			);
-			this.destroy();
+			// this.destroy();
 		}
 		else {
 			this._changeData(

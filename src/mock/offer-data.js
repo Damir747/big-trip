@@ -14,13 +14,23 @@ export const createOffers = (checkedOffer) => {
 export const selectedOffers = (checkedOffer) => {
 	let offersList = "";
 	checkedOffer.forEach((el) => {
-		if (el.checked) {
-			offersList += `<li class="event__offer">
-                    <span class="event__offer-title">${el.title}</span>
-                    &plus;&euro;&nbsp;
-                    <span class="event__offer-price">${el.price}</span>
-                  </li>`;
-		}
+		offersList += `<li class="event__offer">
+	                 <span class="event__offer-title">${el.title}</span>
+	                 &plus;&euro;&nbsp;
+	                 <span class="event__offer-price">${el.price}</span>
+	               </li>`;
 	});
 	return offersList;
+}
+
+export const checkedOffers = (point, offers) => {
+	const arr = [];
+	offers.offers.forEach(el => {
+		arr.push(Object.assign(
+			{},
+			el,
+			{ checked: point.checkedOffer.filter((elem) => elem.title === el.title).length > 0 }
+		));
+	});
+	return arr;
 }

@@ -1,13 +1,24 @@
-export const POINTS_COUNT = 20;	//сколько точек показывать на экране
-export const GENERATED_POINTS_COUNT = 20;		// сколько точек генерировать
-export const DIR_PICTURE = 'http://picsum.photos/248/152?r=';
+export const POINTS_COUNT = 30;	//сколько точек показывать на экране
+export const GENERATED_POINTS_COUNT = 3;		// сколько точек генерировать
+export const DIR_PICTURE = 'https://picsum.photos/248/152?r=';
 export const DIR_ICONS = 'img/icons/';
 export const MAX_RANDOM_PICTURE = 9999;
 export const COUNT_PICTURE = 4;
+export const Method = {
+	GET: 'GET',
+	PUT: 'PUT',
+	POST: 'POST',
+	DELETE: 'DELETE',
+}
+export const SuccessHTTPStatusRange = {
+	'MIN': 200,
+	'MAX': 299
+}
 export const UpdateType = {
 	FULL: 'FULL',
 	POINTS: 'POINTS',
 	PATCH: 'PATCH',
+	INIT: 'INIT'
 };
 export const UserAction = {
 	UPDATE_POINT: 'UPDATE_POINT',

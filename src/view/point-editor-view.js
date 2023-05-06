@@ -1,13 +1,12 @@
 import { humanizeDate, compareTwoDates } from '../utils/common.js';
-import { createOffers } from '../mock/offer-data.js';
+import { createOffers, checkedOffers } from '../mock/offer-data.js';
 import { CITIES, DateFormat, DIR_ICONS, EMPTY_POINT, EVENT_TYPE, EditMode } from '../const.js';
 import SmartView from './smart.js';
 import flatpickr from 'flatpickr';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 import { firstLetterUpperCase } from '../utils/common.js';
-import { orderTypes, pickElementDependOnValue, generateCities, pickElementDependOnValue2, pickElementDependOnValue3, checkPriceIsNumber } from '../data.js';
+import { orderTypes, pickElementDependOnValue, checkPriceIsNumber } from '../data.js';
 import he from 'he';
-import { checkCityInList } from '../data.js';
 
 const datalistCity = (city) => {
 	return `<option value="${city}">`;
@@ -17,18 +16,21 @@ const datalistCities = (cities) => {
 	cities.forEach((el) => citiesList += datalistCity(el));
 	return citiesList;
 }
-const eventPhotoTemplate = (el) => `<img class="event__photo" src="${el}" alt="Event photo">`;
-const eventTypeTemplate = (eventType, checkedType) => {
+const eventPhotoTemplate = (el) => `<img class="event__photo" src="${el.src}" alt="${el.description}">`;
+const eventTypeTemplate = (eventType, checkedType, isDisabled) => {
 	return `<div class="event__type-item">
-                          <input id="event-type-${eventType}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${eventType}" ${checkedType ? 'checked' : ''}>
+                          <input id="event-type-${eventType}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${eventType}" ${checkedType ? 'checked' : ''}  ${isDisabled ? 'disabled' : ''}>
                           <label class="event__type-label  event__type-label--${eventType}" for="event-type-${eventType}-1">${firstLetterUpperCase(eventType)}</label>
                         </div>
 `
 }
-
-const editPointTemplate = (point, editMode) => {
+//? isDisabled не доделан
+const editPointTemplate = (point, editMode, offers, isDisabled) => {
 	let photosList = "";
-	point.photos.forEach((el) => photosList += eventPhotoTemplate(el));
+	point.photos.forEach((el) => {
+		el.src = el.src.replace('http://', 'https://');
+		photosList += eventPhotoTemplate(el);
+	});
 	let eventTypeList = "";
 	EVENT_TYPE.forEach((el) => eventTypeList += eventTypeTemplate(el, (el === point.type.toLowerCase())));
 	return `<li class="trip-events__item">
@@ -76,8 +78,8 @@ const editPointTemplate = (point, editMode) => {
                     <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${point.price}">
                   </div>
 
-                  <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-                  <button class="event__reset-btn" type="reset">${editMode === EditMode.EDIT ? 'Delete' : 'Cancel'}</button>
+                  <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isDisabled ? 'Saving...' : 'Save'}</button>
+                  <button class="event__reset-btn" type="reset"  ${isDisabled ? 'disabled' : ''}>${editMode === EditMode.EDIT ? (isDisabled ? 'Deleting...' : 'Delete') : 'Cancel'}</button>
                   <button class="event__rollup-btn" type="button">
                     <span class="visually-hidden">Open event</span>
                   </button>
@@ -87,7 +89,7 @@ const editPointTemplate = (point, editMode) => {
                     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
                     <div class="event__available-offers">
-								${createOffers(point.checkedOffer)}
+								${createOffers(checkedOffers(point, offers))}
                     </div>
                   </section>
 
@@ -107,13 +109,16 @@ const editPointTemplate = (point, editMode) => {
 };
 
 export default class PointEditorView extends SmartView {
-	constructor(point = EMPTY_POINT, editMode = EditMode.EDIT) {
+	constructor(point = EMPTY_POINT, editMode = EditMode.EDIT, destinationsModel, pointsModel) {
 		super();
 		this._dateStart = point.start;
 		this._dateEnd = point.end;
+		this._type = point.type;
 
 		this._pointState = PointEditorView.parsePointDataToState(point);
 		this._editMode = editMode;
+		this._destinationsModel = destinationsModel;
+		this._pointsModel = pointsModel;
 		this._onRollUpClick = this._onRollUpClick.bind(this);
 		this._onFormSubmit = this._onFormSubmit.bind(this);
 		this._onFormDelete = this._onFormDelete.bind(this);
@@ -129,7 +134,9 @@ export default class PointEditorView extends SmartView {
 		this._setDatePicker(this._dateStart, true);
 		this._setDatePicker(this._dateEnd);
 	}
+
 	// эти два метода нужны будут при работе с backend
+	// ? в модели они нужны для конвертации
 	static parsePointDataToState(pointData) {
 		return Object.assign(
 			{},
@@ -148,13 +155,13 @@ export default class PointEditorView extends SmartView {
 	}
 
 	getTemplate() {
-		return editPointTemplate(this._pointState, this._editMode);
+		return editPointTemplate(this._pointState, this._editMode, this._pointsModel.getOffer(this._type));
 	}
 	reset(point) {
 		this.updateElement(PointEditorView.parsePointDataToState(point));
 	}
 	resetInput(point) {
-		this.updateData(PointEditorView.parsePointDataToState(point));	//? updateDate? может updateElement?
+		this.updateData(PointEditorView.parsePointDataToState(point));
 	}
 	restoreListeners() {
 		this._setInnerListeners();
@@ -162,7 +169,6 @@ export default class PointEditorView extends SmartView {
 		this.setModeToViewClickHandler(this._callback.onRollUpClick);
 		this.setFormSubmitHandler(this._callback.onFormSubmit);
 		this.setFormDeleteHandler(this._callback.onFormDelete);
-		// console.log(this._dateStart);
 		this._setDatePicker(this._dateStart, true);
 		this._setDatePicker(this._dateEnd);
 	}
@@ -197,14 +203,15 @@ export default class PointEditorView extends SmartView {
 
 	_onPointInput(evt) {
 		evt.preventDefault();
-		if (!checkCityInList(evt.target.value)) {
+		const checkCityInList = this._destinationsModel.getDestinations().filter((el) => el.city === evt.target.value).length > 0;
+		if (!checkCityInList) {
 			evt.target.setCustomValidity(`Города ${evt.target.value} нет в списке`);
 			return;
 		}
 		this.updateData({
 			city: evt.target.value,
-			description: pickElementDependOnValue2(evt.target.value, generateCities),
-			photos: pickElementDependOnValue3(evt.target.value, generateCities),
+			description: this._destinationsModel.getDestinations().filter((el) => el.city === evt.target.value)[0].description,
+			photos: this._destinationsModel.getDestinations().filter((el) => el.city === evt.target.value)[0].photos,
 		});
 	}
 
@@ -330,12 +337,12 @@ export default class PointEditorView extends SmartView {
 		if (evt.target.tagName !== 'INPUT') {
 			return;
 		}
-		this._pointState.checkedOffer.filter((el) =>
-			el.short === evt.target.name.replace('event-offer-', ''))[0].checked = evt.target.checked;
-		this.updateData(
-			{
-				checkedOffer: this._pointState.checkedOffer,
-			}
-		);
+		// this._pointState.checkedOffer.filter((el) =>
+		// 	el.short === evt.target.name.replace('event-offer-', ''))[0].checked = evt.target.checked;
+		// this.updateData(
+		// 	{
+		// 		checkedOffer: this._pointState.checkedOffer,
+		// 	}
+		// );
 	}
 }

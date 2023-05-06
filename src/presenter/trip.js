@@ -2,20 +2,24 @@ import BoardView from '../view/board.js'
 import PointListView from '../view/point-list.js'
 import NoPointView from '../view/no-point.js';
 import TripInfo from '../view/trip-info.js';
-import PointPresenter from './point-presenter.js';
+import PointPresenter, { State } from './point-presenter.js';
 import { POINTS_COUNT, DEFAULT_FILTER, DEFAULT_SORT } from '../const.js';
 import { render } from '../view/render.js';
 import { UserAction, UpdateType } from '../const.js';
 import { remove } from '../framework/render.js';
 import { RenderPosition } from '../const.js';
+import LoadingView from '../view/loading.js';
 
 //? Надо ли отображать маршрут полностью (и расчет цены)? Или с учетом фильтра (как сейчас)?
 
 export default class TripPresenter {
-	constructor(tripContainer, tripInfoContainer, tripDetailsContainer, pointsModel, filterModel, sortModel) {
+	constructor(tripContainer, tripInfoContainer, tripDetailsContainer, pointsModel, filterModel, sortModel, api, destinationsModel) {
+		this._isLoading = true;
 		this._pointsModel = pointsModel;
 		this._filterModel = filterModel;
 		this._sortModel = sortModel;
+		this._api = api;
+		this._destinationsModel = destinationsModel;
 		this._tripContainer = tripContainer;					// Контейнер для точек маршрута
 		this._tripInfoContainer = tripInfoContainer;			// Контейнер для Инфо маршрута
 		this._tripDetailsContainer = tripDetailsContainer;	// Контейнер для Фильтр
@@ -25,7 +29,7 @@ export default class TripPresenter {
 		this._boardViewComponent = new BoardView();			// сортировка и контент
 		this._pointListComponent = new PointListView();		// точки маршрута
 		this._noPoint = new NoPointView();						// Нет точек маршрута
-
+		this._loadingComponent = new LoadingView();			// загрузка
 		this._pointPresenter = {};
 
 		this._onPointModeChange = this._onPointModeChange.bind(this);
@@ -36,7 +40,7 @@ export default class TripPresenter {
 		this._sortModel.addObserver(this._handleModelEvent);
 		this._filterModel.addObserver(this._handleModelEvent);
 
-		this._pointNewPresenter = new PointPresenter(this._pointListComponent, this._handleViewAction, this._handleModelEvent);
+		this._pointNewPresenter = new PointPresenter(this._pointListComponent, this._handleViewAction, this._handleModelEvent, this._destinationsModel, this._pointsModel);
 		this._setHandleNewPointButton();
 	}
 	// initStat() {
@@ -61,22 +65,17 @@ export default class TripPresenter {
 		render(this._tripContainer, this._boardViewComponent, RenderPosition.AFTERBEGIN);
 		render(this._boardViewComponent, this._pointListComponent, RenderPosition.BEFOREEND);	//? не надо?
 		this._renderBoard();
-		// this._statPresenter.init();
 
 	}
 	//? Неидеальное расположение. Вероятно, можно сделать красивее
 	toggle() {
 		this._boardViewComponent.toggle();
-		// this._statView.toggle();
 	}
 	show() {
 		this._boardViewComponent.show();
-		// this._statPresenter.hide();
 	}
 	hide() {
 		this._boardViewComponent.hide();
-		// this._statPresenter.show();
-		// this._statPresenter.init();
 	}
 	getModel() {
 		return this._pointsModel;
@@ -95,7 +94,7 @@ export default class TripPresenter {
 		render(this._tripInfoContainer, this._tripInfo, RenderPosition.AFTERBEGIN);
 	}
 	_renderPoint(point) {
-		const pointPresenter = new PointPresenter(this._pointListComponent, this._handleViewAction, this._handleModelEvent);
+		const pointPresenter = new PointPresenter(this._pointListComponent, this._handleViewAction, this._handleModelEvent, this._destinationsModel, this._pointsModel);
 		pointPresenter.init(point);
 		this._pointPresenter[point.id] = pointPresenter;	// Для сохранения ссылки на презентер
 	}
@@ -115,13 +114,22 @@ export default class TripPresenter {
 		}
 	}
 
+	_renderLoading() {
+		render(this._boardViewComponent, this._loadingComponent, RenderPosition.BEFOREEND)
+	}
+
 	_renderBoard() {
+		if (this._isLoading) {
+			this._renderLoading();
+			return;
+		}
 		if (this._getPoints().length === 0) {
 			this._renderNoPoints();
 			return;
 		}
-		this._renderPointList();
+		console.log('render TripInfo и PointList');
 		this._renderTripInfo();
+		this._renderPointList();
 		// Теперь, когда _renderBoard рендерит доску не только на старте,
 		// но и по ходу работы приложения, нужно заменить
 		// константу TASK_COUNT_PER_STEP на свойство _renderedTaskCount,
@@ -132,13 +140,35 @@ export default class TripPresenter {
 	_handleViewAction(actionType, updateType, update) {
 		switch (actionType) {
 			case UserAction.UPDATE_POINT:
-				this._pointsModel.updatePoint(updateType, update);
+				console.log('update point');
+				this._pointPresenter[update.id].setViewState(State.SAVING);
+				this._api.updatePoint(update)
+					.then((response) => {
+						this._pointsModel.updatePoint(updateType, response);
+					})
+					.catch(() => {
+						this._pointPresenter[update.id].setViewState(State.ABORTING);
+					});
 				break;
 			case UserAction.ADD_POINT:
-				this._pointsModel.addPoint(updateType, update);
+				this._pointPresenter.setSaving();
+				this._api.addPoint(update)
+					.then((response) => {
+						this._pointsModel.addPoint(updateType, response);
+					})
+					.catch(() => {
+						this._pointNewPresenter.setAborting();
+					});
 				break;
 			case UserAction.DELETE_POINT:
-				this._pointsModel.deletePoint(updateType, update);
+				this._pointPresenter[update.id].setViewState(State.DELETING);
+				this._api.deletePoint(update)
+					.then(() => {
+						this._pointsModel.deletePoint(updateType, update);
+					})
+					.catch(() => {
+						this._pointPresenter[update.id].setViewState(State.ABORTING);
+					});
 				break;
 			default:
 				throw new error('UserAction is not found');
@@ -147,6 +177,11 @@ export default class TripPresenter {
 	_handleModelEvent(updateType, data, upSort = true) {
 		this._onPointModeChange();
 		switch (updateType) {
+			case UpdateType.INIT:
+				this._isLoading = false;
+				remove(this._loadingComponent);
+				this._renderBoard();
+				break;
 			case UpdateType.FULL:
 				this._clearBoard(true);
 				this._renderBoard();
@@ -170,7 +205,6 @@ export default class TripPresenter {
 			.values(this._pointPresenter)
 			.forEach((pointPresenter) => pointPresenter.resetView());
 	}
-
 	_clearBoard(resetSort = false) {
 		this._pointNewPresenter.destroy();
 		Object
@@ -178,9 +212,10 @@ export default class TripPresenter {
 			.forEach((pointPresenter) => pointPresenter.resetView());
 		Object.values(this._pointPresenter).forEach((pointPresenter) => pointPresenter.destroy());
 		this._pointPresenter = {};
-		// Если в фильтре удалить точки, будет отображаться NoPoints, и tripInfo будет null
-		this._tripInfo.getElement();
-		remove(this._tripInfo);
+		if (this._tripInfo !== undefined) {
+			this._tripInfo.getElement();
+			remove(this._tripInfo);
+		}
 		this._noPoint.getElement();
 		remove(this._noPoint);
 		// remove Empty

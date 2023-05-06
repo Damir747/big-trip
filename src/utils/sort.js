@@ -27,8 +27,8 @@ export const sortPointTimeUp = (timeA, timeB) => {
 	if (weight !== null) {
 		return weight;
 	}
-	const timerOfTripA = timeA.end.diff(timeA.start);
-	const timerOfTripB = timeB.end.diff(timeB.start);
+	const timerOfTripA = dayjs(timeA.end).diff(dayjs(timeA.start));
+	const timerOfTripB = dayjs(timeB.end).diff(dayjs(timeB.start));
 
 	return dayjs(timerOfTripA).diff(dayjs(timerOfTripB));
 

@@ -1,5 +1,6 @@
 import { createElement } from '../utils/common.js';
 
+const SHAKE_ANIMATION_TIMEOUT = 600;
 export default class AbstractView {
 	// _element = null;
 	// _callback = {};
@@ -30,5 +31,12 @@ export default class AbstractView {
 	}
 	toggle() {
 		this.getElement().classList.toggle('visually-hidden');
+	}
+	shake(callback) {
+		this.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT}`;
+		setTimeout(() => {
+			this.getElement().style.animation = '';
+			callback();
+		}, SHAKE_ANIMATION_TIMEOUT);
 	}
 }

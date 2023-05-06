@@ -1,5 +1,4 @@
 import AbstractView from '../framework/abstract-view.js';
-// import FilterMenu from './view/filter.js';
 
 const createNoPointTemplate = () => {
 	// const filterMenu = new FilterMenu();

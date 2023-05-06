@@ -243,6 +243,7 @@ export default class StatView extends AbstractView {
 	}
 	init() {
 		this._setChart();
+		this.hide();		// по умолчанию скрыто. Поэтому при каждой инициализации скрывать.
 	}
 	getTemplate() {
 		return statTemplate();
