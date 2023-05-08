@@ -1,5 +1,4 @@
 import { Method, SuccessHTTPStatusRange } from "./const.js";
-import Offers from "./model/offer-model.js";
 import Points from "./model/point-model.js";
 
 export default class Api {
@@ -23,10 +22,17 @@ export default class Api {
 	getOffers() {
 		return this._load({ url: 'offers' })
 			.then(Api.toJSON)
-			.then((offers) => offers.map(Offers.adaptOffersToClient));
+			.then((offers) => offers.map(Points.adaptOffersToClient));
 	}
 
 	updatePoint(point) {
+		const arr = [];
+		point.offers.forEach(el => {
+			if (el.checked) {
+				arr.push(el);
+			}
+		});
+		point.checkedOffer = arr;
 		return this._load({
 			url: `points/${point.id}`,
 			method: Method.PUT,

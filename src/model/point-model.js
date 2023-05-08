@@ -1,6 +1,5 @@
 import Observer from "../utils/observer.js";
 import { utilFilterSort } from '../utils/filter.js';
-import Offers from "./offer-model.js";
 import dayjs from 'dayjs';
 
 //? Обратите внимание, что, если вы следовали нашим рекомендациям и выделили дополнительные опции в отдельную структуру, для них нужно завести отдельную модель и провести похожие манипуляции.
@@ -9,13 +8,11 @@ export default class Points extends Observer {
 	constructor() {
 		super();
 		this._points = [];
-	}
-	init(offersModel) {
-		this._offersModel = offersModel;
-		console.log(this._offersModel);
+		this._offers = [];
 	}
 	setPoints(updateType, points) {
 		this._points = points.slice();
+		this.setAllOffers();
 		this._notify(updateType);
 	}
 	getPoints(activeFilter, activeSort, upSort) {
@@ -30,7 +27,43 @@ export default class Points extends Observer {
 	getOffer(type) {
 		return this._offers.find((el) => el.title === type);
 	}
+	// для всех точек делает offers под PointEditView
+	// ? Ещё надо будет сделать для новой точки
+	setAllOffers() {
+		this._points.forEach((point) => {
+			const arr = [];
+			const offersByType = this._offers.filter((offer) => offer.title === point.type)[0].offers;
+
+			offersByType.forEach((element) => {
+				const obj = Object.assign(
+					{},
+					element,
+					{ checked: point.checkedOffer.filter((elem) => elem.title === element.title).length === 1 },
+				);
+				arr.push(obj);
+			})
+			point.offers = arr;
+		});
+	}
+	//? при смене типа точки надо обновлять все offers
+	setOffer(point) {
+		// console.log(point);	// неправильные
+		// console.log(this._points);	// правильные
+		const modifiedPoint = this._points.filter((el) => el.id === point.id);
+		// console.log(modifiedPoint);
+		if (modifiedPoint.length > 0) {
+			modifiedPoint[0].checkedOffer = modifiedPoint[0].offers.filter((el) => {
+				if (el.checked) {
+					return el;
+				}
+			});
+		}
+	}
+
 	updatePoint(updateType, modifiedPoint) {
+		// точка modifiedPoint с сервера в "серверном" виде (не адаптирована под View)
+		// console.log(modifiedPoint);	//? Почему в старом неадаптированном виде точка?
+		// Потому что сначала идёт отправка на сервер, получение с сервера, и потом идёт обновление здесь в PointModel
 		const index = this._points.findIndex((el) => el.id === modifiedPoint.id);
 		if (index === -1) {
 			throw new Error('Не удается обновить данную точку');
@@ -55,14 +88,13 @@ export default class Points extends Observer {
 		this._notify(updateType);
 	}
 
-	// есть parsePointDataToState в PointEditorView
 	static adaptToClient(point) {
 		const adaptedPoint = Object.assign(
 			{},
 			point,
 			{
 				price: point.base_price,
-				start: point.date_from !== null ? new Date(point.date_from) : point.date_from,	//Object и 2023-05-03T12:01:30.656Z
+				start: point.date_from !== null ? new Date(point.date_from) : point.date_from,
 				end: point.date_to !== null ? new Date(point.date_to) : point.date_to,
 				id: point.id,
 				checkedFavorite: point.is_favorite,
@@ -79,10 +111,13 @@ export default class Points extends Observer {
 		delete adaptedPoint.date_to;
 		delete adaptedPoint.is_favorite;
 		delete adaptedPoint.destination;
+		// delete adaptedPoint.offers;	//сохранить. offers для PointEditView, а checkedOffers для общего списка
 
 		return adaptedPoint;
 	}
 	static adaptToServer(point) {
+		// console.log(point);
+		// console.log(point.checkedOffer);
 		const adaptedPoint = Object.assign(
 			{},
 			point,
@@ -101,7 +136,7 @@ export default class Points extends Observer {
 				'offers': point.checkedOffer,
 			}
 		);
-
+		// console.log(adaptedPoint.offers);
 		delete adaptedPoint.price;
 		delete adaptedPoint.start;
 		delete adaptedPoint.end;
@@ -125,4 +160,51 @@ export default class Points extends Observer {
 
 		return adaptedDestination;
 	}
+	static adaptOffersToClient(offer) {
+		const adaptOnlyOffers = (offers) => {
+			const adaptedOffers = [];
+			offers.forEach(offer => {
+				const adaptedOffer = Object.assign(
+					{},
+					offer,
+					{
+						title: offer.title,
+						price: offer.price,
+						short: offer.title.toLowerCase().replace(/\s/g, '-'),
+						checked: false,
+					}
+				);
+				adaptedOffers.push(adaptedOffer);
+			});
+
+			return adaptedOffers;
+		}
+
+		const adaptedType = Object.assign(
+			{},
+			offer,
+			{
+				title: offer.type,
+				offers: adaptOnlyOffers(offer.offers),
+			}
+		);
+
+		delete adaptedType.type;
+
+		return adaptedType;
+	}
+	static adaptOffersToServer(offer) {
+		console.log(offer);
+		const adaptedOffer = Object.assign(
+			{},
+			offer,
+			{
+				'title': offer.title,
+				'price': offer.price,
+			}
+		);
+		console.log(offer);
+		return adaptedOffer;
+	}
+
 }

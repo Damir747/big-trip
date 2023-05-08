@@ -13,7 +13,6 @@ import TabModel from './model/tab-model.js';
 import { RenderPosition, UpdateType } from './const.js';
 import StatPresenter from './presenter/stat-presenter.js';
 import Api from './api.js';
-import Offers from './model/offer-model.js';
 import Destinations from './model/destination-model.js';
 
 const AUTHORIZATION = 'Basic dadasdab7n89llghhswgqe4tdfgdg';
@@ -50,15 +49,11 @@ filterPresenter.init();
 const sortPresenter = new SortPresenter(findElement(document, '.trip-events'), filterModel, sortModel, tabModel);
 sortPresenter.init([]);	//?points
 
-const offersModel = new Offers();
 //? поработать с пустыми данными (если ничего не пришло с сервера)
 api.getOffers()
 	.then((offers) => {
 		console.log('Данные offers получены', offers);
-		offersModel.setOffers(UpdateType.INIT, offers);
 		pointsModel.setOffers(offers);
-		// console.log(offersModel.getOffer('sightseeing'));
-		// console.log(offersModel.getOffers());
 	})
 	.catch((err) => {
 		console.log('Offers не загрузились.', err);
@@ -67,6 +62,7 @@ api.getPoints()
 	.then((points) => {
 		console.log('Данные points получены', points);
 		pointsModel.setPoints(UpdateType.INIT, points);
+		// pointsModel.setAllOffers();
 	})
 	.catch((err) => {
 		console.log('Points не загрузились', err);

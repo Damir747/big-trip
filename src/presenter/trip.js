@@ -144,6 +144,7 @@ export default class TripPresenter {
 				this._pointPresenter[update.id].setViewState(State.SAVING);
 				this._api.updatePoint(update)
 					.then((response) => {
+						console.log(response);
 						this._pointsModel.updatePoint(updateType, response);
 					})
 					.catch(() => {

@@ -9,7 +9,6 @@ export default class SmartView extends AbstractView {
 	updateElement() {
 		const previousElement = this.getElement();
 		const parentElement = previousElement.parentElement;
-		console.log(parentElement);
 		if (parentElement === null) { return; }	//? такой костыль при сохранении
 		this.removeElement();
 		const newElement = this.getElement();

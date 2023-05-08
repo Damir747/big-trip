@@ -11,6 +11,7 @@ export const createOffers = (checkedOffer) => {
 	return offersList;
 }
 
+// Показывает в общем списке точек выбранные опции
 export const selectedOffers = (checkedOffer) => {
 	let offersList = "";
 	checkedOffer.forEach((el) => {

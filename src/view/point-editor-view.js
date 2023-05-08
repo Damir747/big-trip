@@ -89,7 +89,7 @@ const editPointTemplate = (point, editMode, offers, isDisabled) => {
                     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
                     <div class="event__available-offers">
-								${createOffers(checkedOffers(point, offers))}
+								${createOffers(point.offers)}
                     </div>
                   </section>
 
@@ -114,7 +114,6 @@ export default class PointEditorView extends SmartView {
 		this._dateStart = point.start;
 		this._dateEnd = point.end;
 		this._type = point.type;
-
 		this._pointState = PointEditorView.parsePointDataToState(point);
 		this._editMode = editMode;
 		this._destinationsModel = destinationsModel;
@@ -337,6 +336,25 @@ export default class PointEditorView extends SmartView {
 		if (evt.target.tagName !== 'INPUT') {
 			return;
 		}
+		// ? this._pointState.offers - это все доступные offers для точки
+		// ? this._pointState.checkedOffer - это только выбранные - хранятся на сервере
+		this._pointState.offers.filter((el) =>
+			el.short === evt.target.name.replace('event-offer-', ''))[0].checked = evt.target.checked;
+
+		// if (checked.length > 0) {
+		// 	const index = this._pointState.offers.findIndex((el) => el.title === checked[0].title);
+		// 	if (index === -1) {
+		// 		throw new Error('Не удается обновить данную точку');
+		// 	}
+		// 	this._pointState = [
+		// 		...this._pointState.checkedOffer.slice(0, index),
+		// 		checked,
+		// 		...this._pointState.checkedOffer.slice(index + 1)
+		// 	];
+		// }
+		// else {
+		// 	this._pointState.offers = arr;
+		// }
 		// this._pointState.checkedOffer.filter((el) =>
 		// 	el.short === evt.target.name.replace('event-offer-', ''))[0].checked = evt.target.checked;
 		// this.updateData(
