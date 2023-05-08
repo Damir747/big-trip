@@ -15,7 +15,7 @@ const tripInfoTemplate = (points) => {
 			way += ' &mdash; ' + element.city;
 		}
 
-		let sum = element.checkedOffer === undefined ? 0 : element.checkedOffer.reduce((sum, currentObj) => sum += currentObj.checked ? currentObj.price : 0, 0);
+		let sum = element.checkedOffers === undefined ? 0 : element.checkedOffers.reduce((sum, currentObj) => sum += currentObj.checked ? currentObj.price : 0, 0);
 		cost += element.price + sum;
 		if (element.start < minDate) {
 			minDate = element.start;

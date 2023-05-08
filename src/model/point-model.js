@@ -40,7 +40,7 @@ export default class Points extends Observer {
 				const obj = Object.assign(
 					{},
 					element,
-					{ checked: point.checkedOffer.filter((elem) => elem.title === element.title).length === 1 },
+					{ checked: point.checkedOffers.filter((elem) => elem.title === element.title).length === 1 },
 				);
 				arr.push(obj);
 			})
@@ -54,7 +54,7 @@ export default class Points extends Observer {
 		const modifiedPoint = this._points.filter((el) => el.id === point.id);
 		// console.log(modifiedPoint);
 		if (modifiedPoint.length > 0) {
-			modifiedPoint[0].checkedOffer = modifiedPoint[0].offers.filter((el) => {
+			modifiedPoint[0].checkedOffers = modifiedPoint[0].offers.filter((el) => {
 				if (el.checked) {
 					return el;
 				}
@@ -101,7 +101,7 @@ export default class Points extends Observer {
 				city: point.destination.name,
 				description: point.destination.description,
 				photos: point.destination.pictures,
-				checkedOffer: point.offers,
+				checkedOffers: point.offers,
 			}
 		);
 
@@ -115,8 +115,7 @@ export default class Points extends Observer {
 		return adaptedPoint;
 	}
 	static adaptToServer(point) {
-		// console.log(point);
-		// console.log(point.checkedOffer);
+
 		const adaptedPoint = Object.assign(
 			{},
 			point,
@@ -132,14 +131,15 @@ export default class Points extends Observer {
 					'description': point.description,
 					'pictures': point.photos,
 				},
-				'offers': point.checkedOffer,
+				'offers': point.checkedOffers,
 			}
 		);
-		// console.log(adaptedPoint.offers);
 		delete adaptedPoint.price;
 		delete adaptedPoint.start;
 		delete adaptedPoint.end;
 		delete adaptedPoint.checkedFavorite;
+		delete adaptedPoint.checkedOffers;
+
 		return adaptedPoint;
 	}
 
@@ -203,7 +203,7 @@ export default class Points extends Observer {
 			{},
 			point,
 			{
-				'checkedOffer': arr,
+				'checkedOffers': arr,
 			}
 		);
 		return adaptedPoint;

@@ -37,7 +37,7 @@ const pointTemplate = (point) => {
                 </p>
                 <h4 class="visually-hidden">Offers:</h4>
                 <ul class="event__selected-offers">
-					 	${selectedOffers(point.checkedOffer)}
+					 	${selectedOffers(point.checkedOffers)}
                 </ul>
                 <button class="event__favorite-btn ${checkedFavorite}" type="button">
                   <span class="visually-hidden">Add to favorite</span>

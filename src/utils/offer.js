@@ -30,7 +30,7 @@ export const checkedOffers = (point, offers) => {
 		arr.push(Object.assign(
 			{},
 			el,
-			{ checked: point.checkedOffer.filter((elem) => elem.title === el.title).length > 0 }
+			{ checked: point.checkedOffers.filter((elem) => elem.title === el.title).length > 0 }
 		));
 	});
 	return arr;

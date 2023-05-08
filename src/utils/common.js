@@ -1,4 +1,3 @@
-import { DIR_PICTURE, MAX_RANDOM_PICTURE } from '../const.js';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 dayjs.extend(duration);
@@ -52,14 +51,6 @@ export const getRandomPositiveInteger = (min, max) => {
 	checkValidation(min, max);
 	return Math.round(Math.random() * (max - min) + min);
 };
-
-export const getRandomPicture = () => DIR_PICTURE + getRandomPositiveInteger(0, MAX_RANDOM_PICTURE);
-
-export const getRandomElementFromArray = (array) => array[getRandomPositiveInteger(0, array.length - 1)];
-
-export const capitalizeFirstLetter = (str) => {
-	return str.at(0).toUpperCase() + str.slice(1);
-}
 
 export const compareTwoDates = (start, end) => dayjs(end).diff(dayjs(start));
 export const sortByDecreasing = (elementA, elementB) => elementB[1] - elementA[1];

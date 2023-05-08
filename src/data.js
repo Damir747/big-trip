@@ -12,7 +12,7 @@ export const generatePoint = () => {
 		'end': date.end,
 		'description': town.description,
 		'photos': town.photos,
-		'checkedOffer': generateOrders(point.title),
+		'checkedOffers': generateOrders(point.title),
 		'checkedFavorite': checkedFavorite(),
 		'isPast': date.start < new Date()
 	}

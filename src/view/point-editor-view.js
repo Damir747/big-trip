@@ -1,6 +1,6 @@
 import { humanizeDate, compareTwoDates } from '../utils/common.js';
 import { createOffers } from '../utils/offer.js';
-import { CITIES, DateFormat, DIR_ICONS, EMPTY_POINT, EVENT_TYPE, EditMode } from '../const.js';
+import { DateFormat, DIR_ICONS, EMPTY_POINT, EVENT_TYPE, EditMode } from '../const.js';
 import SmartView from './smart.js';
 import flatpickr from 'flatpickr';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
@@ -11,9 +11,11 @@ import he from 'he';
 const datalistCity = (city) => {
 	return `<option value="${city}">`;
 }
-const datalistCities = (cities) => {
+const datalistCities = (destinations) => {
 	let citiesList = "";
-	cities.forEach((el) => citiesList += datalistCity(el));
+	// console.log(destinations);
+	destinations.forEach((el) => citiesList += datalistCity(el.city));
+	// console.log(citiesList);
 	return citiesList;
 }
 const eventPhotoTemplate = (el) => `<img class="event__photo" src="${el.src}" alt="${el.description}">`;
@@ -25,7 +27,7 @@ const eventTypeTemplate = (eventType, checkedType, isDisabled) => {
 `
 }
 //? isDisabled не доделан
-const editPointTemplate = (point, editMode, offers, isDisabled) => {
+const editPointTemplate = (point, editMode, offers, destinations, isDisabled) => {
 	let photosList = "";
 	point.photos.forEach((el) => {
 		el.src = el.src.replace('http://', 'https://');
@@ -54,11 +56,11 @@ const editPointTemplate = (point, editMode, offers, isDisabled) => {
 
                   <div class="event__field-group  event__field-group--destination">
                     <label class="event__label  event__type-output" for="event-destination-1">
-                      ${point.type[0].toUpperCase() + point.type.slice(1)}
+                      ${firstLetterUpperCase(point.type)}
                     </label>
                     <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.decode(point.city)}" list="destination-list-1">
                     <datalist id="destination-list-1">
-                      ${datalistCities(CITIES)}
+                      ${datalistCities(destinations)}
                     </datalist>
                   </div>
 
@@ -114,7 +116,7 @@ export default class PointEditorView extends SmartView {
 		this._dateStart = point.start;
 		this._dateEnd = point.end;
 		this._type = point.type;
-		this._pointState = PointEditorView.parsePointDataToState(point);
+		this._pointState = point;
 		this._editMode = editMode;
 		this._destinationsModel = destinationsModel;
 		this._pointsModel = pointsModel;
@@ -134,33 +136,18 @@ export default class PointEditorView extends SmartView {
 		this._setDatePicker(this._dateEnd);
 	}
 
-	// эти два метода нужны будут при работе с backend
-	// ? в модели они нужны для конвертации
-	static parsePointDataToState(pointData) {
-		return Object.assign(
-			{},
-			pointData,
-		);
-	}
-	static parseStateToPointData(state) {
-		return Object.assign(
-			{},
-			state,
-		);
-	}
-
 	init() {
 		console.log('Edit Component Init');
 	}
 
 	getTemplate() {
-		return editPointTemplate(this._pointState, this._editMode, this._pointsModel.getOffer(this._type));
+		return editPointTemplate(this._pointState, this._editMode, this._pointsModel.getOffer(this._type), this._destinationsModel.getDestinations());
 	}
 	reset(point) {
-		this.updateElement(PointEditorView.parsePointDataToState(point));
+		this.updateElement(point);
 	}
 	resetInput(point) {
-		this.updateData(PointEditorView.parsePointDataToState(point));
+		this.updateData(point);
 	}
 	restoreListeners() {
 		this._setInnerListeners();
@@ -239,7 +226,7 @@ export default class PointEditorView extends SmartView {
 		console.log(this._pointsModel.getOffer(evt.target.value));
 		this.updateData({
 			type: evt.target.value,
-			checkedOffer: [],
+			checkedOffers: [],
 			offers: this._pointsModel.getOffer(evt.target.value),
 		});
 		console.log(this._pointState);
@@ -261,7 +248,7 @@ export default class PointEditorView extends SmartView {
 
 	_onFormSubmit(evt) {
 		evt.preventDefault();
-		this._callback.onFormSubmit(PointEditorView.parseStateToPointData(this._pointState));
+		this._callback.onFormSubmit(this._pointState);
 	}
 
 	setFormSubmitHandler(callback) {
@@ -271,7 +258,7 @@ export default class PointEditorView extends SmartView {
 
 	_onFormDelete(evt) {
 		evt.preventDefault();
-		this._callback.onFormDelete(PointEditorView.parseStateToPointData(this._pointState));
+		this._callback.onFormDelete(this._pointState);
 	}
 
 	setFormDeleteHandler(callback) {
@@ -341,29 +328,8 @@ export default class PointEditorView extends SmartView {
 			return;
 		}
 		// ? this._pointState.offers - это все доступные offers для точки
-		// ? this._pointState.checkedOffer - это только выбранные - хранятся на сервере
+		// ? this._pointState.checkedOffers - это только выбранные - хранятся на сервере
 		this._pointState.offers.filter((el) =>
 			el.short === evt.target.name.replace('event-offer-', ''))[0].checked = evt.target.checked;
-		// if (checked.length > 0) {
-		// 	const index = this._pointState.offers.findIndex((el) => el.title === checked[0].title);
-		// 	if (index === -1) {
-		// 		throw new Error('Не удается обновить данную точку');
-		// 	}
-		// 	this._pointState = [
-		// 		...this._pointState.checkedOffer.slice(0, index),
-		// 		checked,
-		// 		...this._pointState.checkedOffer.slice(index + 1)
-		// 	];
-		// }
-		// else {
-		// 	this._pointState.offers = arr;
-		// }
-		// this._pointState.checkedOffer.filter((el) =>
-		// 	el.short === evt.target.name.replace('event-offer-', ''))[0].checked = evt.target.checked;
-		// this.updateData(
-		// 	{
-		// 		checkedOffer: this._pointState.checkedOffer,
-		// 	}
-		// );
 	}
 }

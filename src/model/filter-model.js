@@ -15,5 +15,4 @@ export default class FilterModel extends Observer {
 	getActiveFilter() {
 		return this._activeFilter;
 	}
-
 }
