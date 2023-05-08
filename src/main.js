@@ -1,4 +1,4 @@
-import { markup } from './data.js';
+import { MARKUP, markup } from './const.js';
 import { findElement } from './utils/common.js';
 import { render } from './view/render.js';
 import TripPresenter from './presenter/trip.js';
@@ -20,7 +20,7 @@ const END_POINT = 'https://14.ecmascript.pages.academy/big-trip';
 const api = new Api(END_POINT, AUTHORIZATION);
 
 const headerView = new HeaderView();	// Заголовок (header) для: Маршрут и стоимость, Меню, Фильтры
-render(findElement(document, markup[7].container), headerView.getElement(), RenderPosition.BEFOREEND);
+render(findElement(document, MARKUP.header.container), headerView.getElement(), RenderPosition.BEFOREEND);
 
 //? offersModel инициализировать 36:31
 
@@ -34,19 +34,19 @@ const filterModel = new FilterModel();
 // Сортировки
 const sortModel = new SortModel();
 
-const tripPresenter = new TripPresenter(findElement(document, '.page-body__container'), findElement(document, markup[0].container), findElement(document, markup[1].container), pointsModel, filterModel, sortModel, api, destinationsModel);
+const tripPresenter = new TripPresenter(findElement(document, MARKUP.trip.container), findElement(document, MARKUP.tripInfo.container), findElement(document, MARKUP.tripDetail.container), pointsModel, filterModel, sortModel, api, destinationsModel);
 tripPresenter.init();
 
-const statPresenter = new StatPresenter(findElement(document, '.page-body__container'), pointsModel);
+const statPresenter = new StatPresenter(findElement(document, MARKUP.trip.container), pointsModel);
 statPresenter.init();
 
-const tabPresenter = new TabPresenter(findElement(document, '.trip-main__trip-controls'), findElement(document, '.statistics'), tabModel, pointsModel, tripPresenter, statPresenter);
+const tabPresenter = new TabPresenter(findElement(document, MARKUP.tab.container), findElement(document, MARKUP.stat.container), tabModel, pointsModel, tripPresenter, statPresenter);
 tabPresenter.init(tripPresenter);
 
-const filterPresenter = new FilterPresenter(findElement(document, '.trip-main__trip-controls'), pointsModel, filterModel);
+const filterPresenter = new FilterPresenter(findElement(document, MARKUP.filter.container), pointsModel, filterModel);
 filterPresenter.init();
 
-const sortPresenter = new SortPresenter(findElement(document, '.trip-events'), filterModel, sortModel, tabModel);
+const sortPresenter = new SortPresenter(findElement(document, MARKUP.sort.container), filterModel, sortModel, tabModel);
 sortPresenter.init([]);	//?points
 
 //? поработать с пустыми данными (если ничего не пришло с сервера)

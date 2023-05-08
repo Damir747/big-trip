@@ -26,13 +26,7 @@ export default class Api {
 	}
 
 	updatePoint(point) {
-		const arr = [];
-		point.offers.forEach(el => {
-			if (el.checked) {
-				arr.push(el);
-			}
-		});
-		point.checkedOffer = arr;
+		point = Points.adaptOffersToServer(point);
 		return this._load({
 			url: `points/${point.id}`,
 			method: Method.PUT,

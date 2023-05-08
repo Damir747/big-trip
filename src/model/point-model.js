@@ -25,13 +25,15 @@ export default class Points extends Observer {
 		return this._offers;
 	}
 	getOffer(type) {
-		return this._offers.find((el) => el.title === type);
+		return this._offers.find((el) => el.title === type).offers;
 	}
 	// для всех точек делает offers под PointEditView
 	// ? Ещё надо будет сделать для новой точки
+	// ? если изменил тип точки, выбрал опции, сохранил, открыл, отображаются только выбранные опции. Надо подгружать все.
 	setAllOffers() {
 		this._points.forEach((point) => {
 			const arr = [];
+			// ? при перезагрузке страницы F5 выдает ошибку
 			const offersByType = this._offers.filter((offer) => offer.title === point.type)[0].offers;
 
 			offersByType.forEach((element) => {
@@ -61,9 +63,6 @@ export default class Points extends Observer {
 	}
 
 	updatePoint(updateType, modifiedPoint) {
-		// точка modifiedPoint с сервера в "серверном" виде (не адаптирована под View)
-		// console.log(modifiedPoint);	//? Почему в старом неадаптированном виде точка?
-		// Потому что сначала идёт отправка на сервер, получение с сервера, и потом идёт обновление здесь в PointModel
 		const index = this._points.findIndex((el) => el.id === modifiedPoint.id);
 		if (index === -1) {
 			throw new Error('Не удается обновить данную точку');
@@ -193,18 +192,21 @@ export default class Points extends Observer {
 
 		return adaptedType;
 	}
-	static adaptOffersToServer(offer) {
-		console.log(offer);
-		const adaptedOffer = Object.assign(
+	static adaptOffersToServer(point) {
+		const arr = [];
+		point.offers.forEach(el => {
+			if (el.checked) {
+				arr.push(el);
+			}
+		});
+		const adaptedPoint = Object.assign(
 			{},
-			offer,
+			point,
 			{
-				'title': offer.title,
-				'price': offer.price,
+				'checkedOffer': arr,
 			}
 		);
-		console.log(offer);
-		return adaptedOffer;
+		return adaptedPoint;
 	}
 
 }

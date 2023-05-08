@@ -1,11 +1,11 @@
 import { humanizeDate, compareTwoDates } from '../utils/common.js';
-import { createOffers, checkedOffers } from '../mock/offer-data.js';
+import { createOffers } from '../utils/offer.js';
 import { CITIES, DateFormat, DIR_ICONS, EMPTY_POINT, EVENT_TYPE, EditMode } from '../const.js';
 import SmartView from './smart.js';
 import flatpickr from 'flatpickr';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 import { firstLetterUpperCase } from '../utils/common.js';
-import { orderTypes, pickElementDependOnValue, checkPriceIsNumber } from '../data.js';
+import { checkPriceIsNumber } from '../utils/point.js';
 import he from 'he';
 
 const datalistCity = (city) => {
@@ -235,10 +235,14 @@ export default class PointEditorView extends SmartView {
 		if (evt.target.tagName !== 'INPUT') {
 			return;
 		}
+		console.log(this._pointState);	//? откуда берется поле offer?
+		console.log(this._pointsModel.getOffer(evt.target.value));
 		this.updateData({
 			type: evt.target.value,
-			checkedOffer: pickElementDependOnValue(evt.target.value, orderTypes),
+			checkedOffer: [],
+			offers: this._pointsModel.getOffer(evt.target.value),
 		});
+		console.log(this._pointState);
 	}
 
 	setTypePointHandler(callback) {
@@ -340,7 +344,6 @@ export default class PointEditorView extends SmartView {
 		// ? this._pointState.checkedOffer - это только выбранные - хранятся на сервере
 		this._pointState.offers.filter((el) =>
 			el.short === evt.target.name.replace('event-offer-', ''))[0].checked = evt.target.checked;
-
 		// if (checked.length > 0) {
 		// 	const index = this._pointState.offers.findIndex((el) => el.title === checked[0].title);
 		// 	if (index === -1) {

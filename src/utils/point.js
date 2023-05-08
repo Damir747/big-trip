@@ -1,5 +1,7 @@
 import dayjs from '../../node_modules/dayjs';
 
+export const checkPriceIsNumber = (checkedPrice) => /^\d+$/.test(checkedPrice);
+
 export const findElementByValue = (value, elements, descriptionFlag) => {
 	if (descriptionFlag) {
 		return elements.find((el) => el.name === value)
