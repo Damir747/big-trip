@@ -1,5 +1,5 @@
-import { Method, SuccessHTTPStatusRange } from "./const.js";
-import Points from "./model/point-model.js";
+import { Method, SuccessHTTPStatusRange } from "../const.js";
+import Points from "../model/point-model.js";
 
 export default class Api {
 	constructor(endPoint, authorization) {
@@ -41,7 +41,7 @@ export default class Api {
 			url: `points/${point.id}`,
 			method: Method.POST,
 			body: JSON.stringify(Points.adaptToServer(point)),
-			headers: new Headers({ 'Content-Type': 'application/json' })
+			headers: new Headers({ 'Content-Type': 'application/json' }),
 		})
 			.then(Api.toJSON)
 			.then(Points.adaptToClient);
@@ -66,6 +66,16 @@ export default class Api {
 		)
 			.then(Api.checkStatus)
 			.catch(Api.catchError);
+	}
+
+	sync(data) {
+		return this._load({
+			url: '/points/sync',
+			method: Method.POST,
+			body: JSON.stringify(data),
+			headers: new Headers({ 'Content-Type': 'application/json' }),
+		})
+			.then(Api.toJSON);
 	}
 
 	static checkStatus(response) {

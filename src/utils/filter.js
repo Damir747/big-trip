@@ -9,9 +9,9 @@ const utilFilter = (points, filterName) => {
 		case FILTER_NAMES[0]:
 			return filteredPoints;
 		case FILTER_NAMES[1]:
-			return filteredPoints.filter((el) => dayjs(el.start).diff(dayjs()) >= 0);
+			return filteredPoints.filter(el => dayjs(el.start).diff(dayjs()) >= 0);
 		case FILTER_NAMES[2]:
-			return filteredPoints.filter((el) => dayjs(el.start).diff(dayjs()) < 0);
+			return filteredPoints.filter(el => dayjs(el.start).diff(dayjs()) < 0);
 		default:
 			throw new Error('Unknown filterName', filterName);
 	}

@@ -1,4 +1,4 @@
-import { humanizeDate } from '../utils/common.js';
+import { findElement, humanizeDate } from '../utils/common.js';
 import { DateFormat, DIR_ICONS } from '../const.js';
 import { selectedOffers } from '../utils/offer.js';
 import AbstractView from '../framework/abstract-view.js';
@@ -68,14 +68,14 @@ export default class PointView extends AbstractView {
 	}
 	setModeToEditClickHandler(callback) {
 		this._callback.rollUpClick = callback;
-		this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._onRollUpClick);
+		findElement(this.getElement(), '.event__rollup-btn').addEventListener('click', this._onRollUpClick);
 	}
 	_onFavoriteClick() {
 		this._callback.favoriteClick();
 	}
 	setFavoriteClickHandler(callback) {
 		this._callback.favoriteClick = callback;
-		this.getElement().querySelector('.event__favorite-btn').addEventListener('click', this._onFavoriteClick);
+		findElement(this.getElement(), '.event__favorite-btn').addEventListener('click', this._onFavoriteClick);
 	}
 
 }

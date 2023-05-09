@@ -1,4 +1,4 @@
-import { humanizeDate, compareTwoDates } from '../utils/common.js';
+import { humanizeDate, compareTwoDates, findElement } from '../utils/common.js';
 import { createOffers } from '../utils/offer.js';
 import { DateFormat, DIR_ICONS, EMPTY_POINT, EVENT_TYPE, EditMode } from '../const.js';
 import SmartView from './smart.js';
@@ -117,7 +117,7 @@ export default class PointEditorView extends SmartView {
 		this._dateStart = point.start;
 		this._dateEnd = point.end;
 		this._type = point.type;
-		this._pointState = point;
+		this._point = point;
 		this._editMode = editMode;
 		this._destinationsModel = destinationsModel;
 		this._pointsModel = pointsModel;
@@ -142,10 +142,10 @@ export default class PointEditorView extends SmartView {
 
 	refreshDatalist() {
 		console.log('refreshDatalist');
-		const containerDestinations = this.getElement().querySelector('.event__field-group--destination');
-		const containerDatalist = this.getElement().querySelector('datalist');
+		const containerDestinations = findElement(this.getElement(), '.event__field-group--destination');
+		const containerDatalist = findElement(this.getElement(), 'datalist');
 		console.log(containerDestinations, containerDatalist);
-		render(containerDestinations, containerDatalist);
+		render(containerDestinations, containerDatalist);	//? может убирать старый datalist надо?
 		console.log(this._destinationsModel.getDestinations());
 	}
 
@@ -154,7 +154,7 @@ export default class PointEditorView extends SmartView {
 	}
 
 	getTemplate() {
-		return editPointTemplate(this._pointState, this._editMode, this._pointsModel.getOffer(this._pointState), this._destinationsModel.getDestinations());
+		return editPointTemplate(this._point, this._editMode, this._pointsModel.getOffer(this._point), this._destinationsModel.getDestinations());
 	}
 	reset(point) {
 		this.updateElement(point);
@@ -173,9 +173,9 @@ export default class PointEditorView extends SmartView {
 	}
 
 	_setInnerListeners() {
-		this.getElement().querySelector('.event__input--destination').addEventListener('change', this._onPointInput)
-		this.getElement().querySelector('.event__input--price').addEventListener('change', this._onPriceChange);
-		this.getElement().querySelector('.event__available-offers').addEventListener('change', this._onCheckedOffers);
+		findElement(this.getElement(), '.event__input--destination').addEventListener('change', this._onPointInput)
+		findElement(this.getElement(), '.event__input--price').addEventListener('change', this._onPriceChange);
+		findElement(this.getElement(), '.event__available-offers').addEventListener('change', this._onCheckedOffers);
 	}
 
 	removeElement() {
@@ -190,27 +190,27 @@ export default class PointEditorView extends SmartView {
 	//? отображает только 20 точек. Надо бы сделать: или все, или с кнопкой "загрузить ещё"
 
 	destroy() {
-		this.getElement().querySelector('.event__input--destination').removeEventListener('change', this._onPointInput)
-		this.getElement().querySelector('.event__input--price').removeEventListener('change', this._onPriceChange);
+		findElement(this.getElement(), '.event__input--destination').removeEventListener('change', this._onPointInput)
+		findElement(this.getElement(), '.event__input--price').removeEventListener('change', this._onPriceChange);
 
-		this.getElement().querySelector('.event__type-group').removeEventListener('change', this._changeTypePoint);
-		this.getElement().querySelector('.event__rollup-btn').removeEventListener('click', this._onRollUpClick);
-		this.getElement().querySelector('form').removeEventListener('submit', this._onFormSubmit);
-		this.getElement().querySelector('.event__reset-btn').removeEventListener('click', this._onFormDelete);
+		findElement(this.getElement(), '.event__type-group').removeEventListener('change', this._changeTypePoint);
+		findElement(this.getElement(), '.event__rollup-btn').removeEventListener('click', this._onRollUpClick);
+		findElement(this.getElement(), 'form').removeEventListener('submit', this._onFormSubmit);
+		findElement(this.getElement(), '.event__reset-btn').removeEventListener('click', this._onFormDelete);
 
 	}
 
 	_onPointInput(evt) {
 		evt.preventDefault();
-		const checkCityInList = this._destinationsModel.getDestinations().filter((el) => el.city === evt.target.value).length > 0;
-		if (!checkCityInList) {
+		const index = this._destinationsModel.getDestinations().findIndex(el => el.city === evt.target.value);
+		if (index === -1) {
 			evt.target.setCustomValidity(`Города ${evt.target.value} нет в списке`);
 			return;
 		}
 		this.updateData({
 			city: evt.target.value,
-			description: this._destinationsModel.getDestinations().filter((el) => el.city === evt.target.value)[0].description,
-			photos: this._destinationsModel.getDestinations().filter((el) => el.city === evt.target.value)[0].photos,
+			description: this._destinationsModel.getDestinations().find(el => el.city === evt.target.value).description,
+			photos: this._destinationsModel.getDestinations().find(el => el.city === evt.target.value).photos,
 		});
 	}
 
@@ -238,14 +238,14 @@ export default class PointEditorView extends SmartView {
 		this.updateData({
 			type: evt.target.value,
 			checkedOffers: [],
-			offers: this._pointsModel.getOffer(this._pointState, evt.target.value),
+			offers: this._pointsModel.getOffer(this._point, evt.target.value),
 		});
-		console.log(this._pointState);
+		console.log(this._point);
 	}
 
 	setTypePointHandler(callback) {
 		this._callback.changeTypePoint = callback;
-		this.getElement().querySelector('.event__type-group').addEventListener('change', this._changeTypePoint);
+		findElement(this.getElement(), '.event__type-group').addEventListener('change', this._changeTypePoint);
 	}
 
 	_onRollUpClick(evt) {
@@ -254,27 +254,27 @@ export default class PointEditorView extends SmartView {
 
 	setModeToViewClickHandler(callback) {
 		this._callback.onRollUpClick = callback;
-		this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._onRollUpClick);
+		findElement(this.getElement(), '.event__rollup-btn').addEventListener('click', this._onRollUpClick);
 	}
 
 	_onFormSubmit(evt) {
 		evt.preventDefault();
-		this._callback.onFormSubmit(this._pointState);
+		this._callback.onFormSubmit(this._point);
 	}
 
 	setFormSubmitHandler(callback) {
 		this._callback.onFormSubmit = callback;
-		this.getElement().querySelector('form').addEventListener('submit', this._onFormSubmit);
+		findElement(this.getElement(), 'form').addEventListener('submit', this._onFormSubmit);
 	}
 
 	_onFormDelete(evt) {
 		evt.preventDefault();
-		this._callback.onFormDelete(this._pointState);
+		this._callback.onFormDelete(this._point);
 	}
 
 	setFormDeleteHandler(callback) {
 		this._callback.onFormDelete = callback;
-		this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._onFormDelete);
+		findElement(this.getElement(), '.event__reset-btn').addEventListener('click', this._onFormDelete);
 	}
 
 	_setDatePicker(datePicker, flag) {
@@ -283,26 +283,26 @@ export default class PointEditorView extends SmartView {
 			datePicker = null;
 		}
 		if (flag) {
-			datePicker = flatpickr(this.getElement().querySelector('#event-start-time-1'),
+			datePicker = flatpickr(findElement(this.getElement(), '#event-start-time-1'),
 				{
 					dateFormat: DateFormat.FORMAT_PICKER,
-					defaultDate: new Date(this._pointState.start),
+					defaultDate: new Date(this._point.start),
 					onChange: this._onDateStartChange,
 				},
 			);
 			return;
 		}
-		datePicker = flatpickr(this.getElement().querySelector('#event-end-time-1'),
+		datePicker = flatpickr(findElement(this.getElement(), '#event-end-time-1'),
 			{
 				dateFormat: DateFormat.FORMAT_PICKER,
-				defaultDate: new Date(this._pointState.end),
+				defaultDate: new Date(this._point.end),
 				onChange: this._onDateEndChange,
 			},
 		);
 
 	}
 	_onDateStartChange(inputDate) {
-		if (compareTwoDates(inputDate, this._pointState.end) < 0) {
+		if (compareTwoDates(inputDate, this._point.end) < 0) {
 			this.updateData(
 				{
 					start: inputDate,
@@ -318,7 +318,7 @@ export default class PointEditorView extends SmartView {
 		);
 	}
 	_onDateEndChange(inputDate) {
-		if (compareTwoDates(this._pointState.start, inputDate) < 0) {
+		if (compareTwoDates(this._point.start, inputDate) < 0) {
 			this.updateData(
 				{
 					start: inputDate,
@@ -338,9 +338,12 @@ export default class PointEditorView extends SmartView {
 		if (evt.target.tagName !== 'INPUT') {
 			return;
 		}
-		// ? this._pointState.offers - это все доступные offers для точки
-		// ? this._pointState.checkedOffers - это только выбранные - хранятся на сервере
-		this._pointState.offers.filter((el) =>
-			el.short === evt.target.name.replace('event-offer-', ''))[0].checked = evt.target.checked;
+		// this._point.offers - это все доступные offers для точки
+		// this._point.checkedOffers - это только выбранные - хранятся на сервере
+		const index = this._point.offers.findIndex(el => el.short === evt.target.name.replace('event-offer-', ''));
+		if (index === -1) {
+			return;
+		}
+		this._point.offers[index].checked = evt.target.checked;
 	}
 }

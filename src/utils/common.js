@@ -54,3 +54,7 @@ export const getRandomPositiveInteger = (min, max) => {
 
 export const compareTwoDates = (start, end) => dayjs(end).diff(dayjs(start));
 export const sortByDecreasing = (elementA, elementB) => elementB[1] - elementA[1];
+
+export const isOnline = () => {
+	return window.navigator.onLine;
+}

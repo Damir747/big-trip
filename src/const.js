@@ -96,87 +96,13 @@ export const ANCHOR_START = 'start';
 export const ANCHOR_END = 'end';
 export const TYPE_HORIZONTAL_BAR = 'horizontalBar';
 
-export const MARKUP = {
-	'trip': {
-		container: '.page-body__container',
-		position: RenderPosition.AFTERBEGIN,
-	},
-	'tripInfo': {
-		container: '.trip-main',
-		position: RenderPosition.AFTERBEGIN,
-	},
-	'tripDetail': {
-		container: '.trip-main__trip-controls',
-		position: RenderPosition.BEFOREEND,
-	},
-	'header': {
-		container: '.page-header__container',
-		position: RenderPosition.BEFOREEND,
-	},
-	'tab': {
-		container: '.trip-main__trip-controls',
-		position: RenderPosition.BEFOREEND,
-	},
-	'stat': {
-		container: '.statistics',
-		position: RenderPosition.AFTERBEGIN,
-	},
-	'filter': {
-		container: '.trip-main__trip-controls',
-		position: RenderPosition.BEFOREEND,
-	},
-	'sort': {
-		container: '.trip-events',
-		position: RenderPosition.AFTERBEGIN,
-	}
+export const CONTAINER = {
+	'trip': '.page-body__container',
+	'tripInfo': '.trip-main',
+	'tripDetail': '.trip-main__trip-controls',
+	'header': '.page-header__container',
+	'tab': '.trip-main__trip-controls',
+	'stat': '.statistics',
+	'filter': '.trip-main__trip-controls',
+	'sort': '.trip-events',
 }
-
-//?контейнеры надо для каждой функции
-export const markup = [
-
-	{
-		container: '.trip-main',
-		position: RenderPosition.AFTERBEGIN,
-		count: 1,
-	},
-	{
-		container: '.trip-main__trip-controls',
-		position: RenderPosition.BEFOREEND,
-		count: 1,
-	},
-	{
-		container: '.trip-main__trip-controls',
-		position: RenderPosition.BEFOREEND,
-		count: 1,
-	},
-	{
-		container: '.trip-events',
-		position: RenderPosition.AFTERBEGIN,
-		count: 1,
-	},
-	{
-		container: '.trip-events__list',
-		position: RenderPosition.BEFOREEND,
-		count: 1,
-	},
-	{
-		container: '.trip-events__list',
-		position: RenderPosition.BEFOREEND,
-		count: POINTS_COUNT,
-	},
-	{
-		container: '.trip-events',
-		position: RenderPosition.BEFOREEND,
-		count: 1,
-	},
-	{
-		container: '.page-header__container',
-		position: RenderPosition.BEFOREEND,
-		count: 1,
-	},
-	{
-		container: '.page-body__container',
-		position: RenderPosition.AFTERBEGIN,
-		count: 1,
-	},
-];

@@ -24,14 +24,3 @@ export const selectedOffers = (checkedOffer) => {
 	return offersList;
 }
 
-export const checkedOffers = (point, offers) => {
-	const arr = [];
-	offers.offers.forEach(el => {
-		arr.push(Object.assign(
-			{},
-			el,
-			{ checked: point.checkedOffers.filter((elem) => elem.title === el.title).length > 0 }
-		));
-	});
-	return arr;
-}

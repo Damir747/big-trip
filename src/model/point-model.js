@@ -12,7 +12,6 @@ export default class Points extends Observer {
 	}
 	setPoints(updateType, points) {
 		this._points = points.slice();
-		this.setAllOffers();
 		this._notify(updateType);
 	}
 	getPoints(activeFilter, activeSort, upSort) {
@@ -25,7 +24,7 @@ export default class Points extends Observer {
 	getOffers() {
 		return this._offers;
 	}
-	// Изменить/установить offers для точки.
+	// Изменить/установить/вернуть offers для точки.
 	// Актуально: при смене типа точки. И при отрисовке PointEditorView(type по умолчанию равен type точки)
 	getOffer(point, type = point.type) {
 		this.setOffer(point);
@@ -36,54 +35,37 @@ export default class Points extends Observer {
 		if (index === -1) {
 			return;
 		}
-		//? вероятно, лучше заменить filter на findIndex
-		const offersByType = this._offers.filter((offer) => offer.title === this._points[index].type)[0].offers;
-		console.log(offersByType);
+		const indexType = this._offers.findIndex((offer) => offer.title === this._points[index].type);
+		if (indexType === -1) {
+			return;
+		}
+		const offersByType = this._offers[indexType].offers;
 		const arr = [];
 		offersByType.forEach((element) => {
 			const obj = Object.assign(
 				{},
 				element,
-				{ checked: this._points[index].checkedOffers.filter((elem) => elem.title === element.title).length === 1 },
+				{ checked: this._points[index].checkedOffers.findIndex(elem => elem.title === element.title) !== -1 },
 			);
 			arr.push(obj);
 		});
 		this._points[index].offers = arr;
 	}
-	// для всех точек делает offers под PointEditView
-	// ? Ещё надо будет сделать для новой точки
-	// ? если изменил тип точки, выбрал опции, сохранил, открыл, отображаются только выбранные опции. Надо подгружать все.
-	setAllOffers() {
-		this._points.forEach((point) => {
-			const arr = [];
-			// ? при перезагрузке страницы F5 выдает ошибку
-			const offersByType = this._offers.filter((offer) => offer.title === point.type)[0].offers;
-
-			offersByType.forEach((element) => {
-				const obj = Object.assign(
-					{},
-					element,
-					{ checked: point.checkedOffers.filter((elem) => elem.title === element.title).length === 1 },
-				);
-				arr.push(obj);
-			});
-			point.offers = arr;
-		});
-	}
-	//? при смене типа точки надо обновлять все offers
+	//? Ещё надо будет сделать для новой точки
 	setCheckedOffer(point) {
-		const modifiedPoint = this._points.filter((el) => el.id === point.id);
-		if (modifiedPoint.length > 0) {
-			modifiedPoint[0].checkedOffers = modifiedPoint[0].offers.filter((el) => {
-				if (el.checked) {
-					return el;
-				}
-			});
+		const index = this._points.findIndex(el => el.id === point.id);
+		if (index === -1) {
+			return;
 		}
+		this._points[index].checkedOffers = this._points[index].offers.filter(el => {
+			if (el.checked) {
+				return el;
+			}
+		});
 	}
 
 	updatePoint(updateType, modifiedPoint) {
-		const index = this._points.findIndex((el) => el.id === modifiedPoint.id);
+		const index = this._points.findIndex(el => el.id === modifiedPoint.id);
 		if (index === -1) {
 			throw new Error('Не удается обновить данную точку');
 		}
@@ -102,8 +84,7 @@ export default class Points extends Observer {
 		this._notify(updateType, point);
 	}
 	deletePoint(updateType, point) {
-		this._points = this._points.filter((el) => el.id !== point.id);
-		// Ещё может быть такой способ: найти по id и сделать slice - как в updatePoint
+		this._points = this._points.filter(el => el.id !== point.id);
 		this._notify(updateType);
 	}
 
