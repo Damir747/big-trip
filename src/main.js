@@ -62,7 +62,6 @@ api.getPoints()
 	.then((points) => {
 		console.log('Данные points получены', points);
 		pointsModel.setPoints(UpdateType.INIT, points);
-		// pointsModel.setAllOffers();
 	})
 	.catch((err) => {
 		console.log('Points не загрузились', err);

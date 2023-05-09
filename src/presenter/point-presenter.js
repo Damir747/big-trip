@@ -33,8 +33,6 @@ export default class PointPresenter extends AbstractView {
 		this._onSubmitForm = this._onSubmitForm.bind(this);
 		this._deletePoint = this._deletePoint.bind(this);
 		this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
-		this.refreshDatalist = this.refreshDatalist.bind(this);
-		this._destinationsModel.addObserver(this.refreshDatalist);		//? при обновлении данных о городах обновить datalist
 	}
 
 	init(point = EMPTY_POINT) {
@@ -86,11 +84,6 @@ export default class PointPresenter extends AbstractView {
 
 		remove(previousPointComponent);
 		remove(previousPointEditorComponent);
-	}
-
-	refreshDatalist() {
-		console.log('refreshDatalist');
-		console.log(this._destinationsModel.getDestinations());
 	}
 
 	destroy() {

@@ -10,7 +10,6 @@ export default class TabPresenter extends AbstractView {
 		super();
 		this._tabComponent = null;
 		this._tabContainer = tabContainer;
-		this._tabModel = tabModel;
 
 		this._handleTabChange = this._handleTabChange.bind(this);
 		this._handleModelEvent = this._handleModelEvent.bind(this);

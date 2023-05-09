@@ -7,6 +7,7 @@ export default class Destinations extends Observer {
 	}
 	setDestinations(destinations) {
 		this._destinations = destinations;
+		this._notify();//updateType
 	}
 	getDestinations() {
 		return this._destinations;

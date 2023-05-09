@@ -21,11 +21,34 @@ export default class Points extends Observer {
 	setOffers(offers) {
 		this._offers = offers;
 	}
+	//? а при смене типа точки цена должна ли меняться?
 	getOffers() {
 		return this._offers;
 	}
-	getOffer(type) {
+	// Изменить/установить offers для точки.
+	// Актуально: при смене типа точки. И при отрисовке PointEditorView(type по умолчанию равен type точки)
+	getOffer(point, type = point.type) {
+		this.setOffer(point);
 		return this._offers.find((el) => el.title === type).offers;
+	}
+	setOffer(point) {
+		const index = this._points.findIndex(el => el.id === point.id);
+		if (index === -1) {
+			return;
+		}
+		//? вероятно, лучше заменить filter на findIndex
+		const offersByType = this._offers.filter((offer) => offer.title === this._points[index].type)[0].offers;
+		console.log(offersByType);
+		const arr = [];
+		offersByType.forEach((element) => {
+			const obj = Object.assign(
+				{},
+				element,
+				{ checked: this._points[index].checkedOffers.filter((elem) => elem.title === element.title).length === 1 },
+			);
+			arr.push(obj);
+		});
+		this._points[index].offers = arr;
 	}
 	// для всех точек делает offers под PointEditView
 	// ? Ещё надо будет сделать для новой точки
@@ -43,16 +66,13 @@ export default class Points extends Observer {
 					{ checked: point.checkedOffers.filter((elem) => elem.title === element.title).length === 1 },
 				);
 				arr.push(obj);
-			})
+			});
 			point.offers = arr;
 		});
 	}
 	//? при смене типа точки надо обновлять все offers
-	setOffer(point) {
-		// console.log(point);	// неправильные
-		// console.log(this._points);	// правильные
+	setCheckedOffer(point) {
 		const modifiedPoint = this._points.filter((el) => el.id === point.id);
-		// console.log(modifiedPoint);
 		if (modifiedPoint.length > 0) {
 			modifiedPoint[0].checkedOffers = modifiedPoint[0].offers.filter((el) => {
 				if (el.checked) {
@@ -206,6 +226,8 @@ export default class Points extends Observer {
 				'checkedOffers': arr,
 			}
 		);
+		delete adaptedPoint.offers;
+		console.log(adaptedPoint);
 		return adaptedPoint;
 	}
 

@@ -39,14 +39,9 @@ export default class TripPresenter {
 		this._pointsModel.addObserver(this._handleModelEvent);
 		this._sortModel.addObserver(this._handleModelEvent);
 		this._filterModel.addObserver(this._handleModelEvent);
-		this.refresh = this.refresh.bind(this);
-		this._destinationsModel.addObserver(this.refresh);
 
 		this._pointNewPresenter = new PointPresenter(this._pointListComponent, this._handleViewAction, this._handleModelEvent, this._destinationsModel, this._pointsModel);
 		this._setHandleNewPointButton();
-	}
-	refresh() {
-		console.log('refresh');
 	}
 	// initStat() {
 	// 	const previousStatComponent = this._statComponent;

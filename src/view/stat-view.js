@@ -238,7 +238,7 @@ export default class StatView extends AbstractView {
 		this._timeChart = null;
 
 		this._setChart = this._setChart.bind(this);
-		this._pointsModel.addObserver(this._setChart);	// При изменении точек обновляет цифры в статистике - только не работает
+		this._pointsModel.addObserver(this._setChart);	// При изменении точек обновляет цифры в статистике
 
 	}
 	init() {

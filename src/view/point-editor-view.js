@@ -7,6 +7,7 @@ import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 import { firstLetterUpperCase } from '../utils/common.js';
 import { checkPriceIsNumber } from '../utils/point.js';
 import he from 'he';
+import { render } from './render.js';
 
 const datalistCity = (city) => {
 	return `<option value="${city}">`;
@@ -134,6 +135,18 @@ export default class PointEditorView extends SmartView {
 
 		this._setDatePicker(this._dateStart, true);
 		this._setDatePicker(this._dateEnd);
+
+		this.refreshDatalist = this.refreshDatalist.bind(this);
+		this._destinationsModel.addObserver(this.refreshDatalist);		//? при обновлении данных о городах обновить datalist
+	}
+
+	refreshDatalist() {
+		console.log('refreshDatalist');
+		const containerDestinations = this.getElement().querySelector('.event__field-group--destination');
+		const containerDatalist = this.getElement().querySelector('datalist');
+		console.log(containerDestinations, containerDatalist);
+		render(containerDestinations, containerDatalist);
+		console.log(this._destinationsModel.getDestinations());
 	}
 
 	init() {
@@ -141,7 +154,7 @@ export default class PointEditorView extends SmartView {
 	}
 
 	getTemplate() {
-		return editPointTemplate(this._pointState, this._editMode, this._pointsModel.getOffer(this._type), this._destinationsModel.getDestinations());
+		return editPointTemplate(this._pointState, this._editMode, this._pointsModel.getOffer(this._pointState), this._destinationsModel.getDestinations());
 	}
 	reset(point) {
 		this.updateElement(point);
@@ -222,12 +235,10 @@ export default class PointEditorView extends SmartView {
 		if (evt.target.tagName !== 'INPUT') {
 			return;
 		}
-		console.log(this._pointState);	//? откуда берется поле offer?
-		console.log(this._pointsModel.getOffer(evt.target.value));
 		this.updateData({
 			type: evt.target.value,
 			checkedOffers: [],
-			offers: this._pointsModel.getOffer(evt.target.value),
+			offers: this._pointsModel.getOffer(this._pointState, evt.target.value),
 		});
 		console.log(this._pointState);
 	}
