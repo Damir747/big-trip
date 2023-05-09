@@ -99,7 +99,6 @@ export const TYPE_HORIZONTAL_BAR = 'horizontalBar';
 export const CONTAINER = {
 	'trip': '.page-body__container',
 	'tripInfo': '.trip-main',
-	'tripDetail': '.trip-main__trip-controls',
 	'header': '.page-header__container',
 	'tab': '.trip-main__trip-controls',
 	'stat': '.statistics',

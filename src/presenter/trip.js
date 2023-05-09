@@ -13,7 +13,7 @@ import LoadingView from '../view/loading.js';
 //? Надо ли отображать маршрут полностью (и расчет цены)? Или с учетом фильтра (как сейчас)?
 
 export default class TripPresenter {
-	constructor(tripContainer, tripInfoContainer, tripDetailsContainer, pointsModel, filterModel, sortModel, api, destinationsModel) {
+	constructor(tripContainer, tripInfoContainer, pointsModel, filterModel, sortModel, api, destinationsModel) {
 		this._isLoading = true;
 		this._pointsModel = pointsModel;
 		this._filterModel = filterModel;
@@ -22,7 +22,6 @@ export default class TripPresenter {
 		this._destinationsModel = destinationsModel;
 		this._tripContainer = tripContainer;					// Контейнер для точек маршрута
 		this._tripInfoContainer = tripInfoContainer;			// Контейнер для Инфо маршрута
-		this._tripDetailsContainer = tripDetailsContainer;	// Контейнер для Фильтр
 		this._sortModel.setActiveSort(UpdateType.FULL, DEFAULT_SORT);
 		this._filterModel.setActiveFilter(UpdateType.FULL, DEFAULT_FILTER);
 
@@ -43,33 +42,11 @@ export default class TripPresenter {
 		this._pointNewPresenter = new PointPresenter(this._pointListComponent, this._handleViewAction, this._handleModelEvent, this._destinationsModel, this._pointsModel);
 		this._setHandleNewPointButton();
 	}
-	// initStat() {
-	// 	const previousStatComponent = this._statComponent;
-	// 	this._statComponent = new StatView(this._pointsModel.getPoints());
-
-	// 	if (previousStatComponent === null) {
-	// 		console.log(this._statContainer);
-	// 		console.log(this._statComponent);
-	// 		render(this._statContainer, this._statComponent, RenderPosition.BEFOREEND);
-	// 		return;
-	// 	}
-	// 	replace(this._statComponent, previousStatComponent);
-	// 	remove(previousStatComponent);
-	// 	this._setChart();
-	// }
 
 	init() {
-		// this._defaultSortPoints = tripPoints.slice();
-		// render(findElement(document, markup[0].container), tripInfo.getElement(), RenderPosition.AFTERBEGIN);
-		// render(this._tripDetailsContainer, this._tripInfo, RenderPosition.AFTERBEGIN);
 		render(this._tripContainer, this._boardViewComponent, RenderPosition.AFTERBEGIN);
-		render(this._boardViewComponent, this._pointListComponent, RenderPosition.BEFOREEND);	//? не надо?
+		render(this._boardViewComponent, this._pointListComponent, RenderPosition.BEFOREEND);
 		this._renderBoard();
-
-	}
-	//? Неидеальное расположение. Вероятно, можно сделать красивее
-	toggle() {
-		this._boardViewComponent.toggle();
 	}
 	show() {
 		this._boardViewComponent.show();

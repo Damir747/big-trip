@@ -34,7 +34,7 @@ const filterModel = new FilterModel();
 // Сортировки
 const sortModel = new SortModel();
 
-const tripPresenter = new TripPresenter(findElement(document, CONTAINER.trip), findElement(document, CONTAINER.tripInfo), findElement(document, CONTAINER.tripDetail), pointsModel, filterModel, sortModel, api, destinationsModel);
+const tripPresenter = new TripPresenter(findElement(document, CONTAINER.trip), findElement(document, CONTAINER.tripInfo), pointsModel, filterModel, sortModel, api, destinationsModel);
 tripPresenter.init();
 
 const statPresenter = new StatPresenter(findElement(document, CONTAINER.trip), pointsModel);
@@ -50,6 +50,7 @@ const sortPresenter = new SortPresenter(findElement(document, CONTAINER.sort), f
 sortPresenter.init();
 
 //? поработать с пустыми данными (если ничего не пришло с сервера)
+//? да, если нет offers, обработчиков нет
 api.getOffers()
 	.then((offers) => {
 		console.log('Данные offers получены', offers);

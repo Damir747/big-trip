@@ -1,6 +1,6 @@
-export const createOffers = (checkedOffer) => {
+export const createOffers = (offers) => {
 	let offersList = "";
-	checkedOffer.forEach((el) => offersList += `<div class="event__offer-selector">
+	offers.forEach((el) => offersList += `<div class="event__offer-selector">
 	                     <input class="event__offer-checkbox  visually-hidden" id="event-offer-${el.short}-1" type="checkbox" name="event-offer-${el.short}" ${el.checked ? 'checked' : ''}>
 	                     <label class="event__offer-label" for="event-offer-${el.short}-1">
 	                       <span class="event__offer-title">${el.title}</span>

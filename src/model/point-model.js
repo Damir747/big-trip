@@ -3,6 +3,7 @@ import { utilFilterSort } from '../utils/filter.js';
 import dayjs from 'dayjs';
 
 //? Обратите внимание, что, если вы следовали нашим рекомендациям и выделили дополнительные опции в отдельную структуру, для них нужно завести отдельную модель и провести похожие манипуляции.
+//? а при смене типа точки цена должна ли меняться?
 
 export default class Points extends Observer {
 	constructor() {
@@ -20,7 +21,6 @@ export default class Points extends Observer {
 	setOffers(offers) {
 		this._offers = offers;
 	}
-	//? а при смене типа точки цена должна ли меняться?
 	getOffers() {
 		return this._offers;
 	}

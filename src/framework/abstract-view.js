@@ -29,9 +29,6 @@ export default class AbstractView {
 	hide() {
 		this.getElement().classList.add('visually-hidden');
 	}
-	toggle() {
-		this.getElement().classList.toggle('visually-hidden');
-	}
 	shake(callback) {
 		this.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT}`;
 		setTimeout(() => {

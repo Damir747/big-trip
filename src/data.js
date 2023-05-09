@@ -1,20 +1,17 @@
-export const generatePoint = () => {
-	// const point = generatePointTypes();
-	// const date = generateDate();
-	// const town = generateCities[getRandomPositiveInteger(0, TYPES.length - 1)];
-
+export const generatePoint = (points, destinations) => {
+	//? читать тех.задание на предмет новой точки
 	return {
-		'id': nanoid(),
-		'type': point.title,
-		'price': point.price,
-		'city': town.city,
-		'start': date.start,
-		'end': date.end,
-		'description': town.description,
-		'photos': town.photos,
-		'checkedOffers': generateOrders(point.title),
-		'checkedFavorite': checkedFavorite(),
-		'isPast': date.start < new Date()
+		'type': points.getOffers().length > 0 ? points.getOffers()[0].title : '',
+		'price': 0,
+		'city': destinations.length > 0 ? destinations[0].city : '',
+		'start': new Date(),
+		'end': new Date(),	//? добавить день
+		'description': destinations.length > 0 ? destinations[0].description : '',
+		'photos': destinations.length > 0 ? destinations[0].photos : '',
+		'offers': [],	//? если выставлен тип, то offers надо присвоить
+		'checkedOffers': [],
+		'checkedFavorite': false,
+		'isPast': false,
 	}
 }
 

@@ -28,7 +28,7 @@ const eventTypeTemplate = (eventType, checkedType, isDisabled) => {
 `
 }
 //? isDisabled не доделан
-const editPointTemplate = (point, editMode, offers, destinations, isDisabled) => {
+const editPointTemplate = (point, editMode, destinations, isDisabled) => {
 	let photosList = "";
 	point.photos.forEach((el) => {
 		el.src = el.src.replace('http://', 'https://');
@@ -154,7 +154,8 @@ export default class PointEditorView extends SmartView {
 	}
 
 	getTemplate() {
-		return editPointTemplate(this._point, this._editMode, this._pointsModel.getOffer(this._point), this._destinationsModel.getDestinations());
+		this._pointsModel.getOffer(this._point);
+		return editPointTemplate(this._point, this._editMode, this._destinationsModel.getDestinations());
 	}
 	reset(point) {
 		this.updateElement(point);
@@ -240,7 +241,6 @@ export default class PointEditorView extends SmartView {
 			checkedOffers: [],
 			offers: this._pointsModel.getOffer(this._point, evt.target.value),
 		});
-		console.log(this._point);
 	}
 
 	setTypePointHandler(callback) {
