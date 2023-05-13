@@ -10,7 +10,7 @@ const createFilterItem = (filterName, isChecked, points) => {
                 </div>`
 }
 const filterTemplate = (activeFilter, points) => {
-	const filterItemsTemplate = FILTER_NAMES.map((filter) => createFilterItem(filter, filter === activeFilter, points));
+	const filterItemsTemplate = Object.values(FILTER_NAMES).map((filter) => createFilterItem(filter, filter === activeFilter, points));
 	return `<div class="trip-controls__filters">
 						<h2 class="visually-hidden">Filter events</h2>
 						<!-- Фильтры -->

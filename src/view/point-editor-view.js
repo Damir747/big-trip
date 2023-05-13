@@ -1,6 +1,6 @@
-import { humanizeDate, compareTwoDates, findElement } from '../utils/common.js';
+import { humanizeDate, compareTwoDates, findElement, addListener, removeListener } from '../utils/common.js';
 import { createOffers } from '../utils/offer.js';
-import { DateFormat, DIR_ICONS, EMPTY_POINT, EVENT_TYPE, EditMode } from '../const.js';
+import { DateFormat, DIR_ICONS, EVENT_TYPE, EditMode } from '../const.js';
 import SmartView from './smart.js';
 import flatpickr from 'flatpickr';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
@@ -89,18 +89,18 @@ const editPointTemplate = (point, editMode, destinations, isDisabled) => {
                 </header>
                 <section class="event__details">
                   <section class="event__section  event__section--offers">
-                    <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+                    <h3 class="event__section-title  event__section-title--offers ${point.offers.length === 0 ? 'visually-hidden' : ''}">Offers</h3>
 
                     <div class="event__available-offers">
 								${createOffers(point.offers)}
                     </div>
                   </section>
 
-                  <section class="event__section  event__section--destination">
+                  <section class="event__section  event__section--destination ${point.description.length === 0 ? 'visually-hidden' : ''}">
                     <h3 class="event__section-title  event__section-title--destination">Destination</h3>
                     <p class="event__destination-description">${point.description}</p>
 
-                    <div class="event__photos-container">
+                    <div class="event__photos-container ${photosList.length === 0 ? 'visually-hidden' : ''}">
                       <div class="event__photos-tape">
                         ${photosList}
                       </div>
@@ -112,7 +112,7 @@ const editPointTemplate = (point, editMode, destinations, isDisabled) => {
 };
 
 export default class PointEditorView extends SmartView {
-	constructor(point = EMPTY_POINT, editMode = EditMode.EDIT, destinationsModel, pointsModel) {
+	constructor(point, editMode = EditMode.EDIT, destinationsModel, pointsModel) {
 		super();
 		this._dateStart = point.start;
 		this._dateEnd = point.end;
@@ -142,17 +142,15 @@ export default class PointEditorView extends SmartView {
 		this._destinationsModel.addObserver(this.refreshDatalist);		//? при обновлении данных о городах обновить datalist
 	}
 
+	init() {
+		console.log('Edit Component Init');
+	}
+
 	refreshDatalist() {
 		console.log('refreshDatalist');
 		const containerDestinations = findElement(this.getElement(), '.event__field-group--destination');
 		const containerDatalist = findElement(this.getElement(), 'datalist');
-		console.log(containerDestinations, containerDatalist);
 		render(containerDestinations, containerDatalist);	//? может убирать старый datalist надо?
-		console.log(this._destinationsModel.getDestinations());
-	}
-
-	init() {
-		console.log('Edit Component Init');
 	}
 
 	getTemplate() {
@@ -160,6 +158,7 @@ export default class PointEditorView extends SmartView {
 		return editPointTemplate(this._point, this._editMode, this._destinationsModel.getDestinations());
 	}
 	reset(point) {
+		this._point = point;
 		this._offers = this._point.offers.slice();
 		this.updateElement(point);
 	}
@@ -177,9 +176,9 @@ export default class PointEditorView extends SmartView {
 	}
 
 	_setInnerListeners() {
-		findElement(this.getElement(), '.event__input--destination').addEventListener('change', this._onPointInput)
-		findElement(this.getElement(), '.event__input--price').addEventListener('change', this._onPriceChange);
-		findElement(this.getElement(), '.event__available-offers').addEventListener('change', this._onCheckedOffers);
+		addListener(this.getElement(), '.event__input--destination', 'change', this._onPointInput)
+		addListener(this.getElement(), '.event__input--price', 'change', this._onPriceChange);
+		addListener(this.getElement(), '.event__available-offers', 'change', this._onCheckedOffers);
 	}
 
 	removeElement() {
@@ -194,13 +193,13 @@ export default class PointEditorView extends SmartView {
 	//? отображает только 20 точек. Надо бы сделать: или все, или с кнопкой "загрузить ещё"
 
 	destroy() {
-		findElement(this.getElement(), '.event__input--destination').removeEventListener('change', this._onPointInput)
-		findElement(this.getElement(), '.event__input--price').removeEventListener('change', this._onPriceChange);
+		removeListener(this.getElement(), '.event__input--destination', 'change', this._onPointInput)
+		removeListener(this.getElement(), '.event__input--price', 'change', this._onPriceChange);
 
-		findElement(this.getElement(), '.event__type-group').removeEventListener('change', this._changeTypePoint);
-		findElement(this.getElement(), '.event__rollup-btn').removeEventListener('click', this._onRollUpClick);
-		findElement(this.getElement(), 'form').removeEventListener('submit', this._onFormSubmit);
-		findElement(this.getElement(), '.event__reset-btn').removeEventListener('click', this._onFormDelete);
+		removeListener(this.getElement(), '.event__type-group', 'change', this._changeTypePoint);
+		removeListener(this.getElement(), '.event__rollup-btn', 'click', this._onRollUpClick);
+		removeListener(this.getElement(), 'form', 'submit', this._onFormSubmit);
+		removeListener(this.getElement(), '.event__reset-btn', 'click', this._onFormDelete);
 
 	}
 
@@ -239,28 +238,33 @@ export default class PointEditorView extends SmartView {
 		if (evt.target.tagName !== 'INPUT') {
 			return;
 		}
+		this._offers = this._pointsModel.getOfferByType(evt.target.value);
 		this.updateData({
 			type: evt.target.value,
 			checkedOffers: [],
-			offers: this._pointsModel.getOfferByType(evt.target.value),
+			// offers: this._pointsModel.getOfferByType(evt.target.value),
 		});
-		this._offers = this._pointsModel.getOfferByType(evt.target.value);	//?костыль?
-		console.log(this._offers);
+		if (this._offers.length === 0) {
+			document.querySelector('.event__section--offers').classList.add('visually-hidden');
+		}
+		else {
+			document.querySelector('.event__section--offers').classList.remove('visually-hidden');
+		}
 	}
 
 	setTypePointHandler(callback) {
 		this._callback.changeTypePoint = callback;
-		findElement(this.getElement(), '.event__type-group').addEventListener('change', this._changeTypePoint);
+		addListener(this.getElement(), '.event__type-group', 'change', this._changeTypePoint);
 	}
 
 	_onRollUpClick(evt) {
-		this.reset(this._point);
+		evt.preventDefault();
 		this._callback.onRollUpClick();
 	}
 
 	setModeToViewClickHandler(callback) {
 		this._callback.onRollUpClick = callback;
-		findElement(this.getElement(), '.event__rollup-btn').addEventListener('click', this._onRollUpClick);
+		addListener(this.getElement(), '.event__rollup-btn', 'click', this._onRollUpClick);
 	}
 
 	_onFormSubmit(evt) {
@@ -273,7 +277,7 @@ export default class PointEditorView extends SmartView {
 
 	setFormSubmitHandler(callback) {
 		this._callback.onFormSubmit = callback;
-		findElement(this.getElement(), 'form').addEventListener('submit', this._onFormSubmit);
+		addListener(this.getElement(), 'form', 'submit', this._onFormSubmit);
 	}
 
 	_onFormDelete(evt) {
@@ -283,7 +287,7 @@ export default class PointEditorView extends SmartView {
 
 	setFormDeleteHandler(callback) {
 		this._callback.onFormDelete = callback;
-		findElement(this.getElement(), '.event__reset-btn').addEventListener('click', this._onFormDelete);
+		addListener(this.getElement(), '.event__reset-btn', 'click', this._onFormDelete);
 	}
 
 	_setDatePicker(datePicker, flag) {

@@ -41,7 +41,6 @@ export default class TripPresenter {
 
 		this._pointNewPresenter = new PointPresenter(this._pointListComponent, this._handleViewAction, this._handleModelEvent, this._destinationsModel, this._pointsModel);
 		this._setHandleNewPointButton();
-		console.log(this._pointNewPresenter);
 	}
 
 	init() {
@@ -105,7 +104,6 @@ export default class TripPresenter {
 			this._renderNoPoints();
 			return;
 		}
-		console.log('render TripInfo и PointList');
 		this._renderTripInfo();
 		this._renderPointList();
 		// Теперь, когда _renderBoard рендерит доску не только на старте,
@@ -118,11 +116,9 @@ export default class TripPresenter {
 	_handleViewAction(actionType, updateType, update) {
 		switch (actionType) {
 			case UserAction.UPDATE_POINT:
-				console.log('update point');
 				this._pointPresenter[update.id].setViewState(State.SAVING);
 				this._api.updatePoint(update)
 					.then((response) => {
-						console.log(response);
 						this._pointsModel.updatePoint(updateType, response);
 					})
 					.catch(() => {
@@ -136,7 +132,6 @@ export default class TripPresenter {
 						this._pointsModel.addPoint(updateType, response);
 					})
 					.catch((err) => {
-						console.log(err);
 						this._pointNewPresenter.setAborting();
 					});
 				break;

@@ -36,8 +36,12 @@ export const NO_TRIP_STOP_MESSAGE = "Click New Event to create your first point"
 // const OFFERS_NUMBER = 5;
 
 export const FAVORITE_ACTIVE_CLASS = 'event__favorite-btn--active';
-export const FILTER_NAMES = ['everything', 'future', 'past'];
-export const DEFAULT_FILTER = FILTER_NAMES[0];
+export const FILTER_NAMES = {
+	'EVERYTHING': 'everything',
+	'FUTURE': 'future',
+	'PAST': 'past'
+};
+export const DEFAULT_FILTER = FILTER_NAMES.EVERYTHING;
 export const SORT_NAMES = [{
 	value: 'day',
 	disabled: false,

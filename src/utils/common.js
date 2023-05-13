@@ -17,6 +17,14 @@ export const findElement = (container, selector) => {
 	return container.querySelector(selector);
 };
 
+export const addListener = (container, selector, type, listener) => {
+	findElement(container, selector).addEventListener(type, listener);
+}
+
+export const removeListener = (container, selector, type, listener) => {
+	findElement(container, selector).removeEventListener(type, listener);
+}
+
 export const createElement = (template) => {
 	const newElement = document.createElement('div');
 	newElement.innerHTML = template;

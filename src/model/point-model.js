@@ -24,10 +24,8 @@ export default class PointsModel extends Observer {
 	getOffers() {
 		return this._offers;
 	}
-	// Изменить/установить/вернуть offers для точки.
-	// Актуально: при смене типа точки. И при отрисовке PointEditorView(type по умолчанию равен type точки)
 
-	//? Ещё надо будет сделать для новой точки
+	// получить offers по типу точки (type)
 	getOfferByType(type) {
 		const indexType = this._offers.findIndex((offer) => offer.title === type);
 		if (indexType === -1) {
@@ -45,13 +43,10 @@ export default class PointsModel extends Observer {
 		});
 		return arr;
 	}
-
-	getOffer(point) {
-		const index = this._points.findIndex(el => el.id === point.id);
-		if (index === -1) {
-			return;
-		}
-		const indexType = this._offers.findIndex((offer) => offer.title === this._points[index].type);
+	// Получить offers для точки.
+	// Актуально: при смене типа точки. И при отрисовке PointEditorView(type по умолчанию равен type точки)
+	getOffer(point, type = point.type) {
+		const indexType = this._offers.findIndex((offer) => offer.title === type);
 		if (indexType === -1) {
 			return;
 		}
@@ -61,21 +56,21 @@ export default class PointsModel extends Observer {
 			const obj = Object.assign(
 				{},
 				element,
-				{ checked: this._points[index].checkedOffers.findIndex(elem => elem.title === element.title) !== -1 },
+				{ checked: point.checkedOffers.findIndex(elem => elem.title === element.title) !== -1 },
 			);
 			arr.push(obj);
 		});
-		this._points[index].offers = arr;
-		return this._points[index].offers;
-		//? для смены типа точки теперь не работает
+		point.offers = arr;
+		return point.offers;
 	}
+	// отметить выбранные опции (checkedOffers) для точки
+	// актуально при подтверждении изменений точки (submit)
 	setCheckedOffer(point) {
 		const index = this._points.findIndex(el => el.id === point.id);
 		if (index === -1) {
 			return;
 		}
 		point.checkedOffers = [];
-		console.log(point.offers);
 		this._points[index].checkedOffers = [];
 		point.offers.forEach(el => {
 			if (el.checked) {

@@ -41,7 +41,7 @@ export default class PointPresenter extends AbstractView {
 
 		this._emptyPoint = (point === EMPTY_POINT);
 		if (this._emptyPoint) {
-			this._point = generatePoint(this._pointsModel, this._destinationsModel.getDestinations());	//? генерация точки по умолчанию - надо поправить
+			this._point = generatePoint(this._pointsModel, this._destinationsModel.getDestinations());
 			this._pointMode = Mode.EDIT;
 			this._pointComponent = new PointView(this._point);
 			this._pointEditorComponent = new PointEditorView(this._point, EditMode.NEW, this._destinationsModel, this._pointsModel);
@@ -156,6 +156,7 @@ export default class PointPresenter extends AbstractView {
 				UpdateType.POINTS,
 				point
 			);
+			this._pointEditorComponent.reset(this._point);
 			this.destroy();
 		}
 		else {
@@ -189,7 +190,7 @@ export default class PointPresenter extends AbstractView {
 	_escKeyDownHandler(evt) {
 		if (isEscapeEvent(evt)) {
 			evt.preventDefault();
-			this._pointEditorComponent.reset();
+			this._pointEditorComponent.reset(this._point);
 			this._changeModeToView();
 		}
 	}
