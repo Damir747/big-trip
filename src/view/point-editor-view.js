@@ -121,6 +121,8 @@ export default class PointEditorView extends SmartView {
 		this._editMode = editMode;
 		this._destinationsModel = destinationsModel;
 		this._pointsModel = pointsModel;
+		this._offers = this._pointsModel.getOffer(point);
+
 		this._onRollUpClick = this._onRollUpClick.bind(this);
 		this._onFormSubmit = this._onFormSubmit.bind(this);
 		this._onFormDelete = this._onFormDelete.bind(this);
@@ -158,6 +160,7 @@ export default class PointEditorView extends SmartView {
 		return editPointTemplate(this._point, this._editMode, this._destinationsModel.getDestinations());
 	}
 	reset(point) {
+		this._offers = this._point.offers.slice();
 		this.updateElement(point);
 	}
 	resetInput(point) {
@@ -239,8 +242,10 @@ export default class PointEditorView extends SmartView {
 		this.updateData({
 			type: evt.target.value,
 			checkedOffers: [],
-			offers: this._pointsModel.getOffer(this._point, evt.target.value),
+			offers: this._pointsModel.getOfferByType(evt.target.value),
 		});
+		this._offers = this._pointsModel.getOfferByType(evt.target.value);	//?костыль?
+		console.log(this._offers);
 	}
 
 	setTypePointHandler(callback) {
@@ -249,6 +254,7 @@ export default class PointEditorView extends SmartView {
 	}
 
 	_onRollUpClick(evt) {
+		this.reset(this._point);
 		this._callback.onRollUpClick();
 	}
 
@@ -259,6 +265,9 @@ export default class PointEditorView extends SmartView {
 
 	_onFormSubmit(evt) {
 		evt.preventDefault();
+		this._point.offers = this._offers.slice();
+		console.log(this._point.offers);
+		this._pointsModel.setCheckedOffer(this._point);
 		this._callback.onFormSubmit(this._point);
 	}
 
@@ -340,10 +349,11 @@ export default class PointEditorView extends SmartView {
 		}
 		// this._point.offers - это все доступные offers для точки
 		// this._point.checkedOffers - это только выбранные - хранятся на сервере
-		const index = this._point.offers.findIndex(el => el.short === evt.target.name.replace('event-offer-', ''));
+		const index = this._offers.findIndex(el => el.short === evt.target.name.replace('event-offer-', ''));
 		if (index === -1) {
 			return;
 		}
-		this._point.offers[index].checked = evt.target.checked;
+		this._offers[index].checked = evt.target.checked;
 	}
+
 }

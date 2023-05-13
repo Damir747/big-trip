@@ -5,14 +5,14 @@ import dayjs from 'dayjs';
 //? Обратите внимание, что, если вы следовали нашим рекомендациям и выделили дополнительные опции в отдельную структуру, для них нужно завести отдельную модель и провести похожие манипуляции.
 //? а при смене типа точки цена должна ли меняться?
 
-export default class Points extends Observer {
+export default class PointsModel extends Observer {
 	constructor() {
 		super();
 		this._points = [];
 		this._offers = [];
 	}
 	setPoints(updateType, points) {
-		this._points = points.slice();
+		this._points = points;
 		this._notify(updateType);
 	}
 	getPoints(activeFilter, activeSort, upSort) {
@@ -26,11 +26,27 @@ export default class Points extends Observer {
 	}
 	// Изменить/установить/вернуть offers для точки.
 	// Актуально: при смене типа точки. И при отрисовке PointEditorView(type по умолчанию равен type точки)
-	getOffer(point, type = point.type) {
-		this.setOffer(point);
-		return this._offers.find((el) => el.title === type).offers;
+
+	//? Ещё надо будет сделать для новой точки
+	getOfferByType(type) {
+		const indexType = this._offers.findIndex((offer) => offer.title === type);
+		if (indexType === -1) {
+			return;
+		}
+		const offersByType = this._offers[indexType].offers;
+		const arr = [];
+		offersByType.forEach((element) => {
+			const obj = Object.assign(
+				{},
+				element,
+				{ checked: false },
+			);
+			arr.push(obj);
+		});
+		return arr;
 	}
-	setOffer(point) {
+
+	getOffer(point) {
 		const index = this._points.findIndex(el => el.id === point.id);
 		if (index === -1) {
 			return;
@@ -50,16 +66,20 @@ export default class Points extends Observer {
 			arr.push(obj);
 		});
 		this._points[index].offers = arr;
+		return this._points[index].offers;
+		//? для смены типа точки теперь не работает
 	}
-	//? Ещё надо будет сделать для новой точки
 	setCheckedOffer(point) {
 		const index = this._points.findIndex(el => el.id === point.id);
 		if (index === -1) {
 			return;
 		}
-		this._points[index].checkedOffers = this._points[index].offers.filter(el => {
+		point.checkedOffers = [];
+		console.log(point.offers);
+		this._points[index].checkedOffers = [];
+		point.offers.forEach(el => {
 			if (el.checked) {
-				return el;
+				this._points[index].checkedOffers.push(el);
 			}
 		});
 	}
@@ -208,7 +228,7 @@ export default class Points extends Observer {
 			}
 		);
 		delete adaptedPoint.offers;
-		console.log(adaptedPoint);
+
 		return adaptedPoint;
 	}
 

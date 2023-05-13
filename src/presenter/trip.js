@@ -41,6 +41,7 @@ export default class TripPresenter {
 
 		this._pointNewPresenter = new PointPresenter(this._pointListComponent, this._handleViewAction, this._handleModelEvent, this._destinationsModel, this._pointsModel);
 		this._setHandleNewPointButton();
+		console.log(this._pointNewPresenter);
 	}
 
 	init() {
@@ -129,12 +130,13 @@ export default class TripPresenter {
 					});
 				break;
 			case UserAction.ADD_POINT:
-				this._pointPresenter.setSaving();
+				this._pointNewPresenter.setSaving();
 				this._api.addPoint(update)
 					.then((response) => {
 						this._pointsModel.addPoint(updateType, response);
 					})
-					.catch(() => {
+					.catch((err) => {
+						console.log(err);
 						this._pointNewPresenter.setAborting();
 					});
 				break;

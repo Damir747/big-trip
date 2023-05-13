@@ -60,7 +60,7 @@ export default class PointPresenter extends AbstractView {
 		if (this._emptyPoint) {
 			render(this._pointListContainer, this._pointEditorComponent, RenderPosition.AFTERBEGIN);
 			this._pointEditorComponent.restoreListeners();
-			// document.addEventListener('keydown', this._escKeyDownHandler);
+			document.addEventListener('keydown', this._escKeyDownHandler);
 			return;
 		}
 		if (previousPointComponent === null || previousPointEditorComponent === null) {
@@ -75,8 +75,8 @@ export default class PointPresenter extends AbstractView {
 			case Mode.EDIT:
 				//? тут надо как-то по-другому написать 1:22:10
 				replace(this._pointEditorComponent, previousPointEditorComponent);
-				// replace(this._pointComponent, previousPointEditorComponent);
-				// this._pointMode = Mode.VIEW;
+				replace(this._pointComponent, previousPointEditorComponent);
+				this._pointMode = Mode.VIEW;
 				break;
 			default:
 				throw new Error(`Неизвестный _pointMode: ${this._pointMode}`);
@@ -142,19 +142,21 @@ export default class PointPresenter extends AbstractView {
 				isDeleting: false,
 			});
 		};
+		console.log(this._pointEditorComponent);	//! null
 		this._pointEditorComponent.shake(resetFormState);
 	}
 
 	_onSubmitForm(point) {
-		this._changeModeToView();
 		//? здесь ещё можно проверить, насколько крупное изменение, см. видео 7.1 28:05
+		// сначала изменить данные, только потом изменить View
+		//? а ещё надо будет сделать обработчик на случай, если что-то пошло не так
 		if (this._emptyPoint) {
 			this._changeData(
 				UserAction.ADD_POINT,
 				UpdateType.POINTS,
 				point
 			);
-			// this.destroy();
+			this.destroy();
 		}
 		else {
 			this._changeData(
@@ -162,6 +164,7 @@ export default class PointPresenter extends AbstractView {
 				UpdateType.POINTS,
 				point);
 		}
+		this._changeModeToView();
 	}
 
 	_changeModeToEdit() {
@@ -186,6 +189,7 @@ export default class PointPresenter extends AbstractView {
 	_escKeyDownHandler(evt) {
 		if (isEscapeEvent(evt)) {
 			evt.preventDefault();
+			this._pointEditorComponent.reset();
 			this._changeModeToView();
 		}
 	}
