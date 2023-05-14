@@ -15,16 +15,28 @@ export default class SortPresenter extends AbstractView {
 		this._tabModel = tabModel;
 
 		this._handleModelEvent = this._handleModelEvent.bind(this);
+		this._handleModelEventSort = this._handleModelEventSort.bind(this);
 		this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
-		this._filterModel.addObserver(this._handleModelEvent);	// при переключении фильтров должна сбрасываться сортировка.
-		this._tabModel.addObserver(this._handleModelEvent);		// при переключении на экран статистики и обратно сбрасывается выбранная сортировка.
-		// this._sortModel.addObserver(this._handleModelEvent);		// при изменении направления сортировки 
+		this._filterModel.addObserver(this._handleModelEvent);		// при переключении фильтров должна сбрасываться сортировка.
+		this._tabModel.addObserver(this._handleModelEvent);			// при переключении на экран статистики и обратно сбрасывается выбранная сортировка.
+		this._sortModel.addObserver(this._handleModelEventSort);		// при изменении направления сортировки 
 	}
+
 	init() {
+		this._sortModel.setDefaultUpSort();										// установка направления сортировки по умолчанию
+		this._sortModel.setActiveSort(UpdateType.FULL, DEFAULT_SORT);	// установка сортировки по умолчанию
+
+		this._handleModelEventSort();
+	}
+
+	_handleModelEvent() {
+		this.init();
+	}
+
+	_handleModelEventSort() {
 		const previousSortComponent = this._sortComponent;
 
-		this._sortModel.setActiveSort(UpdateType.FULL, this._sortModel.getActiveSort());
 		this._sortComponent = new SortMenuView(this._sortModel.getActiveSort(), this._sortModel.getUpSort());
 		this._sortComponent.setSortClickListener(this._handleSortTypeChange);
 
@@ -36,16 +48,12 @@ export default class SortPresenter extends AbstractView {
 		remove(previousSortComponent);
 	}
 
-	_handleModelEvent() {
-		this.init();
-	}
-
 	_handleSortTypeChange(sortType) {
-		if (this._sortModel.getActiveSort() === sortType) {
-			this._sortModel.changeUpSort();		// изменение направления сортировки
+		if (this._sortModel.getActiveSort() === sortType) {	// тот же тип сортировки
+			this._sortModel.changeUpSort();							// изменение направления сортировки
 		}
 		else {
-			this._sortModel.setDefaultUpSort();
+			this._sortModel.setDefaultUpSort();						// установка направления сортировки по умолчанию
 		}
 		this._sortModel.setActiveSort(UpdateType.FULL, sortType);
 	}

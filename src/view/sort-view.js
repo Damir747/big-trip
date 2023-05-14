@@ -18,7 +18,6 @@ const sortTemplate = (activeSort, upSort) => {
 export default class SortMenuView extends AbstractView {
 	constructor(activeSort, upSort) {
 		super();
-		console.log(upSort);
 		this._activeSort = activeSort;
 		this._upSort = upSort;
 		this._sortTypeChangeHandler = this._sortTypeChangeHandler.bind(this);

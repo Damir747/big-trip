@@ -611,7 +611,7 @@ main {
 	display: inline-flex;
 	-ms-flex-align: center;
 	align-items: center;
-	padding: 7px 15px 6px 22px;
+	padding: 7px 15px 7px 22px;
 	border: 1px solid transparent;
 	border-radius: 14px;
 	cursor: pointer;

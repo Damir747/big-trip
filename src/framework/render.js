@@ -26,9 +26,11 @@ export const replace = (newComponent, oldComponent) => {
 	if (!(newComponent instanceof AbstractView && oldComponent instanceof AbstractView)) {
 		throw new Error('Can replace only components');
 	}
-	const parent = oldComponent._element.parentElement;
-	if (parent === null) {
-		throw new Error('Parent element is not find');
+	newComponent = newComponent.getElement();
+	oldComponent = oldComponent.getElement();
+	const parent = oldComponent.parentElement;
+	if (parent === null || newComponent === null || oldComponent === null) {
+		throw new Error('One of the replaced elements does not exist ');
 	}
-	parent.replaceChild(newComponent._element, oldComponent._element);
+	parent.replaceChild(newComponent, oldComponent);
 }
