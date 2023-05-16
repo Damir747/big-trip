@@ -14,9 +14,7 @@ const datalistCity = (city) => {
 }
 const datalistCities = (destinations) => {
 	let citiesList = "";
-	// console.log(destinations);
 	destinations.forEach((el) => citiesList += datalistCity(el.city));
-	// console.log(citiesList);
 	return citiesList;
 }
 const eventPhotoTemplate = (el) => `<img class="event__photo" src="${el.src}" alt="${el.description}">`;
@@ -27,15 +25,18 @@ const eventTypeTemplate = (eventType, checkedType, isDisabled) => {
                         </div>
 `
 }
-//? isDisabled не доделан
-const editPointTemplate = (point, editMode, destinations, isDisabled) => {
+
+const editPointTemplate = (point, editMode, destinations) => {
 	let photosList = "";
-	point.photos.forEach((el) => {
-		el.src = el.src.replace('http://', 'https://');
-		photosList += eventPhotoTemplate(el);
-	});
+	if (point.photos !== '') {
+		point.photos.forEach((el) => {
+			el.src = el.src.replace('http://', 'https://');
+			photosList += eventPhotoTemplate(el);
+		});
+	}
 	let eventTypeList = "";
 	EVENT_TYPE.forEach((el) => eventTypeList += eventTypeTemplate(el, (el === point.type.toLowerCase())));
+	console.log(point.offers);
 	return `<li class="trip-events__item">
               <form class="event event--edit" action="#" method="post">
                 <header class="event__header">
@@ -44,7 +45,7 @@ const editPointTemplate = (point, editMode, destinations, isDisabled) => {
                       <span class="visually-hidden">Choose event type</span>
                       <img class="event__type-icon" width="17" height="17" src="${DIR_ICONS}${point.type}.png" alt="Event type icon">
                     </label>
-                    <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
+                    <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox" ${point.isDisabled ? 'disabled' : ''}>
 
                     <div class="event__type-list">
                       <fieldset class="event__type-group">
@@ -59,7 +60,7 @@ const editPointTemplate = (point, editMode, destinations, isDisabled) => {
                     <label class="event__label  event__type-output" for="event-destination-1">
                       ${firstLetterUpperCase(point.type)}
                     </label>
-                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.decode(point.city)}" list="destination-list-1">
+                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.decode(point.city)}" list="destination-list-1" ${destinations.length === 0 ? 'readonly' : ''}  ${point.isDisabled ? 'disabled' : ''}>
                     <datalist id="destination-list-1">
                       ${datalistCities(destinations)}
                     </datalist>
@@ -67,10 +68,10 @@ const editPointTemplate = (point, editMode, destinations, isDisabled) => {
 
                   <div class="event__field-group  event__field-group--time">
                     <label class="visually-hidden" for="event-start-time-1">From</label>
-                    <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${humanizeDate(point.start, DateFormat.FORMAT_FULL_DATE)}">
+                    <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${humanizeDate(point.start, DateFormat.FORMAT_FULL_DATE)}" ${point.isDisabled ? 'disabled' : ''}>
                     &mdash;
                     <label class="visually-hidden" for="event-end-time-1">To</label>
-                    <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${humanizeDate(point.end, DateFormat.FORMAT_FULL_DATE)}">
+                    <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${humanizeDate(point.end, DateFormat.FORMAT_FULL_DATE)}" ${point.isDisabled ? 'disabled' : ''}>
                   </div>
 
                   <div class="event__field-group  event__field-group--price">
@@ -78,11 +79,11 @@ const editPointTemplate = (point, editMode, destinations, isDisabled) => {
                       <span class="visually-hidden">Price</span>
                       &euro;
                     </label>
-                    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${point.price}">
+                    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${point.price}"  ${point.isDisabled ? 'disabled' : ''}>
                   </div>
 
-                  <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isDisabled ? 'Saving...' : 'Save'}</button>
-                  <button class="event__reset-btn" type="reset"  ${isDisabled ? 'disabled' : ''}>${editMode === EditMode.EDIT ? (isDisabled ? 'Deleting...' : 'Delete') : 'Cancel'}</button>
+                  <button class="event__save-btn  btn  btn--blue" type="submit" ${point.isDisabled ? 'disabled' : ''}>${point.isSaving ? 'Saving...' : 'Save'}</button>
+                  <button class="event__reset-btn" type="reset" ${point.isDisabled ? 'disabled' : ''}>${editMode === EditMode.EDIT ? (point.isDeleting ? 'Deleting...' : 'Delete') : 'Cancel'}</button>
                   <button class="event__rollup-btn" type="button">
                     <span class="visually-hidden">Open event</span>
                   </button>
@@ -92,7 +93,7 @@ const editPointTemplate = (point, editMode, destinations, isDisabled) => {
                     <h3 class="event__section-title  event__section-title--offers ${point.offers.length === 0 ? 'visually-hidden' : ''}">Offers</h3>
 
                     <div class="event__available-offers">
-								${createOffers(point.offers)}
+								${createOffers(point.offers, point.isDisabled)}
                     </div>
                   </section>
 
@@ -117,7 +118,7 @@ export default class PointEditorView extends SmartView {
 		this._dateStart = point.start;
 		this._dateEnd = point.end;
 		this._type = point.type;
-		this._point = point;
+		this._point = PointEditorView.parsePointToState(point);
 		this._editMode = editMode;
 		this._destinationsModel = destinationsModel;
 		this._pointsModel = pointsModel;
@@ -147,18 +148,21 @@ export default class PointEditorView extends SmartView {
 	}
 
 	refreshDatalist() {
-		console.log('refreshDatalist');
 		const containerDestinations = findElement(this.getElement(), '.event__field-group--destination');
 		const containerDatalist = findElement(this.getElement(), 'datalist');
 		render(containerDestinations, containerDatalist);	//? может убирать старый datalist надо?
 	}
 
 	getTemplate() {
-		this._pointsModel.getOffer(this._point);
+		console.log(this._point.offers);
+		console.log(this._point.checkedOffers);
+		this._pointsModel.getOffer(this._point);	//? она здесь зануляет выбранные опции. зачем?
+		console.log(this._point.offers);
+		console.log(this._point.checkedOffers);
 		return editPointTemplate(this._point, this._editMode, this._destinationsModel.getDestinations());
 	}
 	reset(point) {
-		this._point = point;
+		this._point = PointEditorView.parsePointToState(point);
 		this._offers = this._point.offers.slice();
 		this.updateElement(point);
 	}
@@ -269,10 +273,13 @@ export default class PointEditorView extends SmartView {
 
 	_onFormSubmit(evt) {
 		evt.preventDefault();
-		this._point.offers = this._offers.slice();
+		this._point.offers = this._offers.slice();	//? а если нет сети, то ошибка
 		console.log(this._point.offers);
+		console.log(this._point.checkedOffers);
 		this._pointsModel.setCheckedOffer(this._point);
-		this._callback.onFormSubmit(this._point);
+		console.log(this._point.offers);
+		console.log(this._point.checkedOffers);
+		this._callback.onFormSubmit(PointEditorView.parseStateToPoint(this._point));
 	}
 
 	setFormSubmitHandler(callback) {
@@ -282,7 +289,7 @@ export default class PointEditorView extends SmartView {
 
 	_onFormDelete(evt) {
 		evt.preventDefault();
-		this._callback.onFormDelete(this._point);
+		this._callback.onFormDelete(PointEditorView.parseStateToPoint(this._point));
 	}
 
 	setFormDeleteHandler(callback) {
@@ -300,6 +307,8 @@ export default class PointEditorView extends SmartView {
 				{
 					dateFormat: DateFormat.FORMAT_PICKER,
 					defaultDate: new Date(this._point.start),
+					enableTime: true,
+					time_24hr: true,
 					onChange: this._onDateStartChange,
 				},
 			);
@@ -309,6 +318,8 @@ export default class PointEditorView extends SmartView {
 			{
 				dateFormat: DateFormat.FORMAT_PICKER,
 				defaultDate: new Date(this._point.end),
+				enableTime: true,
+				time_24hr: true,
 				onChange: this._onDateEndChange,
 			},
 		);
@@ -359,5 +370,25 @@ export default class PointEditorView extends SmartView {
 		}
 		this._offers[index].checked = evt.target.checked;
 	}
-
+	static parsePointToState(point) {
+		return Object.assign(
+			{},
+			point,
+			{
+				isDisabled: false,
+				isSaving: false,
+				isDeleting: false,
+			},
+		);
+	}
+	static parseStateToPoint(state) {
+		state = Object.assign(
+			{},
+			state,
+		);
+		delete state.isDisabled;
+		delete state.isSaving;
+		delete state.isDeleting;
+		return state;
+	}
 }

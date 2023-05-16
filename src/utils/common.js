@@ -6,7 +6,8 @@ export const isEscapeEvent = (evt) => {
 	return (evt.key === ('Escape' || 'Esc'));
 }
 
-export const firstLetterUpperCase = (str) => str[0].toUpperCase() + str.slice(1);
+export const firstLetterUpperCase = (str) => str ? str[0].toUpperCase() + str.slice(1) : '';
+
 
 export const humanizeDate = (date, format) => dayjs(date).format(format);
 

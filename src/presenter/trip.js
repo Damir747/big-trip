@@ -127,11 +127,13 @@ export default class TripPresenter {
 				break;
 			case UserAction.ADD_POINT:
 				this._pointNewPresenter.setSaving();
+				console.log(this._pointNewPresenter._pointEditorComponent);
 				this._api.addPoint(update)
 					.then((response) => {
 						this._pointsModel.addPoint(updateType, response);
 					})
 					.catch((err) => {
+						console.log(this._pointNewPresenter._pointEditorComponent);
 						this._pointNewPresenter.setAborting();
 					});
 				break;

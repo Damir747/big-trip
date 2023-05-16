@@ -87,6 +87,7 @@ export default class PointPresenter extends AbstractView {
 	}
 
 	destroy() {
+		console.log('destroy');
 		if (this._pointEditorComponent == null) {
 			return;
 		}
@@ -101,7 +102,6 @@ export default class PointPresenter extends AbstractView {
 	}
 
 	setViewState(state) {
-		console.log('setViewState', state);
 		const resetFormState = () => {
 			this._pointEditorComponent.updateData({
 				isDisabled: false,
@@ -135,6 +135,7 @@ export default class PointPresenter extends AbstractView {
 		});
 	}
 	setAborting() {
+		console.log(this._pointEditorComponent);	//! null
 		const resetFormState = () => {
 			this._pointEditorComponent.updateData({
 				isDisabled: false,
@@ -142,7 +143,6 @@ export default class PointPresenter extends AbstractView {
 				isDeleting: false,
 			});
 		};
-		console.log(this._pointEditorComponent);	//! null
 		this._pointEditorComponent.shake(resetFormState);
 	}
 
@@ -154,10 +154,9 @@ export default class PointPresenter extends AbstractView {
 			this._changeData(
 				UserAction.ADD_POINT,
 				UpdateType.POINTS,
-				point
+				point,
 			);
-			this._pointEditorComponent.reset(this._point);
-			this.destroy();
+			// this._pointEditorComponent.reset(this._point);
 		}
 		else {
 			this._changeData(
@@ -165,7 +164,6 @@ export default class PointPresenter extends AbstractView {
 				UpdateType.POINTS,
 				point);
 		}
-		this._changeModeToView();
 	}
 
 	_changeModeToEdit() {
@@ -177,12 +175,7 @@ export default class PointPresenter extends AbstractView {
 	}
 
 	_changeModeToView() {
-		if (this._emptyPoint) {
-			this.destroy();
-		}
-		else {
-			replace(this._pointComponent, this._pointEditorComponent);
-		}
+		replace(this._pointComponent, this._pointEditorComponent);
 		document.removeEventListener('keydown', this._escKeyDownHandler);
 		this._pointMode = Mode.VIEW;
 	}

@@ -61,22 +61,24 @@ export default class PointsModel extends Observer {
 			arr.push(obj);
 		});
 		point.offers = arr;
+		console.log(arr);
 		return point.offers;
 	}
 	// отметить выбранные опции (checkedOffers) для точки
 	// актуально при подтверждении изменений точки (submit)
 	setCheckedOffer(point) {
+		point.offers.forEach(el => {
+			if (el.checked) {
+				point.checkedOffers.push(el);
+			}
+		});
+
 		const index = this._points.findIndex(el => el.id === point.id);
+		console.log(index);
 		if (index === -1) {
 			return;
 		}
-		point.checkedOffers = [];
-		this._points[index].checkedOffers = [];
-		point.offers.forEach(el => {
-			if (el.checked) {
-				this._points[index].checkedOffers.push(el);
-			}
-		});
+		this._points[index].checkedOffers = point.checkedOffers;
 	}
 
 	updatePoint(updateType, modifiedPoint) {
