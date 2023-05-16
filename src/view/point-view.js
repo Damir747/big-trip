@@ -2,7 +2,6 @@ import { addListener, humanizeDate, humanizeTripTime } from '../utils/common.js'
 import { DateFormat, DIR_ICONS } from '../const.js';
 import { selectedOffers } from '../utils/offer.js';
 import AbstractView from '../framework/abstract-view.js';
-import dayjs from 'dayjs';
 
 //? Новая точка маршрута создаётся нажатием на кнопку «New Event». Форма создания новой точки маршрута появляется в самом начале списка. Кнопка при этом блокируется на время создания новой точки.
 
