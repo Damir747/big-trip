@@ -1,14 +1,8 @@
-import { addListener, humanizeDate } from '../utils/common.js';
+import { addListener, humanizeDate, humanizeTripTime } from '../utils/common.js';
 import { DateFormat, DIR_ICONS } from '../const.js';
 import { selectedOffers } from '../utils/offer.js';
 import AbstractView from '../framework/abstract-view.js';
 import dayjs from 'dayjs';
-
-
-//? В колонке «Time» отображается время и продолжительность нахождения в точке маршрута(разность между окончанием и началом события).Время маршрута отображается в формате начало — окончание(например, «10: 30 — 11: 00»).Формат продолжительности нахождения в точке маршрута зависит от длительности:
-//     Менее часа: минуты(например, 23M);
-//     Менее суток: часы минуты(например, 02H 44M или 12H 00M, если минуты равны нулю);
-//     Более суток: дни часы минуты(например, 01D 02H 30M или 07D 00H 00M, если часы и / или минуты равны нулю).
 
 //? Новая точка маршрута создаётся нажатием на кнопку «New Event». Форма создания новой точки маршрута появляется в самом начале списка. Кнопка при этом блокируется на время создания новой точки.
 
@@ -30,7 +24,7 @@ const pointTemplate = (point) => {
                     &mdash;
                     <time class="event__end-time" datetime="${point.end}">${humanizeDate(point.end, DateFormat.FORMAT_HOUR)}</time>
                   </p>
-                  <p class="event__duration">${humanizeDate(dayjs(point.end).diff(dayjs(point.start), ''), DateFormat.FORMAT_DIF)}</p>
+                  <p class="event__duration">${humanizeTripTime(point.start, point.end)}</p>
                 </div>
                 <p class="event__price">
                   &euro;&nbsp;<span class="event__price-value">${point.price}</span>

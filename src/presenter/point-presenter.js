@@ -87,7 +87,6 @@ export default class PointPresenter extends AbstractView {
 	}
 
 	destroy() {
-		console.log('destroy');
 		if (this._pointEditorComponent == null) {
 			return;
 		}

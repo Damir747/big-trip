@@ -61,7 +61,6 @@ export default class PointsModel extends Observer {
 			arr.push(obj);
 		});
 		point.offers = arr;
-		console.log(arr);
 		return point.offers;
 	}
 	// отметить выбранные опции (checkedOffers) для точки

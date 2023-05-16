@@ -1,3 +1,5 @@
+import { DateFormat } from '../const.js';
+
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 dayjs.extend(duration);
@@ -8,8 +10,25 @@ export const isEscapeEvent = (evt) => {
 
 export const firstLetterUpperCase = (str) => str ? str[0].toUpperCase() + str.slice(1) : '';
 
-
 export const humanizeDate = (date, format) => dayjs(date).format(format);
+
+export const humanizeTripTime = (start, end) => {
+	const days = dayjs(end).diff(dayjs(start), 'day');
+	const hours = dayjs(end).diff(dayjs(start), 'hour') % 24;
+	const minutes = dayjs(end).diff(dayjs(start), 'minute') % 60;
+
+	const daysString = (days > 99) ? '99' : ('0'.concat(days)).slice(-2);
+	const hoursString = ('0'.concat(hours)).slice(-2);
+	const minutesString = ('0'.concat(minutes)).slice(-2);
+
+	if (days > 0) {
+		return `${daysString}D ${hoursString}H ${minutesString}M`;
+	}
+	if (hours > 0) {
+		return `${hoursString}H ${minutesString}M`;
+	}
+	return `${minutesString}M`;
+};
 
 export const findElement = (container, selector) => {
 	if (container === null) {

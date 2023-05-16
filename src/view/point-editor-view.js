@@ -8,6 +8,7 @@ import { firstLetterUpperCase } from '../utils/common.js';
 import { checkPriceIsNumber } from '../utils/point.js';
 import he from 'he';
 import { render } from './render.js';
+import dayjs from 'dayjs';
 
 const datalistCity = (city) => {
 	return `<option value="${city}">`;
@@ -36,7 +37,6 @@ const editPointTemplate = (point, editMode, destinations) => {
 	}
 	let eventTypeList = "";
 	EVENT_TYPE.forEach((el) => eventTypeList += eventTypeTemplate(el, (el === point.type.toLowerCase())));
-	console.log(point.offers);
 	return `<li class="trip-events__item">
               <form class="event event--edit" action="#" method="post">
                 <header class="event__header">
@@ -154,11 +154,11 @@ export default class PointEditorView extends SmartView {
 	}
 
 	getTemplate() {
-		console.log(this._point.offers);
-		console.log(this._point.checkedOffers);
+		// console.log(this._point.offers);
+		// console.log(this._point.checkedOffers);
 		this._pointsModel.getOffer(this._point);	//? она здесь зануляет выбранные опции. зачем?
-		console.log(this._point.offers);
-		console.log(this._point.checkedOffers);
+		// console.log(this._point.offers);
+		// console.log(this._point.checkedOffers);
 		return editPointTemplate(this._point, this._editMode, this._destinationsModel.getDestinations());
 	}
 	reset(point) {
@@ -274,11 +274,11 @@ export default class PointEditorView extends SmartView {
 	_onFormSubmit(evt) {
 		evt.preventDefault();
 		this._point.offers = this._offers.slice();	//? а если нет сети, то ошибка
-		console.log(this._point.offers);
-		console.log(this._point.checkedOffers);
+		// console.log(this._point.offers);
+		// console.log(this._point.checkedOffers);
 		this._pointsModel.setCheckedOffer(this._point);
-		console.log(this._point.offers);
-		console.log(this._point.checkedOffers);
+		// console.log(this._point.offers);
+		// console.log(this._point.checkedOffers);
 		this._callback.onFormSubmit(PointEditorView.parseStateToPoint(this._point));
 	}
 
@@ -320,6 +320,8 @@ export default class PointEditorView extends SmartView {
 				defaultDate: new Date(this._point.end),
 				enableTime: true,
 				time_24hr: true,
+				minDate: dayjs(this._point.start).add(15, 'minute').toDate(),
+				maxDate: dayjs(this._point.start).add(99, 'day').toDate(),
 				onChange: this._onDateEndChange,
 			},
 		);

@@ -29,6 +29,10 @@ export const DateFormat = {
 	FORMAT_SHORT_DATE: 'MMM DD',
 	FORMAT_DIF: 'HH[H] mm[M]',
 	FORMAT_PICKER: 'd/m/y H:i',
+	FORMAT_MDHM: 'MM[M] DD[D] HH[H] mm[M]',
+	FORMAT_DHM: 'DD[D] HH[H] mm[M]',
+	FORMAT_HM: 'HH[H] mm[M]',
+	FORMAT_M: 'mm[M]',
 }
 
 export const NO_TRIP_STOP_MESSAGE = "Click New Event to create your first point";
