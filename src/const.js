@@ -105,11 +105,11 @@ export const ANCHOR_END = 'end';
 export const TYPE_HORIZONTAL_BAR = 'horizontalBar';
 
 export const CONTAINER = {
-	'trip': '.page-body__container',
-	'tripInfo': '.trip-main',
-	'header': '.page-header__container',
-	'tab': '.trip-main__trip-controls',
-	'stat': '.statistics',
-	'filter': '.trip-main__trip-controls',
-	'sort': '.trip-events',
+	TRIP: '.page-body__container',
+	TRIPINFO: '.trip-main',
+	HEADER: '.page-header__container',
+	TAB: '.trip-main__trip-controls',
+	STAT: '.statistics',
+	FILTER: '.trip-main__trip-controls',
+	SORT: '.trip-events',
 }

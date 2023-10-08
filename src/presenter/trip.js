@@ -48,12 +48,6 @@ export default class TripPresenter {
 		render(this._boardViewComponent, this._pointListComponent, RenderPosition.BEFOREEND);
 		this._renderBoard();
 	}
-	show() {
-		this._boardViewComponent.show();
-	}
-	hide() {
-		this._boardViewComponent.hide();
-	}
 	getModel() {
 		return this._pointsModel;
 	}
@@ -62,6 +56,12 @@ export default class TripPresenter {
 	}
 	getSortModel() {
 		return this._sortModel;
+	}
+	hide() {
+		this._boardViewComponent.hide();
+	}
+	show() {
+		this._boardViewComponent.show();
 	}
 	_getPoints() {
 		return this.getModel().getPoints(this.getFilterModel().getActiveFilter(), this.getSortModel().getActiveSort(), this.getSortModel().getUpSort());

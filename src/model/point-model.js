@@ -73,7 +73,7 @@ export default class PointsModel extends Observer {
 		});
 
 		const index = this._points.findIndex(el => el.id === point.id);
-		console.log(index);
+
 		if (index === -1) {
 			return;
 		}

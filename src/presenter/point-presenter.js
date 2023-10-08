@@ -2,10 +2,11 @@ import AbstractView from '../framework/abstract-view.js';
 import { Mode, UpdateType, UserAction, RenderPosition, EMPTY_POINT, EditMode } from '../const.js';
 import { render } from '../view/render.js';
 import { remove, replace } from '../framework/render.js';
-import { isEscapeEvent } from '../utils/common.js';
+import { isEscapeEvent, isOnline } from '../utils/common.js';
 import PointView from '../view/point-view.js';
 import PointEditorView from '../view/point-editor-view.js';
 import { generatePoint } from '../data.js';
+import { toast } from '../utils/toast.js';
 
 export const State = {
 	SAVING: 'SAVING',
@@ -100,6 +101,13 @@ export default class PointPresenter extends AbstractView {
 		this._pointComponent = null;
 	}
 
+	resetView() {
+		if (this._pointMode !== Mode.VIEW) {
+			this._pointEditorComponent.reset(this._point);
+			this._changeModeToView();
+		}
+	}
+
 	setViewState(state) {
 		const resetFormState = () => {
 			this._pointEditorComponent.updateData({
@@ -149,6 +157,10 @@ export default class PointPresenter extends AbstractView {
 		//? здесь ещё можно проверить, насколько крупное изменение, см. видео 7.1 28:05
 		// сначала изменить данные, только потом изменить View
 		//? а ещё надо будет сделать обработчик на случай, если что-то пошло не так
+		if (!isOnline) {
+			toast(`Can't save point offline`, true);
+			return;
+		}
 		if (this._emptyPoint) {
 			this._changeData(
 				UserAction.ADD_POINT,
@@ -187,12 +199,6 @@ export default class PointPresenter extends AbstractView {
 		}
 	}
 
-	resetView() {
-		if (this._pointMode !== Mode.VIEW) {
-			this._pointEditorComponent.reset(this._point);
-			this._changeModeToView();
-		}
-	}
 	_changeFavoriteStatus() {
 		this._changeData(
 			UserAction.UPDATE_POINT,
@@ -205,6 +211,10 @@ export default class PointPresenter extends AbstractView {
 		);
 	}
 	_deletePoint(point) {
+		if (!isOnline) {
+			toast(`Can't delete point offline`, true);
+			return;
+		}
 		if (this._emptyPoint) {
 			this.destroy();
 		}

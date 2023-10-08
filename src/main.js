@@ -12,15 +12,34 @@ import TabPresenter from './presenter/tab-presenter.js';
 import TabModel from './model/tab-model.js';
 import { RenderPosition, UpdateType } from './const.js';
 import StatPresenter from './presenter/stat-presenter.js';
-import Api from './api/api.js';
 import Destinations from './model/destination-model.js';
+import { isOnline } from './utils/common.js';
+import Store from './api/store.js';
+import Api from './api/api.js';
+import Provider from './api/provider.js';
+import { toast, toastRemove } from './utils/toast.js';
 
 const AUTHORIZATION = 'Basic dadasdab7n89llghhswgqe4tdfgdg';
 const END_POINT = 'https://14.ecmascript.pages.academy/big-trip';
+const STORE_PREFIX = 'big-trip-storage';
+const STORE_POINTS = 'points';
+const STORE_OFFERS = 'offers';
+const STORE_DESTINATIONS = 'destinations';
+const STORE_VERSION = 'v14';
+const STORE_POINTS_NAME = `${STORE_PREFIX}-${STORE_POINTS}-${STORE_VERSION}`;
+const STORE_OFFERS_NAME = `${STORE_PREFIX}-${STORE_OFFERS}-${STORE_VERSION}`;
+const STORE_DESTINATIONS_NAME = `${STORE_PREFIX}-${STORE_DESTINATIONS}-${STORE_VERSION}`;
+
 const api = new Api(END_POINT, AUTHORIZATION);
+const storePoints = new Store(STORE_POINTS_NAME, window.localStorage);
+const apiWithProviderPoints = new Provider(api, storePoints);
+const storeOffers = new Store(STORE_OFFERS_NAME, window.localStorage);
+const apiWithProviderOffers = new Provider(api, storeOffers);
+const storeDestinations = new Store(STORE_DESTINATIONS_NAME, window.localStorage);
+const apiWithProviderDestinations = new Provider(api, storeDestinations);
 
 const headerView = new HeaderView();	// Заголовок (header) для: Маршрут и стоимость, Меню, Фильтры
-render(findElement(document, CONTAINER.header), headerView.getElement(), RenderPosition.BEFOREEND);
+render(findElement(document, CONTAINER.HEADER), headerView.getElement(), RenderPosition.BEFOREEND);
 
 //? offersModel инициализировать 36:31
 
@@ -34,24 +53,24 @@ const filterModel = new FilterModel();
 // Сортировки
 const sortModel = new SortModel();
 
-const tripPresenter = new TripPresenter(findElement(document, CONTAINER.trip), findElement(document, CONTAINER.tripInfo), pointsModel, filterModel, sortModel, api, destinationsModel);
+const tripPresenter = new TripPresenter(findElement(document, CONTAINER.TRIP), findElement(document, CONTAINER.TRIPINFO), pointsModel, filterModel, sortModel, apiWithProviderPoints, destinationsModel);
 tripPresenter.init();
 
-const statPresenter = new StatPresenter(findElement(document, CONTAINER.trip), pointsModel);
+const statPresenter = new StatPresenter(findElement(document, CONTAINER.TRIP), pointsModel);
 statPresenter.init();
 
-const tabPresenter = new TabPresenter(findElement(document, CONTAINER.tab), findElement(document, CONTAINER.stat), tabModel, pointsModel, tripPresenter, statPresenter);
+const tabPresenter = new TabPresenter(findElement(document, CONTAINER.TAB), findElement(document, CONTAINER.STAT), tabModel, pointsModel, tripPresenter, statPresenter);
 tabPresenter.init(tripPresenter);
 
-const filterPresenter = new FilterPresenter(findElement(document, CONTAINER.filter), pointsModel, filterModel);
+const filterPresenter = new FilterPresenter(findElement(document, CONTAINER.FILTER), pointsModel, filterModel);
 filterPresenter.init();
 
-const sortPresenter = new SortPresenter(findElement(document, CONTAINER.sort), filterModel, sortModel, tabModel);
+const sortPresenter = new SortPresenter(findElement(document, CONTAINER.SORT), filterModel, sortModel, tabModel);
 sortPresenter.init();
 
 //? поработать с пустыми данными (если ничего не пришло с сервера)
 //? да, если нет offers, обработчиков нет
-api.getOffers()
+apiWithProviderOffers.getOffers()
 	.then((offers) => {
 		console.log('Данные offers получены', offers);
 		pointsModel.setOffers(offers);
@@ -59,7 +78,7 @@ api.getOffers()
 	.catch((err) => {
 		console.log('Offers не загрузились.', err);
 	});
-api.getPoints()
+apiWithProviderPoints.getPoints()
 	.then((points) => {
 		console.log('Данные points получены', points);
 		pointsModel.setPoints(UpdateType.INIT, points);
@@ -69,7 +88,7 @@ api.getPoints()
 		pointsModel.setPoints(UpdateType.INIT, []);
 	});
 
-api.getDestinations()
+apiWithProviderDestinations.getDestinations()
 	.then((destinations) => {
 		console.log('Данные destinations получены.', destinations);
 		destinationsModel.setDestinations(destinations);
@@ -77,3 +96,21 @@ api.getDestinations()
 	.catch((err) => {
 		console.log('Destinations не загрузились.', err);
 	});
+
+window.addEventListener('load', () => {
+	navigator.serviceWorker.register('/sw.js');
+	if (!isOnline) {
+		toast('we are offline', true);
+	}
+});
+
+window.addEventListener('online', () => {
+	document.title = document.title.replace('[offline]', '');
+	apiWithProviderPoints.sync();
+	toastRemove();
+});
+
+window.addEventListener('offline', () => {
+	document.title += ' [offline]';
+	toast('we are offline', true);
+});

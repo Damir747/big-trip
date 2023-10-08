@@ -13,7 +13,7 @@ const createStoreStructure = (items) => {
 		});
 	}, {});
 }
-
+// реализуйте приватный метод _isOnLine для проверки наличия сети;
 export default class Provider {
 	constructor(api, store) {
 		this._api = api;
@@ -23,17 +23,53 @@ export default class Provider {
 		if (isOnline()) {
 			return this._api.getPoints()
 				.then((points) => {
+					console.log(points);	// array
 					const items = createStoreStructure(points.map(PointModel.adaptToServer));
+					console.log(items);	// object
 					this._store.setItems(items);
 					return points;
 				})
 		}
+		console.log('offline');
 		const storePoints = Object.values(this._store.getItems());
 		return Promise.resolve(storePoints.map(PointModel.adaptToClient));
 	}
-	updatePoints(point) {
+	getDestinations() {
+		if (isOnline()) {
+			return this._api.getDestinations()
+				.then((destinations) => {
+					this._store.setItems(destinations);
+					console.log(destinations);	// array
+					return destinations;
+				})
+		}
+
+		const storeItems = this._store.getItems();
+		return Promise.resolve(storeItems);
+
+		// const storeDestinations = Object.values(this._store.getDestinations());
+		// //? не факт, что надо будет конвертировать
+		// return Promise.resolve(storeDestinations.map(PointModel.adaptDestinationsToClient));
+	}
+	getOffers() {
+		if (isOnline()) {
+			return this._api.getOffers()
+				.then((offers) => {
+					this._store.setItems(offers);
+					console.log(offers);	// array
+					return offers;
+				})
+		}
+		const storeItems = this._store.getItems();
+		return Promise.resolve(storeItems);
+
+		// const storeOffers = Object.values(this._store.getOffers());
+		// return Promise.resolve(storeOffers.map(PointModel.adaptOffersToClient));
+	}
+
+	updatePoint(point) {
 		if (isOnline) {
-			return this._api.updatePoints(point)
+			return this._api.updatePoint(point)
 				.then((updatedPoint) => {
 					this._store.setItem(updatedPoint.id, PointModel.adaptToServer(updatedPoint));
 					return updatedPoint;
