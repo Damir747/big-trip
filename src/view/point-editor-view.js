@@ -9,6 +9,7 @@ import { checkPriceIsNumber } from '../utils/point.js';
 import he from 'he';
 import { render } from './render.js';
 import dayjs from 'dayjs';
+import { toast } from '../utils/toast.js';
 
 const datalistCity = (city) => {
 	return `<option value="${city}">`;
@@ -55,7 +56,7 @@ const editPointTemplate = (point, editMode, destinations) => {
                       </fieldset>
                     </div>
                   </div>
-
+						
                   <div class="event__field-group  event__field-group--destination">
                     <label class="event__label  event__type-output" for="event-destination-1">
                       ${firstLetterUpperCase(point.type)}
@@ -154,11 +155,7 @@ export default class PointEditorView extends SmartView {
 	}
 
 	getTemplate() {
-		// console.log(this._point.offers);
-		// console.log(this._point.checkedOffers);
-		this._pointsModel.getOffer(this._point);	//? она здесь зануляет выбранные опции. зачем?
-		// console.log(this._point.offers);
-		// console.log(this._point.checkedOffers);
+		this._pointsModel.getOffer(this._point);
 		return editPointTemplate(this._point, this._editMode, this._destinationsModel.getDestinations());
 	}
 	reset(point) {
@@ -246,13 +243,13 @@ export default class PointEditorView extends SmartView {
 		this.updateData({
 			type: evt.target.value,
 			checkedOffers: [],
-			// offers: this._pointsModel.getOfferByType(evt.target.value),
 		});
-		if (this._offers.length === 0) {
-			document.querySelector('.event__section--offers').classList.add('visually-hidden');
+		console.log(this._offers);
+		if (this._offers && this._offers.length >= 0) {
+			document.querySelector('.event__section--offers').classList.remove('visually-hidden');
 		}
 		else {
-			document.querySelector('.event__section--offers').classList.remove('visually-hidden');
+			document.querySelector('.event__section--offers').classList.add('visually-hidden');
 		}
 	}
 
@@ -362,13 +359,18 @@ export default class PointEditorView extends SmartView {
 		if (evt.target.tagName !== 'INPUT') {
 			return;
 		}
-		// this._point.offers - это все доступные offers для точки
-		// this._point.checkedOffers - это только выбранные - хранятся на сервере
-		const index = this._offers.findIndex(el => el.short === evt.target.name.replace('event-offer-', ''));
-		if (index === -1) {
-			return;
+		if (this._offers) {
+			// this._point.offers - это все доступные offers для точки
+			// this._point.checkedOffers - это только выбранные - хранятся на сервере
+			const index = this._offers.findIndex(el => el.short === evt.target.name.replace('event-offer-', ''));
+			if (index === -1) {
+				return;
+			}
+			this._offers[index].checked = evt.target.checked;
 		}
-		this._offers[index].checked = evt.target.checked;
+		else {
+			toast(`offers are not loaded. selected offers will not be save`);
+		}
 	}
 	static parsePointToState(point) {
 		return Object.assign(

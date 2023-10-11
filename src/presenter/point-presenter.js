@@ -42,6 +42,14 @@ export default class PointPresenter extends AbstractView {
 
 		this._emptyPoint = (point === EMPTY_POINT);
 		if (this._emptyPoint) {
+			if (this._pointsModel.getOffers().length === 0) {
+				toast(`can't create new point because offers are not ready`)
+				return;
+			}
+			if (this._destinationsModel.getDestinations().length === 0) {
+				toast(`can't create new point because destinations are not ready`)
+				return;
+			}
 			this._point = generatePoint(this._pointsModel, this._destinationsModel.getDestinations());
 			this._pointMode = Mode.EDIT;
 			this._pointComponent = new PointView(this._point);

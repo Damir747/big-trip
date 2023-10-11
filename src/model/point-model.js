@@ -46,21 +46,23 @@ export default class PointsModel extends Observer {
 	// Получить offers для точки.
 	// Актуально: при смене типа точки. И при отрисовке PointEditorView(type по умолчанию равен type точки)
 	getOffer(point, type = point.type) {
+		if (!this.offers) {
+			return;
+		}
 		const indexType = this._offers.findIndex((offer) => offer.title === type);
 		if (indexType === -1) {
 			return;
 		}
 		const offersByType = this._offers[indexType].offers;
-		const arr = [];
+		point.offers = new Array();
 		offersByType.forEach((element) => {
 			const obj = Object.assign(
 				{},
 				element,
 				{ checked: point.checkedOffers.findIndex(elem => elem.title === element.title) !== -1 },
 			);
-			arr.push(obj);
+			point.offers.push(obj);
 		});
-		point.offers = arr;
 		return point.offers;
 	}
 	// отметить выбранные опции (checkedOffers) для точки

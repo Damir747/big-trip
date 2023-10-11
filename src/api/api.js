@@ -13,7 +13,7 @@ export default class Api {
 			.then(Api.toJSON)
 			.then((points) => points.map(PointsModel.adaptToClient));
 	}
-
+	// Если offers не загружены, то отображение в точке идёт не корректно, выбранные опции отображаются, но не выделены, сохранение вызывает ошибку
 	//? при проблемах с загрузкой - точки открываются. Вся инфомрация есть. Всё работает.
 	// Название города - запрет на редактирование.Надо бы ошибку выдать.
 	// новую точку - надо выдать ошибку
@@ -28,7 +28,8 @@ export default class Api {
 	getOffers() {
 		return this._load({ url: 'offers' })
 			.then(Api.toJSON)
-			.then((offers) => offers.map(PointsModel.adaptOffersToClient));
+			.then((offers) => offers.map(PointsModel.adaptOffersToClient))
+			.then((offers) => console.log(offers));
 	}
 	// ? destinations и offers - надо выдать ошибку в новой точке, а также в редактировании
 	// ? points - сообщить об ошибке
