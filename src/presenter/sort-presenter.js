@@ -25,7 +25,7 @@ export default class SortPresenter extends AbstractView {
 
 	init() {
 		this._sortModel.setDefaultUpSort();										// установка направления сортировки по умолчанию
-		this._sortModel.setActiveSort(UpdateType.FULL, DEFAULT_SORT);	// установка сортировки по умолчанию
+		this._sortModel.setActiveSort(UpdateType.POINTS, DEFAULT_SORT);	// установка сортировки по умолчанию
 
 		this._handleModelEventSort();
 	}
@@ -55,6 +55,6 @@ export default class SortPresenter extends AbstractView {
 		else {
 			this._sortModel.setDefaultUpSort();						// установка направления сортировки по умолчанию
 		}
-		this._sortModel.setActiveSort(UpdateType.FULL, sortType);
+		this._sortModel.setActiveSort(UpdateType.POINTS, sortType);
 	}
 }

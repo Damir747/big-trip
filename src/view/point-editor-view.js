@@ -273,12 +273,10 @@ export default class PointEditorView extends SmartView {
 
 	_onFormSubmit(evt) {
 		evt.preventDefault();
-		this._point.offers = this._offers.slice();	//? а если нет сети, то ошибка
-		// console.log(this._point.offers);
-		// console.log(this._point.checkedOffers);
-		this._pointsModel.setCheckedOffer(this._point);
-		// console.log(this._point.offers);
-		// console.log(this._point.checkedOffers);
+		if (this._offers) {
+			this._point.offers = this._offers.slice();	//? а если нет сети, то ошибка
+			this._pointsModel.setCheckedOffer(this._point);
+		}
 		this._callback.onFormSubmit(PointEditorView.parseStateToPoint(this._point));
 	}
 

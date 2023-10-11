@@ -9,6 +9,7 @@ import { UserAction, UpdateType } from '../const.js';
 import { remove } from '../framework/render.js';
 import { RenderPosition } from '../const.js';
 import LoadingView from '../view/loading.js';
+import LoadMoreButton from '../view/load-more.js';
 
 //? Надо ли отображать маршрут полностью (и расчет цены)? Или с учетом фильтра (как сейчас)?
 
@@ -34,6 +35,7 @@ export default class TripPresenter {
 		this._onPointModeChange = this._onPointModeChange.bind(this);
 		this._handleViewAction = this._handleViewAction.bind(this);
 		this._handleModelEvent = this._handleModelEvent.bind(this);
+		this._handleButton = this._handleButton.bind(this);
 
 		this._pointsModel.addObserver(this._handleModelEvent);
 		this._sortModel.addObserver(this._handleModelEvent);
@@ -46,6 +48,8 @@ export default class TripPresenter {
 	init() {
 		render(this._tripContainer, this._boardViewComponent, RenderPosition.AFTERBEGIN);
 		render(this._boardViewComponent, this._pointListComponent, RenderPosition.BEFOREEND);
+		this._showPointsStart = 0;
+		this._showPoints = POINTS_COUNT;
 		this._renderBoard();
 	}
 	getModel() {
@@ -66,6 +70,29 @@ export default class TripPresenter {
 	_getPoints() {
 		return this.getModel().getPoints(this.getFilterModel().getActiveFilter(), this.getSortModel().getActiveSort(), this.getSortModel().getUpSort());
 	}
+
+	_toggleButton() {
+		if (this._getPoints().length > this._showPoints) {
+			this._loadMoreButton.show();
+		}
+		else {
+			this._loadMoreButton.hide();
+		}
+	}
+
+	_handleButton() {
+		this._showPointsStart += POINTS_COUNT;
+		this._showPoints = Math.min(this._getPoints().length, this._showPoints + POINTS_COUNT);
+		this._renderPointList(this._showPointsStart);
+		this._toggleButton();
+	}
+
+	_renderLoadMoreButton() {
+		this._loadMoreButton = new LoadMoreButton();
+		render(this._tripContainer, this._loadMoreButton, RenderPosition.BEFOREEND);
+		this._loadMoreButton.setButtonCLickListener(this._handleButton);
+		this._toggleButton();
+	}
 	_renderTripInfo() {
 		this._tripInfo = new TripInfo(this._getPoints());	// Информация - описание поездки
 		render(this._tripInfoContainer, this._tripInfo, RenderPosition.AFTERBEGIN);
@@ -84,11 +111,8 @@ export default class TripPresenter {
 		render(this._boardViewComponent, this._noPoint, RenderPosition.BEFOREEND);
 	}
 
-	_renderPointList() {
-		this._renderPoints(0, Math.min(this._getPoints().length, POINTS_COUNT));
-		if (this._getPoints().length > POINTS_COUNT) {
-			console.log('Load More Button');
-		}
+	_renderPointList(start = 0) {
+		this._renderPoints(start, this._showPoints);
 	}
 
 	_renderLoading() {
@@ -106,6 +130,7 @@ export default class TripPresenter {
 		}
 		this._renderTripInfo();
 		this._renderPointList();
+		this._renderLoadMoreButton();
 		// Теперь, когда _renderBoard рендерит доску не только на старте,
 		// но и по ходу работы приложения, нужно заменить
 		// константу TASK_COUNT_PER_STEP на свойство _renderedTaskCount,
@@ -164,7 +189,7 @@ export default class TripPresenter {
 				this._renderBoard();
 				break;
 			case UpdateType.POINTS:
-				this._clearBoard();
+				this._clearBoard(false);
 				this._renderBoard();
 				break;
 			case UpdateType.PATCH:
@@ -193,11 +218,16 @@ export default class TripPresenter {
 			this._tripInfo.getElement();
 			remove(this._tripInfo);
 		}
+		if (this._loadMoreButton !== undefined) {
+			remove(this._loadMoreButton);
+		}
 		this._noPoint.getElement();
 		remove(this._noPoint);
 		// remove Empty
 		// remove Cost
 		if (resetSort) {
+			this._showPointsStart = 0;
+			this._showPoints = POINTS_COUNT;
 			// this._upSort = false;
 			// this._sortModel.setActiveSort(UpdateType.FULL, DEFAULT_SORT);
 			// this._filterModel.setActiveFilter(UpdateType.FULL, DEFAULT_FILTER);

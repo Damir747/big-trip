@@ -106,8 +106,8 @@ window.addEventListener('load', () => {
 
 window.addEventListener('online', () => {
 	document.title = document.title.replace('[offline]', '');
-	apiWithProviderPoints.sync();
 	toastRemove();
+	apiWithProviderPoints.sync();
 });
 
 window.addEventListener('offline', () => {

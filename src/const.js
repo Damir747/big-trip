@@ -1,4 +1,4 @@
-export const POINTS_COUNT = 20;	//сколько точек показывать на экране
+export const POINTS_COUNT = 4;	//сколько точек показывать на экране
 export const DIR_ICONS = 'img/icons/';
 export const COUNT_PICTURE = 4;
 export const Method = {
