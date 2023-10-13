@@ -10,6 +10,7 @@ import { remove } from '../framework/render.js';
 import { RenderPosition } from '../const.js';
 import LoadingView from '../view/loading.js';
 import LoadMoreButton from '../view/load-more.js';
+import { isOnline } from '../utils/common.js';
 
 export default class TripPresenter {
 	constructor(tripContainer, tripInfoContainer, pointsModel, filterModel, sortModel, api, destinationsModel) {
@@ -116,6 +117,10 @@ export default class TripPresenter {
 
 	_renderPointList(start = 0) {
 		this._renderPoints(start, this._showPoints);
+
+		const buttonsRollDown = document.querySelectorAll('.event__rollup-btn');
+		buttonsRollDown.forEach(button => button.disabled = !isOnline());
+
 	}
 
 	_renderLoading() {

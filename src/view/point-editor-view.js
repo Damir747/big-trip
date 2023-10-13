@@ -1,4 +1,4 @@
-import { humanizeDate, compareTwoDates, findElement, addListener, removeListener } from '../utils/common.js';
+import { humanizeDate, compareTwoDates, findElement, addListener, removeListener, isOnline } from '../utils/common.js';
 import { createOffers } from '../utils/offer.js';
 import { DateFormat, DIR_ICONS, EVENT_TYPE, EditMode } from '../const.js';
 import SmartView from './smart.js';
@@ -141,7 +141,7 @@ export default class PointEditorView extends SmartView {
 		this._setDatePicker(this._dateEnd);
 
 		this.refreshDatalist = this.refreshDatalist.bind(this);
-		this._destinationsModel.addObserver(this.refreshDatalist);		//? при обновлении данных о городах обновить datalist
+		this._destinationsModel.addObserver(this.refreshDatalist);
 	}
 
 	init() {
@@ -151,7 +151,7 @@ export default class PointEditorView extends SmartView {
 	refreshDatalist() {
 		const containerDestinations = findElement(this.getElement(), '.event__field-group--destination');
 		const containerDatalist = findElement(this.getElement(), 'datalist');
-		render(containerDestinations, containerDatalist);	//? может убирать старый datalist надо?
+		render(containerDestinations, containerDatalist);
 	}
 
 	getTemplate() {
@@ -257,6 +257,10 @@ export default class PointEditorView extends SmartView {
 		addListener(this.getElement(), '.event__type-group', 'change', this._changeTypePoint);
 	}
 
+	disableNewButton() {
+		document.querySelector('.trip-main__event-add-btn').disabled = !isOnline();
+	}
+
 	_onRollUpClick(evt) {
 		evt.preventDefault();
 		this._callback.onRollUpClick();
@@ -270,10 +274,11 @@ export default class PointEditorView extends SmartView {
 	_onFormSubmit(evt) {
 		evt.preventDefault();
 		if (this._offers) {
-			this._point.offers = this._offers.slice();	//? а если нет сети, то ошибка
+			this._point.offers = this._offers.slice();
 			this._pointsModel.setCheckedOffer(this._point);
 		}
 		this._callback.onFormSubmit(PointEditorView.parseStateToPoint(this._point));
+		this.disableNewButton();
 	}
 
 	setFormSubmitHandler(callback) {
@@ -284,6 +289,7 @@ export default class PointEditorView extends SmartView {
 	_onFormDelete(evt) {
 		evt.preventDefault();
 		this._callback.onFormDelete(PointEditorView.parseStateToPoint(this._point));
+		this.disableNewButton();
 	}
 
 	setFormDeleteHandler(callback) {

@@ -43,7 +43,6 @@ export default class PointsModel extends Observer {
 		return arr;
 	}
 
-	//? по стрелке вверх закрытие не удаляет форму (измененный тип сохраняется), вот Escape удаляет (измененный тип сбрасывается)
 	// Получить offers для точки.
 	// Актуально: при смене типа точки. И при отрисовке PointEditorView(type по умолчанию равен type точки)
 	getOffer(point, type = point.type) {

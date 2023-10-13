@@ -82,8 +82,6 @@ export default class PointPresenter extends AbstractView {
 				replace(this._pointComponent, previousPointComponent);
 				break;
 			case Mode.EDIT:
-				//? тут надо как-то по-другому написать 1:22:10
-				replace(this._pointEditorComponent, previousPointEditorComponent);
 				replace(this._pointComponent, previousPointEditorComponent);
 				this._pointMode = Mode.VIEW;
 				break;
@@ -198,7 +196,7 @@ export default class PointPresenter extends AbstractView {
 		replace(this._pointComponent, this._pointEditorComponent);
 		document.removeEventListener('keydown', this._escKeyDownHandler);
 		this._pointMode = Mode.VIEW;
-		document.querySelector('.trip-main__event-add-btn').disabled = !isOnline();
+		this._pointEditorComponent.disableNewButton();
 	}
 
 	_escKeyDownHandler(evt) {
@@ -230,7 +228,7 @@ export default class PointPresenter extends AbstractView {
 		else {
 			this._changeData(
 				UserAction.DELETE_POINT,
-				UpdateType.POINTS,		// PATCH не обновляет, остается открытая форма редактирования
+				UpdateType.POINTS,		// PATCH не обновляет, остается открытая форма редактирования. //? Последняя точка удаляется с ошибкой
 				point,
 			)
 		}

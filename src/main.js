@@ -107,28 +107,6 @@ window.addEventListener('load', () => {
 	}
 });
 //? При переходе в офлайн-режим. Создание и редактирование точки маршрута в режиме офлайн недоступно. Единственное доступное действие — добавление точки маршрута в избранное.
-//? title онлайн/оффлайн не изменяется
-
-window.addEventListener('online', () => {
-	document.title = document.title.replace(' [offline]', '');
-	apiWithProvider.sync();
-	toastRemove();
-});
-
-
-window.addEventListener('offline', () => {
-	document.title += ' [offline]';
-	toastPermanent();
-});
-
-
-window.onload = () => {
-	window.ononline = (evt) => { console.log('online'); };
-	window.onoffline = (evt) => { console.log('offline'); };
-};
-window.ononline = (event) => {
-	console.log("You are now connected to the network.");
-};
 
 window.addEventListener('online', (evt) => {
 	console.log('online');
@@ -139,7 +117,7 @@ window.addEventListener('online', (evt) => {
 	const buttonsRollDown = document.querySelectorAll('.event__rollup-btn');
 	buttonsRollDown.forEach(button => button.disabled = false);
 });
-window.addEventListener("offline", (evt) => {
+window.addEventListener('offline', (evt) => {
 	console.log('offline');
 	document.title += ' [offline]';
 	toast('we are offline', true);
@@ -148,3 +126,8 @@ window.addEventListener("offline", (evt) => {
 	buttonsRollDown.forEach(button => button.disabled = true);
 });
 window.addEventListener("resize", () => { console.log('resize') });
+function handleMouseClick(event) {
+	console.log('Вы нажали на элемент:', event.target)
+}
+
+window.addEventListener("click", handleMouseClick);

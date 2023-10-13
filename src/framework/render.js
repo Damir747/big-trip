@@ -5,7 +5,7 @@ import AbstractView from './abstract-view.js';
  * @param {AbstractView} component Компонент, который нужно удалить
  */
 export const remove = (component) => {
-	if (component === null) {
+	if (component === null || component._element === null) {
 		return;
 	}
 
