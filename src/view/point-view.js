@@ -3,10 +3,6 @@ import { DateFormat, DIR_ICONS } from '../const.js';
 import { selectedOffers } from '../utils/offer.js';
 import AbstractView from '../framework/abstract-view.js';
 
-//? Новая точка маршрута создаётся нажатием на кнопку «New Event». Форма создания новой точки маршрута появляется в самом начале списка. Кнопка при этом блокируется на время создания новой точки.
-
-//? Если информация о пункте назначения отсутствует, блок «Destination» не отображается.
-
 const pointTemplate = (point) => {
 	const checkedFavorite = point.checkedFavorite ? 'event__favorite-btn--active' : '';
 
@@ -46,7 +42,6 @@ const pointTemplate = (point) => {
 };
 
 export default class PointView extends AbstractView {
-	// _point = null;
 	constructor(point) {
 		super();
 		this._point = point;

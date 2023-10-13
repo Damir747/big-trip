@@ -23,9 +23,7 @@ export default class Provider {
 		if (isOnline()) {
 			return this._api.getPoints()
 				.then((points) => {
-					console.log(points);	// array
 					const items = createStoreStructure(points.map(PointModel.adaptToServer));
-					console.log(items);	// object
 					this._store.setItems(items);
 					return points;
 				})
@@ -39,36 +37,31 @@ export default class Provider {
 			return this._api.getDestinations()
 				.then((destinations) => {
 					this._store.setItems(destinations);
-					console.log(destinations);	// array
 					return destinations;
 				})
 		}
 
 		const storeItems = this._store.getItems();
-		return Promise.resolve(storeItems);
-
-		// const storeDestinations = Object.values(this._store.getDestinations());
-		// //? не факт, что надо будет конвертировать
-		// return Promise.resolve(storeDestinations.map(PointModel.adaptDestinationsToClient));
+		return Promise.resolve(storeItems.map(PointModel.adaptDestinationsToClient));
 	}
 	getOffers() {
 		if (isOnline()) {
 			return this._api.getOffers()
 				.then((offers) => {
-					this._store.setItems(offers);
-					console.log(offers);	// array
+					const items = createStoreStructure(offers.map(PointModel.adaptOffersToServer));
+					this._store.setItems(items);
 					return offers;
 				})
 		}
 		const storeItems = this._store.getItems();
-		return Promise.resolve(storeItems);
+		return Promise.resolve(storeItems.map(PointModel.adaptOffersToClient));
 
 		// const storeOffers = Object.values(this._store.getOffers());
 		// return Promise.resolve(storeOffers.map(PointModel.adaptOffersToClient));
 	}
 
 	updatePoint(point) {
-		if (isOnline) {
+		if (isOnline()) {
 			return this._api.updatePoint(point)
 				.then((updatedPoint) => {
 					this._store.setItem(updatedPoint.id, PointModel.adaptToServer(updatedPoint));
@@ -79,7 +72,7 @@ export default class Provider {
 		return Promise.resolve(point);
 	}
 	addPoint(point) {
-		if (isOnline) {
+		if (isOnline()) {
 			return this._api.addPoint(point)
 				.then((newPoint) => {
 					this._store.setItem(newPoint.id, PointModel.adaptToServer(newPoint))
@@ -89,7 +82,7 @@ export default class Provider {
 		return Promise.reject(new Error('Add point failed'));
 	}
 	deletePoint(point) {
-		if (isOnline) {
+		if (isOnline()) {
 			return this._api.deletePoint(point)
 				.then(() =>
 					this._store.removeItem(point.id));
@@ -97,7 +90,7 @@ export default class Provider {
 		return Promise.reject(new Error('Delete point failed'));
 	}
 	sync() {
-		if (isOnline) {
+		if (isOnline()) {
 			const storePoints = Object.values(this._store.getItems());
 			return this._api.sync(storePoints)
 				.then((response) => {

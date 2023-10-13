@@ -3,8 +3,6 @@ import { createElement } from '../utils/common.js';
 const SHAKE_ANIMATION_TIMEOUT = 600;
 const DURATION_MULTIPLIER = 1000;
 export default class AbstractView {
-	// _element = null;
-	// _callback = {};
 	constructor() {
 		if (new.target === AbstractView) {
 			throw new Error('Can\'t instantiate AbstractView, only concrete one.');
@@ -31,7 +29,6 @@ export default class AbstractView {
 		this.getElement().classList.add('visually-hidden');
 	}
 	shake(callback) {
-		//? правильней: классы вместо инлайн
 		this.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / DURATION_MULTIPLIER}s`;
 		setTimeout(() => {
 			this.getElement().style.animation = '';

@@ -19,6 +19,7 @@ import Api from './api/api.js';
 import Provider from './api/provider.js';
 import { toast, toastRemove } from './utils/toast.js';
 
+
 const AUTHORIZATION = 'Basic dadasdab7n89llghhswgqe4tdfgdg';
 const END_POINT = 'https://14.ecmascript.pages.academy/big-trip';
 const STORE_PREFIX = 'big-trip-storage';
@@ -40,7 +41,7 @@ const apiWithProviderDestinations = new Provider(api, storeDestinations);
 
 const headerView = new HeaderView();	// Заголовок (header) для: Маршрут и стоимость, Меню, Фильтры
 render(findElement(document, CONTAINER.HEADER), headerView.getElement(), RenderPosition.BEFOREEND);
-
+//? при сохранении точки, "отвыбранные" опции временно показываются как выбранные
 //? offersModel инициализировать 36:31
 
 const pointsModel = new PointsModel();
@@ -68,8 +69,6 @@ filterPresenter.init();
 const sortPresenter = new SortPresenter(findElement(document, CONTAINER.SORT), filterModel, sortModel, tabModel);
 sortPresenter.init();
 
-//? поработать с пустыми данными (если ничего не пришло с сервера)
-//? да, если нет offers, обработчиков нет
 apiWithProviderOffers.getOffers()
 	.then((offers) => {
 		console.log('Данные offers получены', offers);
@@ -77,6 +76,7 @@ apiWithProviderOffers.getOffers()
 	})
 	.catch((err) => {
 		console.log('Offers не загрузились.', err);
+		toast('Offers are not loaded');
 	});
 apiWithProviderPoints.getPoints()
 	.then((points) => {
@@ -85,6 +85,7 @@ apiWithProviderPoints.getPoints()
 	})
 	.catch((err) => {
 		console.log('Points не загрузились', err);
+		toast('Points are not loaded');
 		pointsModel.setPoints(UpdateType.INIT, []);
 	});
 
@@ -95,22 +96,55 @@ apiWithProviderDestinations.getDestinations()
 	})
 	.catch((err) => {
 		console.log('Destinations не загрузились.', err);
+		toast('Destinations are not loaded');
 	});
+
 
 window.addEventListener('load', () => {
 	navigator.serviceWorker.register('/sw.js');
-	if (!isOnline) {
+	if (!isOnline()) {
 		toast('we are offline', true);
 	}
 });
+//? При переходе в офлайн-режим. Создание и редактирование точки маршрута в режиме офлайн недоступно. Единственное доступное действие — добавление точки маршрута в избранное.
+//? title онлайн/оффлайн не изменяется
 
 window.addEventListener('online', () => {
-	document.title = document.title.replace('[offline]', '');
+	document.title = document.title.replace(' [offline]', '');
+	apiWithProvider.sync();
 	toastRemove();
-	apiWithProviderPoints.sync();
 });
+
 
 window.addEventListener('offline', () => {
 	document.title += ' [offline]';
-	toast('we are offline', true);
+	toastPermanent();
 });
+
+
+window.onload = () => {
+	window.ononline = (evt) => { console.log('online'); };
+	window.onoffline = (evt) => { console.log('offline'); };
+};
+window.ononline = (event) => {
+	console.log("You are now connected to the network.");
+};
+
+window.addEventListener('online', (evt) => {
+	console.log('online');
+	document.title = document.title.replace('[offline]', '');
+	toastRemove();
+	apiWithProviderPoints.sync();
+	document.querySelector('.trip-main__event-add-btn').disabled = false;
+	const buttonsRollDown = document.querySelectorAll('.event__rollup-btn');
+	buttonsRollDown.forEach(button => button.disabled = false);
+});
+window.addEventListener("offline", (evt) => {
+	console.log('offline');
+	document.title += ' [offline]';
+	toast('we are offline', true);
+	document.querySelector('.trip-main__event-add-btn').disabled = true;
+	const buttonsRollDown = document.querySelectorAll('.event__rollup-btn');
+	buttonsRollDown.forEach(button => button.disabled = true);
+});
+window.addEventListener("resize", () => { console.log('resize') });

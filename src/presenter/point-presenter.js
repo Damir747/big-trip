@@ -165,7 +165,7 @@ export default class PointPresenter extends AbstractView {
 		//? здесь ещё можно проверить, насколько крупное изменение, см. видео 7.1 28:05
 		// сначала изменить данные, только потом изменить View
 		//? а ещё надо будет сделать обработчик на случай, если что-то пошло не так
-		if (!isOnline) {
+		if (!isOnline()) {
 			toast(`Can't save point offline`, true);
 			return;
 		}
@@ -194,15 +194,16 @@ export default class PointPresenter extends AbstractView {
 	}
 
 	_changeModeToView() {
+		this._pointEditorComponent.reset(this._point);	//? надо поставить проверки на null на таких операциях
 		replace(this._pointComponent, this._pointEditorComponent);
 		document.removeEventListener('keydown', this._escKeyDownHandler);
 		this._pointMode = Mode.VIEW;
+		document.querySelector('.trip-main__event-add-btn').disabled = !isOnline();
 	}
 
 	_escKeyDownHandler(evt) {
 		if (isEscapeEvent(evt)) {
 			evt.preventDefault();
-			this._pointEditorComponent.reset(this._point);
 			this._changeModeToView();
 		}
 	}
@@ -219,7 +220,7 @@ export default class PointPresenter extends AbstractView {
 		);
 	}
 	_deletePoint(point) {
-		if (!isOnline) {
+		if (!isOnline()) {
 			toast(`Can't delete point offline`, true);
 			return;
 		}

@@ -7,32 +7,22 @@ export default class Api {
 		this._authorization = authorization;
 	}
 
-	// ? при проблемах с загрузкой - пустое поле (нет точек), новую точку создаёт.
 	getPoints() {
 		return this._load({ url: 'points' })
 			.then(Api.toJSON)
 			.then((points) => points.map(PointsModel.adaptToClient));
 	}
-	// Если offers не загружены, то отображение в точке идёт не корректно, выбранные опции отображаются, но не выделены, сохранение вызывает ошибку
-	//? при проблемах с загрузкой - точки открываются. Вся инфомрация есть. Всё работает.
-	// Название города - запрет на редактирование.Надо бы ошибку выдать.
-	// новую точку - надо выдать ошибку
 	getDestinations() {
 		return this._load({ url: 'destinations' })
 			.then(Api.toJSON)
 			.then((destinations) => destinations.map(PointsModel.adaptDestinationsToClient));
 	}
-
-	//? при проблемах с загрузкой - точки открываются. Вся инфомрация есть. Изменять даёт. Сохранить не даёт.
-	// новую точку - надо выдать ошибку
 	getOffers() {
 		return this._load({ url: 'offers' })
 			.then(Api.toJSON)
-			.then((offers) => offers.map(PointsModel.adaptOffersToClient))
-			.then((offers) => console.log(offers));
+			.then((offers) => offers.map(PointsModel.adaptOffersToClient));
 	}
-	// ? destinations и offers - надо выдать ошибку в новой точке, а также в редактировании
-	// ? points - сообщить об ошибке
+
 	updatePoint(point) {
 		point = PointsModel.adaptOffersToServer(point);
 		return this._load({

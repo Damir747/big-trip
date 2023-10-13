@@ -11,8 +11,6 @@ import { RenderPosition } from '../const.js';
 import LoadingView from '../view/loading.js';
 import LoadMoreButton from '../view/load-more.js';
 
-//? Надо ли отображать маршрут полностью (и расчет цены)? Или с учетом фильтра (как сейчас)?
-
 export default class TripPresenter {
 	constructor(tripContainer, tripInfoContainer, pointsModel, filterModel, sortModel, api, destinationsModel) {
 		this._isLoading = true;
@@ -67,8 +65,15 @@ export default class TripPresenter {
 	show() {
 		this._boardViewComponent.show();
 	}
+	_getAllPoints() {
+		return this.getModel().getPoints();
+	}
 	_getPoints() {
-		return this.getModel().getPoints(this.getFilterModel().getActiveFilter(), this.getSortModel().getActiveSort(), this.getSortModel().getUpSort());
+		return this.getModel().getPoints(
+			this.getFilterModel().getActiveFilter(),
+			this.getSortModel().getActiveSort(),
+			this.getSortModel().getUpSort()
+		);
 	}
 
 	_toggleButton() {
@@ -89,12 +94,12 @@ export default class TripPresenter {
 
 	_renderLoadMoreButton() {
 		this._loadMoreButton = new LoadMoreButton();
-		render(this._tripContainer, this._loadMoreButton, RenderPosition.BEFOREEND);
+		render(this._boardViewComponent, this._loadMoreButton, RenderPosition.BEFOREEND);
 		this._loadMoreButton.setButtonCLickListener(this._handleButton);
 		this._toggleButton();
 	}
 	_renderTripInfo() {
-		this._tripInfo = new TripInfo(this._getPoints());	// Информация - описание поездки
+		this._tripInfo = new TripInfo(this._getAllPoints());	// Информация - описание поездки
 		render(this._tripInfoContainer, this._tripInfo, RenderPosition.AFTERBEGIN);
 	}
 	_renderPoint(point) {
@@ -104,8 +109,6 @@ export default class TripPresenter {
 	}
 	_renderPoints(from, to) {
 		this._getPoints().slice(from, to).forEach((tripPoint) => this._renderPoint(tripPoint));
-		//? надо переделать на параметр points (вместо from / to) и работу с ним
-
 	}
 	_renderNoPoints() {
 		render(this._boardViewComponent, this._noPoint, RenderPosition.BEFOREEND);
@@ -251,6 +254,7 @@ export default class TripPresenter {
 		btnAddEvent.addEventListener('click', (evt) => {
 			evt.preventDefault();
 			this._createPoint();
+			btnAddEvent.disabled = true;
 		});
 	}
 }

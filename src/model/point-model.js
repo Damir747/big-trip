@@ -3,7 +3,6 @@ import { utilFilterSort } from '../utils/filter.js';
 import dayjs from 'dayjs';
 
 //? Обратите внимание, что, если вы следовали нашим рекомендациям и выделили дополнительные опции в отдельную структуру, для них нужно завести отдельную модель и провести похожие манипуляции.
-//? а при смене типа точки цена должна ли меняться?
 
 export default class PointsModel extends Observer {
 	constructor() {
@@ -43,12 +42,11 @@ export default class PointsModel extends Observer {
 		});
 		return arr;
 	}
+
+	//? по стрелке вверх закрытие не удаляет форму (измененный тип сохраняется), вот Escape удаляет (измененный тип сбрасывается)
 	// Получить offers для точки.
 	// Актуально: при смене типа точки. И при отрисовке PointEditorView(type по умолчанию равен type точки)
 	getOffer(point, type = point.type) {
-		if (!this.offers) {
-			return;
-		}
 		const indexType = this._offers.findIndex((offer) => offer.title === type);
 		if (indexType === -1) {
 			return;
@@ -123,18 +121,16 @@ export default class PointsModel extends Observer {
 				checkedOffers: point.offers,
 			}
 		);
-
 		delete adaptedPoint.base_price;
 		delete adaptedPoint.date_from;
 		delete adaptedPoint.date_to;
 		delete adaptedPoint.is_favorite;
 		delete adaptedPoint.destination;
-		// delete adaptedPoint.offers;	//сохранить. offers для PointEditView, а checkedOffers для общего списка
 
 		return adaptedPoint;
 	}
-	static adaptToServer(point) {
 
+	static adaptToServer(point) {
 		const adaptedPoint = Object.assign(
 			{},
 			point,
@@ -172,12 +168,12 @@ export default class PointsModel extends Observer {
 				photos: destination.pictures,
 			}
 		);
-
 		delete adaptedDestination.name;
 		delete adaptedDestination.pictures;
 
 		return adaptedDestination;
 	}
+
 	static adaptOffersToClient(offer) {
 		const adaptOnlyOffers = (offers) => {
 			const adaptedOffers = [];
@@ -194,7 +190,6 @@ export default class PointsModel extends Observer {
 				);
 				adaptedOffers.push(adaptedOffer);
 			});
-
 			return adaptedOffers;
 		}
 
@@ -206,11 +201,11 @@ export default class PointsModel extends Observer {
 				offers: adaptOnlyOffers(offer.offers),
 			}
 		);
-
 		delete adaptedType.type;
 
 		return adaptedType;
 	}
+
 	static adaptOffersToServer(point) {
 		const arr = [];
 		point.offers.forEach(el => {
@@ -229,5 +224,4 @@ export default class PointsModel extends Observer {
 
 		return adaptedPoint;
 	}
-
 }

@@ -191,7 +191,6 @@ export default class PointEditorView extends SmartView {
 			// this._dateEnd = null;
 		}
 	}
-	//? отображает только 20 точек. Надо бы сделать: или все, или с кнопкой "загрузить ещё"
 
 	destroy() {
 		removeListener(this.getElement(), '.event__input--destination', 'change', this._onPointInput)
