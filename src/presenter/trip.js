@@ -51,15 +51,6 @@ export default class TripPresenter {
 		this._showPoints = POINTS_COUNT;
 		this._renderBoard();
 	}
-	getModel() {
-		return this._pointsModel;
-	}
-	getFilterModel() {
-		return this._filterModel;
-	}
-	getSortModel() {
-		return this._sortModel;
-	}
 	hide() {
 		this._boardViewComponent.hide();
 	}
@@ -67,13 +58,13 @@ export default class TripPresenter {
 		this._boardViewComponent.show();
 	}
 	_getAllPoints() {
-		return this.getModel().getPoints();
+		return this._pointsModel.getPoints();
 	}
 	_getPoints() {
-		return this.getModel().getPoints(
-			this.getFilterModel().getActiveFilter(),
-			this.getSortModel().getActiveSort(),
-			this.getSortModel().getUpSort()
+		return this._pointsModel.getPoints(
+			this._filterModel.getActiveFilter(),
+			this._sortModel.getActiveSort(),
+			this._sortModel.getUpSort()
 		);
 	}
 
@@ -154,13 +145,13 @@ export default class TripPresenter {
 					});
 				break;
 			case UserAction.ADD_POINT:
-				this._pointNewPresenter.setSaving();
+				this._pointNewPresenter.setViewState(State.SAVING);
 				this._api.addPoint(update)
 					.then((response) => {
 						this._pointsModel.addPoint(updateType, response);
 					})
 					.catch((err) => {
-						this._pointNewPresenter.setAborting();
+						this._pointNewPresenter.setViewState(State.ABORTING);
 					});
 				break;
 			case UserAction.DELETE_POINT:

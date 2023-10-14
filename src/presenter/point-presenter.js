@@ -150,23 +150,6 @@ export default class PointPresenter extends AbstractView {
 				break;
 		}
 	}
-	setSaving() {
-		this._pointEditorComponent.updateData({
-			isDisabled: true,
-			isSaving: true,
-		});
-	}
-	setAborting() {
-		console.log(this._pointEditorComponent);	//! null
-		const resetFormState = () => {
-			this._pointEditorComponent.updateData({
-				isDisabled: false,
-				isSaving: false,
-				isDeleting: false,
-			});
-		};
-		this._pointEditorComponent.shake(resetFormState);
-	}
 
 	_changeModeToEdit() {
 		replace(this._pointEditorComponent, this._pointComponent);

@@ -17,11 +17,8 @@ const utilFilter = (points, filterName) => {
 	}
 }
 
-export const filterCount = (points, filterName) => {
-	return utilFilter(points, filterName).length;
-}
+export const filterCount = (points, filterName) => utilFilter(points, filterName).length;
 
-// сюда засунуть часть точек - show more points
 export const utilFilterSort = (points, filterName = DEFAULT_FILTER, sortName = sortPointDateUp, upSort = true) => {
 	const filteredPoints = utilFilter(points, filterName);
 	switch (sortName) {
