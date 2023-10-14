@@ -12,7 +12,7 @@ const getWeightForNullDate = (dateA, dateB) => {
 	}
 	return null;
 }
-export const sortPointDateUp = (dateA, dateB) => {
+const sortPointDateUp = (dateA, dateB) => {
 	const weight = getWeightForNullDate(dateA.dueDate, dateB.dueDate);
 	if (weight !== null) {
 		return weight;
@@ -20,9 +20,9 @@ export const sortPointDateUp = (dateA, dateB) => {
 	return dayjs(dateA.start).diff(dayjs(dateB.start));
 }
 
-export const sortPointDateDown = (dateA, dateB) => sortPointDateUp(dateB, dateA);
+const sortPointDateDown = (dateA, dateB) => sortPointDateUp(dateB, dateA);
 
-export const sortPointTimeUp = (timeA, timeB) => {
+const sortPointTimeUp = (timeA, timeB) => {
 	const weight = getWeightForNullDate(timeA.dueDate, timeB.dueDate);
 	if (weight !== null) {
 		return weight;
@@ -34,7 +34,9 @@ export const sortPointTimeUp = (timeA, timeB) => {
 
 }
 
-export const sortPointTimeDown = (timeA, timeB) => sortPointTimeUp(timeB, timeA);
+const sortPointTimeDown = (timeA, timeB) => sortPointTimeUp(timeB, timeA);
 
-export const sortPointCostUp = (costA, costB) => costA.price - costB.price;
-export const sortPointCostDown = (costA, costB) => costB.price - costA.price;
+const sortPointCostUp = (costA, costB) => costA.price - costB.price;
+const sortPointCostDown = (costA, costB) => costB.price - costA.price;
+
+export { sortPointDateUp, sortPointDateDown, sortPointTimeUp, sortPointTimeDown, sortPointCostUp, sortPointCostDown }

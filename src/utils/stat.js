@@ -1,12 +1,7 @@
 import { ChartMode } from "../const.js";
 import { compareTwoDates, sortByDecreasing } from '../utils/common.js';
 
-export const arrUniqueTypes = (points) => {
-	const allTypes = points.map((point) => point.type);
-	return Array.from(new Set(allTypes));
-};
-
-export const getSortedData = (points, uniqueTypes, chartMode) => {
+const getSortedData = (points, uniqueTypes, chartMode) => {
 	const data = {};
 
 	uniqueTypes.forEach((type) => data[type] = 0);
@@ -34,3 +29,5 @@ export const getSortedData = (points, uniqueTypes, chartMode) => {
 	};
 	return sortedData.reduce(transferToObject, { types: [], values: [] });
 };
+
+export { getSortedData };

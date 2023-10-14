@@ -9,9 +9,11 @@ const createBoardTemplate = () => `<section class="trip-events">
 
 			</section>`;
 
-export default class BoardView extends AbstractView {
+class BoardView extends AbstractView {
 
 	getTemplate() {
 		return createBoardTemplate();
 	}
 }
+
+export default BoardView;

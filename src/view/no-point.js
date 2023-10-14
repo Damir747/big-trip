@@ -8,8 +8,10 @@ const createNoPointTemplate = () => {
 	// 'There are no future events now'
 };
 
-export default class NoPointView extends AbstractView {
+class NoPointView extends AbstractView {
 	getTemplate() {
 		return createNoPointTemplate();
 	}
 }
+
+export default NoPointView;

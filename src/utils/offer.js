@@ -1,4 +1,4 @@
-export const createOffers = (offers, isDisabled) => {
+const getOffersTemplate = (offers, isDisabled) => {
 	let offersList = "";
 	offers.forEach((el) => offersList += `<div class="event__offer-selector">
 	                     <input class="event__offer-checkbox  visually-hidden" id="event-offer-${el.short}-1" type="checkbox" name="event-offer-${el.short}" ${(!el.hasOwnProperty('checked') || el.checked) ? 'checked' : ''} ${isDisabled ? 'disabled' : ''}>
@@ -12,7 +12,7 @@ export const createOffers = (offers, isDisabled) => {
 }
 
 // Показывает в общем списке точек выбранные опции
-export const selectedOffers = (checkedOffer) => {
+const getSelectedOffersTemplate = (checkedOffer) => {
 	let offersList = "";
 	checkedOffer.forEach((el) => {
 		offersList += `<li class="event__offer">
@@ -24,3 +24,4 @@ export const selectedOffers = (checkedOffer) => {
 	return offersList;
 }
 
+export { getOffersTemplate, getSelectedOffersTemplate };

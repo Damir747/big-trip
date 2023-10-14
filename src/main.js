@@ -1,6 +1,6 @@
 import { CONTAINER } from './const.js';
 import { findElement } from './utils/common.js';
-import { render } from './view/render.js';
+import { render } from './framework/render.js';
 import TripPresenter from './presenter/trip.js';
 import HeaderView from './view/header-view.js';
 import PointsModel from './model/point-model.js';

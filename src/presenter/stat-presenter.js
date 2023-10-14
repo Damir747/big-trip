@@ -1,10 +1,9 @@
 import AbstractView from "../framework/abstract-view.js";
 import StatView from '../view/stat-view.js';
-import { render } from "../view/render.js";
-import { replace, remove } from "../framework/render.js";
+import { render, replace, remove } from "../framework/render.js";
 import { RenderPosition } from '../const.js';
 
-export default class StatPresenter extends AbstractView {
+class StatPresenter extends AbstractView {
 	constructor(statContainer, pointsModel) {
 		super();
 		this._statComponent = null;
@@ -43,3 +42,5 @@ export default class StatPresenter extends AbstractView {
 		this.init();
 	}
 }
+
+export default StatPresenter;

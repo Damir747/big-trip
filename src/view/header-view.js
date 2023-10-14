@@ -12,8 +12,10 @@ const createSectionTemplate = () => {
 				<button class="trip-main__event-add-btn  btn  btn--big  btn--yellow" type="button">New event</button>
 			</div>`;
 }
-export default class HeaderView extends AbstractView {
+class HeaderView extends AbstractView {
 	getTemplate() {
 		return createSectionTemplate();
 	}
 }
+
+export default HeaderView;

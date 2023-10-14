@@ -13,8 +13,8 @@ const createStoreStructure = (items) => {
 		});
 	}, {});
 }
-// реализуйте приватный метод _isOnLine для проверки наличия сети;
-export default class Provider {
+//? реализуйте приватный метод _isOnLine для проверки наличия сети;
+class Provider {
 	constructor(api, store) {
 		this._api = api;
 		this._store = store;
@@ -104,3 +104,5 @@ export default class Provider {
 		return Promise.reject(new Error('sync data failed'));
 	}
 }
+
+export default Provider;

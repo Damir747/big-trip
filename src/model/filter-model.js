@@ -1,7 +1,7 @@
 import { DEFAULT_FILTER } from "../const.js";
 import Observer from "../utils/observer.js";
 
-export default class FilterModel extends Observer {
+class FilterModel extends Observer {
 	constructor() {
 		super();
 		this._activeFilter = DEFAULT_FILTER;
@@ -16,3 +16,5 @@ export default class FilterModel extends Observer {
 		return this._activeFilter;
 	}
 }
+
+export default FilterModel;

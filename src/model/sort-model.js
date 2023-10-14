@@ -1,7 +1,7 @@
 import { DEFAULT_SORT } from "../const.js";
 import Observer from "../utils/observer.js";
 
-export default class SortModel extends Observer {
+class SortModel extends Observer {
 	constructor() {
 		super();
 		this._activeSort = DEFAULT_SORT;
@@ -25,3 +25,5 @@ export default class SortModel extends Observer {
 		this._upSort = flag;
 	}
 }
+
+export default SortModel;

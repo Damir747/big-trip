@@ -2,7 +2,7 @@ import { createElement } from '../utils/common.js';
 
 const SHAKE_ANIMATION_TIMEOUT = 600;
 const DURATION_MULTIPLIER = 1000;
-export default class AbstractView {
+class AbstractView {
 	constructor() {
 		if (new.target === AbstractView) {
 			throw new Error('Can\'t instantiate AbstractView, only concrete one.');
@@ -36,3 +36,5 @@ export default class AbstractView {
 		}, SHAKE_ANIMATION_TIMEOUT);
 	}
 }
+
+export default AbstractView;

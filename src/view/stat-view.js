@@ -1,10 +1,10 @@
 import AbstractView from "../framework/abstract-view.js";
 import Chart from '../../node_modules/chart.js';
 import ChartDataLabels from '../../node_modules/chartjs-plugin-datalabels';
-import { getSortedData, arrUniqueTypes } from '../utils/stat.js';
+import { getSortedData } from '../utils/stat.js';
 import { ChartMode, BAR_HEIGHT, TYPE_HORIZONTAL_BAR, BACKGROUND_COLOR, HOVER_BACKGROUND_COLOR, ANCHOR_START, ANCHOR_END } from "../const.js";
 import { findElement } from '../utils/common.js';
-import { humanizeDateDuration } from '../utils/point.js';
+import dayjs from 'dayjs';
 
 const moneyChart = (moneyCtx, points, types) => {
 	const moneyData = getSortedData(points, types, ChartMode.MONEY);
@@ -209,6 +209,23 @@ const timeChart = (timeCtx, points, types) => {
 	});
 }
 
+const TimeFormat = {
+	HOUR_PER_DAY: 1440,
+	MINUTE_PER_HOUR: 60,
+	MILLISECOND_PER_MINUTE: 60000,
+};
+const DAYS_COUNT = 10;
+
+const humanizeDateDuration = (tripTime) => {
+	const duration = dayjs.duration(tripTime).$d;
+
+	const day = duration.days < DAYS_COUNT ? `0${duration.days}D` : `${duration.days}D`;
+	const hour = duration.hours < DAYS_COUNT ? `0${duration.hours}H` : `${duration.hours}H`;
+	const minute = duration.minutes < DAYS_COUNT ? `0${duration.minutes}M` : `${duration.minutes}M`;
+	const total = (tripTime / TimeFormat.MILLISECOND_PER_MINUTE) > TimeFormat.HOUR_PER_DAY ? `${day} ${hour} ${minute}` : (tripTime / TimeFormat.MILLISECOND_PER_MINUTE) > TimeFormat.MINUTE_PER_HOUR ? `${hour} ${minute}` : minute;
+	return total;
+};
+
 const statTemplate = () => {
 	return `<section class="statistics">
           <h2 class="visually-hidden">Trip statistics</h2>
@@ -227,7 +244,7 @@ const statTemplate = () => {
         </section>`;
 }
 
-export default class StatView extends AbstractView {
+class StatView extends AbstractView {
 	constructor(pointsModel) {
 		super();
 
@@ -265,7 +282,7 @@ export default class StatView extends AbstractView {
 		const typeCtx = findElement(this.getElement(), '.statistics__chart--type');
 		const timeCtx = findElement(this.getElement(), '.statistics__chart--time');
 
-		const uniqueTypes = arrUniqueTypes(this._points);
+		const uniqueTypes = uniqueTypes(this._points);
 		this._moneyChart = moneyChart(moneyCtx, this._points, uniqueTypes);
 		this._typeChart = typeChart(typeCtx, this._points, uniqueTypes);
 		this._timeChart = timeChart(timeCtx, this._points, uniqueTypes);
@@ -282,3 +299,5 @@ export default class StatView extends AbstractView {
 	}
 
 }
+
+export default StatView;

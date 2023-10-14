@@ -1,7 +1,7 @@
 import { DEFAULT_TAB } from "../const.js";
 import Observer from "../utils/observer.js";
 
-export default class TabModel extends Observer {
+class TabModel extends Observer {
 	constructor() {
 		super();
 		this._activeTab = DEFAULT_TAB;
@@ -17,3 +17,5 @@ export default class TabModel extends Observer {
 	}
 
 }
+
+export default TabModel;

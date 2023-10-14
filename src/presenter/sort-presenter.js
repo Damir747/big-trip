@@ -1,11 +1,10 @@
 import { UpdateType } from "../const.js";
 import AbstractView from "../framework/abstract-view.js";
 import SortMenuView from '../view/sort-view.js';
-import { render } from "../view/render.js";
-import { remove, replace } from '../framework/render.js';
+import { render, remove, replace } from '../framework/render.js';
 import { RenderPosition, DEFAULT_SORT } from '../const.js';
 
-export default class SortPresenter extends AbstractView {
+class SortPresenter extends AbstractView {
 	constructor(sortContainer, filterModel, sortModel, tabModel) {
 		super();
 		this._sortComponent = null;
@@ -58,3 +57,5 @@ export default class SortPresenter extends AbstractView {
 		this._sortModel.setActiveSort(UpdateType.POINTS, sortType);
 	}
 }
+
+export default SortPresenter;

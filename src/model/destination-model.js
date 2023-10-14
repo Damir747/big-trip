@@ -1,6 +1,6 @@
 import Observer from "../utils/observer.js";
 
-export default class Destinations extends Observer {
+class Destinations extends Observer {
 	constructor() {
 		super();
 		this._destinations = [];
@@ -16,3 +16,5 @@ export default class Destinations extends Observer {
 		return this._destinations.slice()[idDestination];
 	}
 }
+
+export default Destinations;

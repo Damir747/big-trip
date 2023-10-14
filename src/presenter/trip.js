@@ -2,17 +2,14 @@ import BoardView from '../view/board.js'
 import PointListView from '../view/point-list.js'
 import NoPointView from '../view/no-point.js';
 import TripInfo from '../view/trip-info.js';
-import PointPresenter, { State } from './point-presenter.js';
-import { POINTS_COUNT, DEFAULT_FILTER, DEFAULT_SORT } from '../const.js';
-import { render } from '../view/render.js';
-import { UserAction, UpdateType } from '../const.js';
-import { remove } from '../framework/render.js';
-import { RenderPosition } from '../const.js';
+import PointPresenter from './point-presenter.js';
+import { render, remove } from '../framework/render.js';
 import LoadingView from '../view/loading.js';
 import LoadMoreButton from '../view/load-more.js';
 import { isOnline } from '../utils/common.js';
+import { POINTS_COUNT, DEFAULT_FILTER, DEFAULT_SORT, State, UpdateType, RenderPosition, UserAction } from '../const.js';
 
-export default class TripPresenter {
+class TripPresenter {
 	constructor(tripContainer, tripInfoContainer, pointsModel, filterModel, sortModel, api, destinationsModel) {
 		this._isLoading = true;
 		this._pointsModel = pointsModel;
@@ -238,3 +235,5 @@ export default class TripPresenter {
 		});
 	}
 }
+
+export default TripPresenter;

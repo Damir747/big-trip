@@ -2,7 +2,7 @@ import AbstractView from "../framework/abstract-view";
 
 const createLoadMoreButtonTemplate = () => '<div><button class="btn  btn--big  btn--yellow" type="button">Load More Points</button></div>';
 
-export default class LoadMoreButton extends AbstractView {
+class LoadMoreButton extends AbstractView {
 	constructor() {
 		super();
 		this._buttonHandle = this._buttonHandle.bind(this);
@@ -20,3 +20,5 @@ export default class LoadMoreButton extends AbstractView {
 		this.getElement().addEventListener('click', this._buttonHandle);
 	}
 }
+
+export default LoadMoreButton;

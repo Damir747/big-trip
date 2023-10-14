@@ -15,7 +15,7 @@ const tabTemplate = (activeTab) => {
 				</div>`;
 };
 
-export default class TabView extends AbstractView {
+class TabView extends AbstractView {
 	constructor(activeTab = DEFAULT_TAB) {
 		super();
 		this._activeTab = activeTab;
@@ -34,3 +34,5 @@ export default class TabView extends AbstractView {
 	}
 
 }
+
+export default TabView;

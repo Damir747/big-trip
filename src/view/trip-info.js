@@ -45,7 +45,7 @@ const tripInfoTemplate = (points) => {
 				</section>`;
 };
 
-export default class TripInfo extends AbstractView {
+class TripInfo extends AbstractView {
 	constructor(points = []) {
 		super();
 		this._points = points;
@@ -54,3 +54,5 @@ export default class TripInfo extends AbstractView {
 		return tripInfoTemplate(this._points);
 	}
 }
+
+export default TripInfo;

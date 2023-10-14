@@ -1,10 +1,10 @@
 import Observer from "../utils/observer.js";
-import { utilFilterSort } from '../utils/filter.js';
+import { getFilterSortPoints } from '../utils/filter.js';
 import dayjs from 'dayjs';
 
 //? Обратите внимание, что, если вы следовали нашим рекомендациям и выделили дополнительные опции в отдельную структуру, для них нужно завести отдельную модель и провести похожие манипуляции.
 
-export default class PointsModel extends Observer {
+class PointsModel extends Observer {
 	constructor() {
 		super();
 		this._points = [];
@@ -15,7 +15,7 @@ export default class PointsModel extends Observer {
 		this._notify(updateType);
 	}
 	getPoints(activeFilter, activeSort, upSort) {
-		return utilFilterSort(this._points, activeFilter, activeSort, upSort);
+		return getFilterSortPoints(this._points, activeFilter, activeSort, upSort);
 	}
 	setOffers(offers) {
 		this._offers = offers;
@@ -225,3 +225,5 @@ export default class PointsModel extends Observer {
 		return adaptedPoint;
 	}
 }
+
+export default PointsModel;

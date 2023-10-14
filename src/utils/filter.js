@@ -3,7 +3,7 @@ import { sortPointDateUp, sortPointDateDown, sortPointTimeUp, sortPointTimeDown,
 import { SORT_NAMES } from '../const.js';
 import dayjs from "dayjs";
 
-const utilFilter = (points, filterName) => {
+const getFilterPoints = (points, filterName) => {
 	const filteredPoints = points.slice();
 	switch (filterName) {
 		case FILTER_NAMES.EVERYTHING:
@@ -17,10 +17,10 @@ const utilFilter = (points, filterName) => {
 	}
 }
 
-export const filterCount = (points, filterName) => utilFilter(points, filterName).length;
+const getFilterCount = (points, filterName) => getFilterPoints(points, filterName).length;
 
-export const utilFilterSort = (points, filterName = DEFAULT_FILTER, sortName = sortPointDateUp, upSort = true) => {
-	const filteredPoints = utilFilter(points, filterName);
+const getFilterSortPoints = (points, filterName = DEFAULT_FILTER, sortName = sortPointDateUp, upSort = true) => {
+	const filteredPoints = getFilterPoints(points, filterName);
 	switch (sortName) {
 		case SORT_NAMES[0].value:
 			return filteredPoints.sort(upSort ? sortPointDateUp : sortPointDateDown);
@@ -37,3 +37,5 @@ export const utilFilterSort = (points, filterName = DEFAULT_FILTER, sortName = s
 	}
 
 }
+
+export { getFilterCount, getFilterSortPoints }

@@ -1,6 +1,5 @@
-export const POINTS_COUNT = 4;	//сколько точек показывать на экране
+export const POINTS_COUNT = 5;	//сколько точек показывать на экране
 export const DIR_ICONS = 'img/icons/';
-export const COUNT_PICTURE = 4;
 export const Method = {
 	GET: 'GET',
 	PUT: 'PUT',
@@ -8,8 +7,8 @@ export const Method = {
 	DELETE: 'DELETE',
 }
 export const SuccessHTTPStatusRange = {
-	'MIN': 200,
-	'MAX': 299
+	MIN: 200,
+	MAX: 299
 }
 export const UpdateType = {
 	FULL: 'FULL',
@@ -36,8 +35,6 @@ export const DateFormat = {
 }
 
 export const NO_TRIP_STOP_MESSAGE = "Click New Event to create your first point";
-
-// const OFFERS_NUMBER = 5;
 
 export const FAVORITE_ACTIVE_CLASS = 'event__favorite-btn--active';
 export const FILTER_NAMES = {
@@ -112,4 +109,10 @@ export const CONTAINER = {
 	STAT: '.statistics',
 	FILTER: '.trip-main__trip-controls',
 	SORT: '.trip-events',
+}
+
+export const State = {
+	SAVING: 'SAVING',
+	DELETING: 'DELETING',
+	ABORTING: 'ABORTING',
 }

@@ -1,4 +1,4 @@
-export default class Observer {
+class Observer {
 	constructor() {
 		this._observers = [];
 	}
@@ -12,3 +12,5 @@ export default class Observer {
 		this._observers.forEach((observer) => observer(event, payload, upSort));
 	}
 }
+
+export default Observer;

@@ -1,19 +1,13 @@
 import AbstractView from '../framework/abstract-view.js';
-import { Mode, UpdateType, UserAction, RenderPosition, EMPTY_POINT, EditMode } from '../const.js';
-import { render } from '../view/render.js';
-import { remove, replace } from '../framework/render.js';
+import { Mode, UpdateType, UserAction, RenderPosition, EMPTY_POINT, EditMode, State } from '../const.js';
+import { render, remove, replace } from '../framework/render.js';
 import { isEscapeEvent, isOnline } from '../utils/common.js';
 import PointView from '../view/point-view.js';
 import PointEditorView from '../view/point-editor-view.js';
 import { generatePoint } from '../data.js';
 import { toast } from '../utils/toast.js';
 
-export const State = {
-	SAVING: 'SAVING',
-	DELETING: 'DELETING',
-	ABORTING: 'ABORTING',
-}
-export default class PointPresenter extends AbstractView {
+class PointPresenter extends AbstractView {
 	constructor(pointListContainer, changeData, changeMode, destinationsModel, pointsModel) {
 		super();
 
@@ -155,7 +149,7 @@ export default class PointPresenter extends AbstractView {
 		replace(this._pointEditorComponent, this._pointComponent);
 		this._pointEditorComponent.restoreListeners();
 		document.addEventListener('keydown', this._escKeyDownHandler);
-		this._changeMode(UpdateType.PATCH, this._point);	//???
+		this._changeMode(UpdateType.PATCH, this._point);
 		this._pointMode = Mode.EDIT;
 	}
 
@@ -217,3 +211,5 @@ export default class PointPresenter extends AbstractView {
 		}
 	}
 }
+
+export default PointPresenter;

@@ -1,7 +1,7 @@
 
 import AbstractView from '../framework/abstract-view.js';
 
-export default class SmartView extends AbstractView {
+class SmartView extends AbstractView {
 	constructor() {
 		super();
 		this._state = {};
@@ -35,3 +35,5 @@ export default class SmartView extends AbstractView {
 		throw new Error('Abstarct method not implemented: restoreListeners');
 	}
 }
+
+export default SmartView;

@@ -1,7 +1,7 @@
 import { Method, SuccessHTTPStatusRange } from "../const.js";
 import PointsModel from "../model/point-model.js";
 
-export default class Api {
+class Api {
 	constructor(endPoint, authorization) {
 		this._endPoint = endPoint;
 		this._authorization = authorization;
@@ -91,3 +91,5 @@ export default class Api {
 		throw err;
 	}
 }
+
+export default Api;

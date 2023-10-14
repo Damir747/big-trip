@@ -1,5 +1,5 @@
 import { humanizeDate, compareTwoDates, findElement, addListener, removeListener, isOnline } from '../utils/common.js';
-import { createOffers } from '../utils/offer.js';
+import { getOffersTemplate } from '../utils/offer.js';
 import { DateFormat, DIR_ICONS, EVENT_TYPE, EditMode } from '../const.js';
 import SmartView from './smart.js';
 import flatpickr from 'flatpickr';
@@ -7,7 +7,7 @@ import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 import { firstLetterUpperCase } from '../utils/common.js';
 import { checkPriceIsNumber } from '../utils/point.js';
 import he from 'he';
-import { render } from './render.js';
+import { render } from '../framework/render.js';
 import dayjs from 'dayjs';
 import { toast } from '../utils/toast.js';
 
@@ -94,7 +94,7 @@ const editPointTemplate = (point, editMode, destinations) => {
                     <h3 class="event__section-title  event__section-title--offers ${point.offers.length === 0 ? 'visually-hidden' : ''}">Offers</h3>
 
                     <div class="event__available-offers">
-								${createOffers(point.offers, point.isDisabled)}
+								${getOffersTemplate(point.offers, point.isDisabled)}
                     </div>
                   </section>
 
@@ -113,7 +113,7 @@ const editPointTemplate = (point, editMode, destinations) => {
             </li>`;
 };
 
-export default class PointEditorView extends SmartView {
+class PointEditorView extends SmartView {
 	constructor(point, editMode = EditMode.EDIT, destinationsModel, pointsModel) {
 		super();
 		this._dateStart = point.start;
@@ -398,3 +398,5 @@ export default class PointEditorView extends SmartView {
 		return state;
 	}
 }
+
+export default PointEditorView;

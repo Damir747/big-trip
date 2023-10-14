@@ -1,11 +1,10 @@
 import { DEFAULT_TAB, UpdateType } from "../const.js";
 import AbstractView from "../framework/abstract-view.js";
 import TabView from "../view/tab-view.js";
-import { render } from "../view/render.js";
-import { remove, replace } from '../framework/render.js';
+import { render, remove, replace } from '../framework/render.js';
 import { RenderPosition } from '../const.js';
 
-export default class TabPresenter extends AbstractView {
+class TabPresenter extends AbstractView {
 	constructor(tabContainer, statContainer, tabModel, pointsModel, tripPresenter, statPresenter) {
 		super();
 		this._tabComponent = null;
@@ -60,3 +59,5 @@ export default class TabPresenter extends AbstractView {
 
 	}
 }
+
+export default TabPresenter;

@@ -1,6 +1,6 @@
 import { addListener, humanizeDate, humanizeTripTime, isOnline } from '../utils/common.js';
 import { DateFormat, DIR_ICONS } from '../const.js';
-import { selectedOffers } from '../utils/offer.js';
+import { getSelectedOffersTemplate } from '../utils/offer.js';
 import AbstractView from '../framework/abstract-view.js';
 
 const pointTemplate = (point) => {
@@ -26,7 +26,7 @@ const pointTemplate = (point) => {
                 </p>
                 <h4 class="visually-hidden">Offers:</h4>
                 <ul class="event__selected-offers">
-					 	${selectedOffers(point.checkedOffers)}
+					 	${getSelectedOffersTemplate(point.checkedOffers)}
                 </ul>
                 <button class="event__favorite-btn ${checkedFavorite}" type="button">
                   <span class="visually-hidden">Add to favorite</span>
@@ -42,7 +42,7 @@ const pointTemplate = (point) => {
             </li>`;
 };
 
-export default class PointView extends AbstractView {
+class PointView extends AbstractView {
 	constructor(point) {
 		super();
 		this._point = point;
@@ -68,3 +68,5 @@ export default class PointView extends AbstractView {
 	}
 
 }
+
+export default PointView;

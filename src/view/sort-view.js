@@ -15,7 +15,7 @@ const sortTemplate = (activeSort, upSort) => {
                 </form>`;
 };
 
-export default class SortMenuView extends AbstractView {
+class SortMenuView extends AbstractView {
 	constructor(activeSort, upSort) {
 		super();
 		this._activeSort = activeSort;
@@ -36,3 +36,5 @@ export default class SortMenuView extends AbstractView {
 		this.getElement().addEventListener('click', this._sortTypeChangeHandler);
 	}
 }
+
+export default SortMenuView;

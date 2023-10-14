@@ -2,15 +2,15 @@ import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 dayjs.extend(duration);
 
-export const isEscapeEvent = (evt) => {
+const isEscapeEvent = (evt) => {
 	return (evt.key === ('Escape' || 'Esc'));
 }
 
-export const firstLetterUpperCase = (str) => str ? str[0].toUpperCase() + str.slice(1) : '';
+const firstLetterUpperCase = (str) => str ? str[0].toUpperCase() + str.slice(1) : '';
 
-export const humanizeDate = (date, format) => dayjs(date).format(format);
+const humanizeDate = (date, format) => dayjs(date).format(format);
 
-export const humanizeTripTime = (start, end) => {
+const humanizeTripTime = (start, end) => {
 	const days = dayjs(end).diff(dayjs(start), 'day');
 	const hours = dayjs(end).diff(dayjs(start), 'hour') % 24;
 	const minutes = dayjs(end).diff(dayjs(start), 'minute') % 60;
@@ -28,22 +28,22 @@ export const humanizeTripTime = (start, end) => {
 	return `${minutesString}M`;
 };
 
-export const findElement = (container, selector) => {
+const findElement = (container, selector) => {
 	if (container === null) {
 		return null;
 	}
 	return container.querySelector(selector);
 };
 
-export const addListener = (container, selector, type, listener) => {
+const addListener = (container, selector, type, listener) => {
 	findElement(container, selector).addEventListener(type, listener);
 }
 
-export const removeListener = (container, selector, type, listener) => {
+const removeListener = (container, selector, type, listener) => {
 	findElement(container, selector).removeEventListener(type, listener);
 }
 
-export const createElement = (template) => {
+const createElement = (template) => {
 	const newElement = document.createElement('div');
 	newElement.innerHTML = template;
 	return newElement.firstElementChild;
@@ -73,14 +73,16 @@ const checkValidation = (min, max) => {
 	checkMinMax(min, max);
 };
 
-export const getRandomPositiveInteger = (min, max) => {
+const getRandomPositiveInteger = (min, max) => {
 	checkValidation(min, max);
 	return Math.round(Math.random() * (max - min) + min);
 };
 
-export const compareTwoDates = (start, end) => dayjs(end).diff(dayjs(start));
-export const sortByDecreasing = (elementA, elementB) => elementB[1] - elementA[1];
+const compareTwoDates = (start, end) => dayjs(end).diff(dayjs(start));
+const sortByDecreasing = (elementA, elementB) => elementB[1] - elementA[1];
 
-export const isOnline = () => {
+const isOnline = () => {
 	return window.navigator.onLine;
 }
+
+export { isEscapeEvent, firstLetterUpperCase, humanizeDate, humanizeTripTime, findElement, addListener, removeListener, createElement, getRandomPositiveInteger, compareTwoDates, sortByDecreasing, isOnline };

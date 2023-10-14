@@ -1,9 +1,9 @@
 import AbstractView from '../framework/abstract-view.js';
 import { CUT_FILTER_NAME, FILTER_NAMES } from '../const.js';
-import { filterCount } from '../utils/filter.js';
+import { getFilterCount } from '../utils/filter.js';
 
 const createFilterItem = (filterName, isChecked, points) => {
-	const count = filterCount(points, filterName);
+	const count = getFilterCount(points, filterName);
 	return `<div class="trip-filters__filter">
                   <input id="filter-${filterName}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" data-filter-type="${filterName}" value="${filterName}" ${isChecked ? 'checked' : ''} ${count > 0 ? '' : 'disabled'}>
                   <label class="trip-filters__filter-label" for="filter-${filterName}">${filterName.toUpperCase()} ${count}</label>
@@ -20,7 +20,7 @@ const filterTemplate = (activeFilter, points) => {
               </form>
 				</div>`;
 };
-export default class FilterView extends AbstractView {
+class FilterView extends AbstractView {
 	constructor(activeFilter, points) {
 		super();
 		this._activeFilter = activeFilter;
@@ -43,3 +43,5 @@ export default class FilterView extends AbstractView {
 		this.getElement().addEventListener('click', this._filterTypeChangeHandle);
 	}
 }
+
+export default FilterView;
