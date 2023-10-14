@@ -243,7 +243,6 @@ export default class PointEditorView extends SmartView {
 			type: evt.target.value,
 			checkedOffers: [],
 		});
-		console.log(this._offers);
 		if (this._offers && this._offers.length >= 0) {
 			document.querySelector('.event__section--offers').classList.remove('visually-hidden');
 		}

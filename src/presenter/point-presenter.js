@@ -108,9 +108,18 @@ export default class PointPresenter extends AbstractView {
 	}
 
 	resetView() {
-		if (this._pointMode !== Mode.VIEW) {
-			this._pointEditorComponent.reset(this._point);
-			this._changeModeToView();
+		this._changeModeToView();
+	}
+
+	_changeModeToView() {
+		if (this._pointEditorComponent) {
+			if (this._pointMode !== Mode.VIEW) {
+				this._pointEditorComponent.reset(this._point);
+				replace(this._pointComponent, this._pointEditorComponent);
+				document.removeEventListener('keydown', this._escKeyDownHandler);
+				this._pointMode = Mode.VIEW;
+			}
+			this._pointEditorComponent.disableNewButton();
 		}
 	}
 
@@ -159,30 +168,6 @@ export default class PointPresenter extends AbstractView {
 		this._pointEditorComponent.shake(resetFormState);
 	}
 
-	_onSubmitForm(point) {
-		//? здесь ещё можно проверить, насколько крупное изменение, см. видео 7.1 28:05
-		// сначала изменить данные, только потом изменить View
-		//? а ещё надо будет сделать обработчик на случай, если что-то пошло не так
-		if (!isOnline()) {
-			toast(`Can't save point offline`, true);
-			return;
-		}
-		if (this._emptyPoint) {
-			this._changeData(
-				UserAction.ADD_POINT,
-				UpdateType.POINTS,
-				point,
-			);
-			// this._pointEditorComponent.reset(this._point);
-		}
-		else {
-			this._changeData(
-				UserAction.UPDATE_POINT,
-				UpdateType.POINTS,
-				point);
-		}
-	}
-
 	_changeModeToEdit() {
 		replace(this._pointEditorComponent, this._pointComponent);
 		this._pointEditorComponent.restoreListeners();
@@ -191,12 +176,26 @@ export default class PointPresenter extends AbstractView {
 		this._pointMode = Mode.EDIT;
 	}
 
-	_changeModeToView() {
-		this._pointEditorComponent.reset(this._point);	//? надо поставить проверки на null на таких операциях
-		replace(this._pointComponent, this._pointEditorComponent);
-		document.removeEventListener('keydown', this._escKeyDownHandler);
-		this._pointMode = Mode.VIEW;
-		this._pointEditorComponent.disableNewButton();
+	_onSubmitForm(point) {
+		//? здесь ещё можно проверить, насколько крупное изменение, см. видео 7.1 28:05
+
+		if (!isOnline()) {
+			toast(`Can't save point offline`);
+			return;
+		}
+		if (this._emptyPoint) {
+			this._changeData(
+				UserAction.ADD_POINT,
+				UpdateType.POINTS,
+				point,
+			);
+		}
+		else {
+			this._changeData(
+				UserAction.UPDATE_POINT,
+				UpdateType.POINTS,
+				point);
+		}
 	}
 
 	_escKeyDownHandler(evt) {
@@ -217,9 +216,10 @@ export default class PointPresenter extends AbstractView {
 			),
 		);
 	}
+
 	_deletePoint(point) {
 		if (!isOnline()) {
-			toast(`Can't delete point offline`, true);
+			toast(`Can't delete point offline`);
 			return;
 		}
 		if (this._emptyPoint) {
@@ -228,7 +228,7 @@ export default class PointPresenter extends AbstractView {
 		else {
 			this._changeData(
 				UserAction.DELETE_POINT,
-				UpdateType.POINTS,		// PATCH не обновляет, остается открытая форма редактирования. //? Последняя точка удаляется с ошибкой
+				UpdateType.POINTS,
 				point,
 			)
 		}

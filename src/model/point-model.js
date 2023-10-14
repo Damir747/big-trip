@@ -65,6 +65,7 @@ export default class PointsModel extends Observer {
 	// отметить выбранные опции (checkedOffers) для точки
 	// актуально при подтверждении изменений точки (submit)
 	setCheckedOffer(point) {
+		point.checkedOffers = [];
 		point.offers.forEach(el => {
 			if (el.checked) {
 				point.checkedOffers.push(el);

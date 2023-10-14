@@ -31,7 +31,7 @@ export default class TripPresenter {
 		this._loadingComponent = new LoadingView();			// загрузка
 		this._pointPresenter = {};
 
-		this._onPointModeChange = this._onPointModeChange.bind(this);
+		this._resetPointMode = this._resetPointMode.bind(this);
 		this._handleViewAction = this._handleViewAction.bind(this);
 		this._handleModelEvent = this._handleModelEvent.bind(this);
 		this._handleButton = this._handleButton.bind(this);
@@ -132,18 +132,13 @@ export default class TripPresenter {
 			this._renderLoading();
 			return;
 		}
+		this._renderTripInfo();
 		if (this._getPoints().length === 0) {
 			this._renderNoPoints();
 			return;
 		}
-		this._renderTripInfo();
 		this._renderPointList();
 		this._renderLoadMoreButton();
-		// Теперь, когда _renderBoard рендерит доску не только на старте,
-		// но и по ходу работы приложения, нужно заменить
-		// константу TASK_COUNT_PER_STEP на свойство _renderedTaskCount,
-		// чтобы в случае перерисовки сохранить N-показанных карточек
-		// Load More Button
 	}
 
 	_handleViewAction(actionType, updateType, update) {
@@ -160,13 +155,11 @@ export default class TripPresenter {
 				break;
 			case UserAction.ADD_POINT:
 				this._pointNewPresenter.setSaving();
-				console.log(this._pointNewPresenter._pointEditorComponent);
 				this._api.addPoint(update)
 					.then((response) => {
 						this._pointsModel.addPoint(updateType, response);
 					})
 					.catch((err) => {
-						console.log(this._pointNewPresenter._pointEditorComponent);
 						this._pointNewPresenter.setAborting();
 					});
 				break;
@@ -185,9 +178,9 @@ export default class TripPresenter {
 		}
 	}
 	_handleModelEvent(updateType, data, upSort = true) {
-		this._onPointModeChange();
 		switch (updateType) {
 			case UpdateType.INIT:
+				this._resetPointMode();
 				this._isLoading = false;
 				remove(this._loadingComponent);
 				this._renderBoard();
@@ -201,6 +194,7 @@ export default class TripPresenter {
 				this._renderBoard();
 				break;
 			case UpdateType.PATCH:
+				this._resetPointMode();
 				// this._pointPresenter[data.id].init(data);
 				break;
 			default:
@@ -208,7 +202,7 @@ export default class TripPresenter {
 		}
 	}
 
-	_onPointModeChange() {
+	_resetPointMode() {
 		this._pointNewPresenter.destroy();
 		// сбрасывает все редакторы к просмотру
 		Object
@@ -216,10 +210,7 @@ export default class TripPresenter {
 			.forEach((pointPresenter) => pointPresenter.resetView());
 	}
 	_clearBoard(resetSort = false) {
-		this._pointNewPresenter.destroy();
-		Object
-			.values(this._pointPresenter)
-			.forEach((pointPresenter) => pointPresenter.resetView());
+		this._resetPointMode();
 		Object.values(this._pointPresenter).forEach((pointPresenter) => pointPresenter.destroy());
 		this._pointPresenter = {};
 		if (this._tripInfo !== undefined) {
@@ -240,13 +231,6 @@ export default class TripPresenter {
 			// this._sortModel.setActiveSort(UpdateType.FULL, DEFAULT_SORT);
 			// this._filterModel.setActiveFilter(UpdateType.FULL, DEFAULT_FILTER);
 		}
-	}
-
-	_onChangeSort() {
-
-	}
-	_renderTripSort() {
-
 	}
 
 	_createPoint() {

@@ -41,7 +41,7 @@ const apiWithProviderDestinations = new Provider(api, storeDestinations);
 
 const headerView = new HeaderView();	// Заголовок (header) для: Маршрут и стоимость, Меню, Фильтры
 render(findElement(document, CONTAINER.HEADER), headerView.getElement(), RenderPosition.BEFOREEND);
-//? при сохранении точки, "отвыбранные" опции временно показываются как выбранные
+
 //? offersModel инициализировать 36:31
 
 const pointsModel = new PointsModel();
@@ -75,7 +75,6 @@ apiWithProviderOffers.getOffers()
 		pointsModel.setOffers(offers);
 	})
 	.catch((err) => {
-		console.log('Offers не загрузились.', err);
 		toast('Offers are not loaded');
 	});
 apiWithProviderPoints.getPoints()
@@ -84,7 +83,6 @@ apiWithProviderPoints.getPoints()
 		pointsModel.setPoints(UpdateType.INIT, points);
 	})
 	.catch((err) => {
-		console.log('Points не загрузились', err);
 		toast('Points are not loaded');
 		pointsModel.setPoints(UpdateType.INIT, []);
 	});
@@ -95,7 +93,6 @@ apiWithProviderDestinations.getDestinations()
 		destinationsModel.setDestinations(destinations);
 	})
 	.catch((err) => {
-		console.log('Destinations не загрузились.', err);
 		toast('Destinations are not loaded');
 	});
 
@@ -106,10 +103,8 @@ window.addEventListener('load', () => {
 		toast('we are offline', true);
 	}
 });
-//? При переходе в офлайн-режим. Создание и редактирование точки маршрута в режиме офлайн недоступно. Единственное доступное действие — добавление точки маршрута в избранное.
 
 window.addEventListener('online', (evt) => {
-	console.log('online');
 	document.title = document.title.replace('[offline]', '');
 	toastRemove();
 	apiWithProviderPoints.sync();
@@ -118,16 +113,9 @@ window.addEventListener('online', (evt) => {
 	buttonsRollDown.forEach(button => button.disabled = false);
 });
 window.addEventListener('offline', (evt) => {
-	console.log('offline');
 	document.title += ' [offline]';
 	toast('we are offline', true);
 	document.querySelector('.trip-main__event-add-btn').disabled = true;
 	const buttonsRollDown = document.querySelectorAll('.event__rollup-btn');
 	buttonsRollDown.forEach(button => button.disabled = true);
 });
-window.addEventListener("resize", () => { console.log('resize') });
-function handleMouseClick(event) {
-	console.log('Вы нажали на элемент:', event.target)
-}
-
-window.addEventListener("click", handleMouseClick);

@@ -28,7 +28,6 @@ export default class Provider {
 					return points;
 				})
 		}
-		console.log('offline');
 		const storePoints = Object.values(this._store.getItems());
 		return Promise.resolve(storePoints.map(PointModel.adaptToClient));
 	}

@@ -18,7 +18,6 @@ export default class Store {
 		);
 	}
 	setItem(key, value) {
-		console.log(this._storeKey, key);
 		const store = this.getItems();
 		this._storage.setItem(
 			this._storeKey,

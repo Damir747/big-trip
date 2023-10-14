@@ -9,11 +9,8 @@ export default class SmartView extends AbstractView {
 	updateElement() {
 		const previousElement = this.getElement();
 		const parentElement = previousElement.parentElement;
-		//? такой костыль при сохранении
-		// trip-events__item
 		if (parentElement === null) {
 			throw new Error(`Для ${previousElement.className} не найден parent`);
-			// return;
 		}
 		this.removeElement();
 		const newElement = this.getElement();
