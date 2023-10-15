@@ -1,5 +1,5 @@
-import { DEFAULT_SORT } from "../const.js";
-import Observer from "../utils/observer.js";
+import { DEFAULT_SORT } from '../const.js';
+import Observer from '../utils/observer.js';
 
 class SortModel extends Observer {
 	constructor() {

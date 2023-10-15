@@ -1,8 +1,8 @@
-import AbstractView from "../framework/abstract-view.js";
+import AbstractView from '../framework/abstract-view.js';
 import Chart from '../../node_modules/chart.js';
 import ChartDataLabels from '../../node_modules/chartjs-plugin-datalabels';
 import { getSortedData } from '../utils/stat.js';
-import { ChartMode, BAR_HEIGHT, TYPE_HORIZONTAL_BAR, BACKGROUND_COLOR, HOVER_BACKGROUND_COLOR, ANCHOR_START, ANCHOR_END } from "../const.js";
+import { ChartMode, BAR_HEIGHT, TYPE_HORIZONTAL_BAR, BACKGROUND_COLOR, HOVER_BACKGROUND_COLOR, ANCHOR_START, ANCHOR_END } from '../const.js';
 import { findElement } from '../utils/common.js';
 import dayjs from 'dayjs';
 
@@ -12,9 +12,9 @@ const moneyChart = (moneyCtx, points, types) => {
 		plugins: [ChartDataLabels],
 		type: TYPE_HORIZONTAL_BAR,
 		data: {
-			labels: moneyData.types,	//['TAXI', 'BUS', 'TRAIN', 'SHIP', 'TRANSPORT', 'DRIVE'],
+			labels: moneyData.types,
 			datasets: [{
-				data: moneyData.values,	//[400, 300, 200, 160, 150, 100],
+				data: moneyData.values,
 				backgroundColor: BACKGROUND_COLOR,
 				hoverBackgroundColor: HOVER_BACKGROUND_COLOR,
 				anchor: ANCHOR_START,
@@ -227,19 +227,19 @@ const humanizeDateDuration = (tripTime) => {
 };
 
 const statTemplate = () => {
-	return `<section class="statistics">
-          <h2 class="visually-hidden">Trip statistics</h2>
+	return `<section class='statistics'>
+          <h2 class='visually-hidden'>Trip statistics</h2>
 
-          <div class="statistics__item">
-            <canvas class="statistics__chart--money" id="money" width="900"></canvas>
+          <div class='statistics__item'>
+            <canvas class='statistics__chart--money' id='money' width='900'></canvas>
           </div>
 
-          <div class="statistics__item">
-            <canvas class="statistics__chart--type" id="type" width="900"></canvas>
+          <div class='statistics__item'>
+            <canvas class='statistics__chart--type' id='type' width='900'></canvas>
           </div>
 
-          <div class="statistics__item">
-            <canvas class="statistics__chart--time" id="time-spend" width="900"></canvas>
+          <div class='statistics__item'>
+            <canvas class='statistics__chart--time' id='time-spend' width='900'></canvas>
           </div>
         </section>`;
 }

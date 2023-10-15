@@ -1,5 +1,5 @@
 import { addListener, humanizeDate, humanizeTripTime, isOnline } from '../utils/common.js';
-import { DateFormat, DIR_ICONS } from '../const.js';
+import { DateFormat, ICON_DIRECTION } from '../const.js';
 import { getSelectedOffersTemplate } from '../utils/offer.js';
 import AbstractView from '../framework/abstract-view.js';
 
@@ -10,7 +10,7 @@ const pointTemplate = (point) => {
               <div class="event">
                 <time class="event__date" datetime="${humanizeDate(point.start, DateFormat.FORMAT_DATE)}">${humanizeDate(point.start, DateFormat.FORMAT_SHORT_DATE)}</time>
                 <div class="event__type">
-                  <img class="event__type-icon" width="42" height="42" src="${DIR_ICONS}${point.type}.png" alt="Event type icon">
+                  <img class="event__type-icon" width="42" height="42" src="${ICON_DIRECTION}${point.type}.png" alt="Event type icon">
                 </div>
                 <h3 class="event__title">${point.type} ${point.city}</h3>
                 <div class="event__schedule">

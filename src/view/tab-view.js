@@ -1,11 +1,11 @@
-import { TAB_NAMES, ACTIVE_TAB_CLASS, DEFAULT_TAB } from '../const.js';
+import { TabNames, ACTIVE_TAB_CLASS, DEFAULT_TAB } from '../const.js';
 import AbstractView from '../framework/abstract-view.js';
 
 const createTabsItem = (tabName, isActive) => {
 	return `<a class="trip-tabs__btn  ${isActive ? ACTIVE_TAB_CLASS : ''}" href="#" for="${tabName}">${tabName}</a>`
 }
 const tabTemplate = (activeTab) => {
-	const tabsItemsTemplate = TAB_NAMES.map((item) => createTabsItem(item, item === activeTab));
+	const tabsItemsTemplate = TabNames.map((item) => createTabsItem(item, item === activeTab));
 	return `<div class="trip-controls__navigation">
 						<h2 class="visually-hidden">Switch trip view</h2>
 						<!-- Меню -->

@@ -1,4 +1,4 @@
-import Observer from "../utils/observer.js";
+import Observer from '../utils/observer.js';
 import { getFilterSortPoints } from '../utils/filter.js';
 import dayjs from 'dayjs';
 

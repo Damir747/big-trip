@@ -1,5 +1,5 @@
-import { UpdateType } from "../const.js";
-import AbstractView from "../framework/abstract-view.js";
+import { UpdateType } from '../const.js';
+import AbstractView from '../framework/abstract-view.js';
 import SortMenuView from '../view/sort-view.js';
 import { render, remove, replace } from '../framework/render.js';
 import { RenderPosition, DEFAULT_SORT } from '../const.js';

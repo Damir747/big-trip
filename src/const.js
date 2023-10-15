@@ -1,27 +1,27 @@
-export const POINTS_COUNT = 5;	//сколько точек показывать на экране
-export const DIR_ICONS = 'img/icons/';
-export const Method = {
+const DEFAULT_POINT_COUNT = 5;
+const ICON_DIRECTION = 'img/icons/';
+const Method = {
 	GET: 'GET',
 	PUT: 'PUT',
 	POST: 'POST',
 	DELETE: 'DELETE',
 }
-export const SuccessHTTPStatusRange = {
+const SuccessHTTPStatusRange = {
 	MIN: 200,
 	MAX: 299
 }
-export const UpdateType = {
+const UpdateType = {
 	FULL: 'FULL',
 	POINTS: 'POINTS',
 	PATCH: 'PATCH',
 	INIT: 'INIT'
 };
-export const UserAction = {
+const UserAction = {
 	UPDATE_POINT: 'UPDATE_POINT',
 	ADD_POINT: 'ADD_POINT',
 	DELETE_POINT: 'DELETE_POINT',
 }
-export const DateFormat = {
+const DateFormat = {
 	FORMAT_HOUR: 'HH:mm',
 	FORMAT_FULL_DATE: 'DD/MM/YY HH:mm',
 	FORMAT_DATE: 'YYYY-MM-DD',
@@ -34,16 +34,16 @@ export const DateFormat = {
 	FORMAT_M: 'mm[M]',
 }
 
-export const NO_TRIP_STOP_MESSAGE = "Click New Event to create your first point";
+const NO_TRIP_STOP_MESSAGE = 'Click New Event to create your first point';
 
-export const FAVORITE_ACTIVE_CLASS = 'event__favorite-btn--active';
-export const FILTER_NAMES = {
-	'EVERYTHING': 'everything',
-	'FUTURE': 'future',
-	'PAST': 'past'
+const FAVORITE_ACTIVE_CLASS = 'event__favorite-btn--active';
+const FilterNames = {
+	EVERYTHING: 'everything',
+	FUTURE: 'future',
+	PAST: 'past'
 };
-export const DEFAULT_FILTER = FILTER_NAMES.EVERYTHING;
-export const SORT_NAMES = [{
+const DEFAULT_FILTER = FilterNames.EVERYTHING;
+const SortNames = [{
 	value: 'day',
 	disabled: false,
 },
@@ -63,45 +63,45 @@ export const SORT_NAMES = [{
 	value: 'offer',
 	disabled: true,
 }];
-export const DEFAULT_SORT = SORT_NAMES[0].value;
-export const TAB_NAMES = ['Table', 'Stats'];
-export const DEFAULT_TAB = TAB_NAMES[0];
-export const ACTIVE_TAB_CLASS = 'trip-tabs__btn--active';
+const DEFAULT_SORT = SortNames[0].value;
+const TabNames = ['Table', 'Stats'];
+const DEFAULT_TAB = TabNames[0];
+const ACTIVE_TAB_CLASS = 'trip-tabs__btn--active';
 
-export const RenderPosition = {
+const RenderPosition = {
 	AFTERBEGIN: 'afterbegin',
 	BEFOREEND: 'beforeend',
 };
 
-export const Mode = {
+const Mode = {
 	VIEW: 'view',
 	EDIT: 'edit',
 }
-export const EditMode = {
+const EditMode = {
 	NEW: 'new',
 	EDIT: 'edit',
 }
 
-export const EMPTY_POINT = 'EMPTY';
+const EMPTY_POINT = 'EMPTY';
 
-export const EVENT_TYPE = ['taxi', 'bus', 'train', 'ship', 'transport', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
+const EVENT_TYPE = ['taxi', 'bus', 'train', 'ship', 'transport', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
-export const CUT_FILTER_NAME = 'filter-';
+const CUT_FILTER_NAME = 'filter-';
 
-export const ChartMode = {
+const ChartMode = {
 	MONEY: 'money',
 	TYPE: 'type',
 	TIME: 'time',
 };
 
-export const BAR_HEIGHT = 55;
-export const BACKGROUND_COLOR = '#ffffff';
-export const HOVER_BACKGROUND_COLOR = '#ffffff';
-export const ANCHOR_START = 'start';
-export const ANCHOR_END = 'end';
-export const TYPE_HORIZONTAL_BAR = 'horizontalBar';
+const BAR_HEIGHT = 55;
+const BACKGROUND_COLOR = '#ffffff';
+const HOVER_BACKGROUND_COLOR = '#ffffff';
+const ANCHOR_START = 'start';
+const ANCHOR_END = 'end';
+const TYPE_HORIZONTAL_BAR = 'horizontalBar';
 
-export const CONTAINER = {
+const Container = {
 	TRIP: '.page-body__container',
 	TRIPINFO: '.trip-main',
 	HEADER: '.page-header__container',
@@ -111,8 +111,15 @@ export const CONTAINER = {
 	SORT: '.trip-events',
 }
 
-export const State = {
+const State = {
 	SAVING: 'SAVING',
 	DELETING: 'DELETING',
 	ABORTING: 'ABORTING',
 }
+
+export {
+	DEFAULT_POINT_COUNT, ICON_DIRECTION, Method, SuccessHTTPStatusRange, UpdateType, UserAction, DateFormat,
+	NO_TRIP_STOP_MESSAGE, FAVORITE_ACTIVE_CLASS, FilterNames, DEFAULT_FILTER, SortNames, DEFAULT_SORT, TabNames,
+	DEFAULT_TAB, ACTIVE_TAB_CLASS, RenderPosition, Mode, EditMode, EMPTY_POINT, EVENT_TYPE, CUT_FILTER_NAME, ChartMode,
+	BAR_HEIGHT, BACKGROUND_COLOR, HOVER_BACKGROUND_COLOR, ANCHOR_START, ANCHOR_END, TYPE_HORIZONTAL_BAR, Container, State
+};

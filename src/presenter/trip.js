@@ -7,7 +7,7 @@ import { render, remove } from '../framework/render.js';
 import LoadingView from '../view/loading.js';
 import LoadMoreButton from '../view/load-more.js';
 import { isOnline } from '../utils/common.js';
-import { POINTS_COUNT, DEFAULT_FILTER, DEFAULT_SORT, State, UpdateType, RenderPosition, UserAction } from '../const.js';
+import { DEFAULT_POINT_COUNT, DEFAULT_FILTER, DEFAULT_SORT, State, UpdateType, RenderPosition, UserAction } from '../const.js';
 
 class TripPresenter {
 	constructor(tripContainer, tripInfoContainer, pointsModel, filterModel, sortModel, api, destinationsModel) {
@@ -45,7 +45,7 @@ class TripPresenter {
 		render(this._tripContainer, this._boardViewComponent, RenderPosition.AFTERBEGIN);
 		render(this._boardViewComponent, this._pointListComponent, RenderPosition.BEFOREEND);
 		this._showPointsStart = 0;
-		this._showPoints = POINTS_COUNT;
+		this._showPoints = DEFAULT_POINT_COUNT;
 		this._renderBoard();
 	}
 	hide() {
@@ -75,8 +75,8 @@ class TripPresenter {
 	}
 
 	_handleButton() {
-		this._showPointsStart += POINTS_COUNT;
-		this._showPoints = Math.min(this._getPoints().length, this._showPoints + POINTS_COUNT);
+		this._showPointsStart += DEFAULT_POINT_COUNT;
+		this._showPoints = Math.min(this._getPoints().length, this._showPoints + DEFAULT_POINT_COUNT);
 		this._renderPointList(this._showPointsStart);
 		this._toggleButton();
 	}
@@ -214,7 +214,7 @@ class TripPresenter {
 		// remove Cost
 		if (resetSort) {
 			this._showPointsStart = 0;
-			this._showPoints = POINTS_COUNT;
+			this._showPoints = DEFAULT_POINT_COUNT;
 			// this._upSort = false;
 			// this._sortModel.setActiveSort(UpdateType.FULL, DEFAULT_SORT);
 			// this._filterModel.setActiveFilter(UpdateType.FULL, DEFAULT_FILTER);

@@ -1,6 +1,6 @@
 import { humanizeDate, compareTwoDates, findElement, addListener, removeListener, isOnline } from '../utils/common.js';
 import { getOffersTemplate } from '../utils/offer.js';
-import { DateFormat, DIR_ICONS, EVENT_TYPE, EditMode } from '../const.js';
+import { DateFormat, ICON_DIRECTION, EVENT_TYPE, EditMode } from '../const.js';
 import SmartView from './smart.js';
 import flatpickr from 'flatpickr';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
@@ -44,7 +44,7 @@ const editPointTemplate = (point, editMode, destinations) => {
                   <div class="event__type-wrapper">
                     <label class="event__type  event__type-btn" for="event-type-toggle-1">
                       <span class="visually-hidden">Choose event type</span>
-                      <img class="event__type-icon" width="17" height="17" src="${DIR_ICONS}${point.type}.png" alt="Event type icon">
+                      <img class="event__type-icon" width="17" height="17" src="${ICON_DIRECTION}${point.type}.png" alt="Event type icon">
                     </label>
                     <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox" ${point.isDisabled ? 'disabled' : ''}>
 

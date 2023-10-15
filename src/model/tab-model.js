@@ -1,5 +1,5 @@
-import { DEFAULT_TAB } from "../const.js";
-import Observer from "../utils/observer.js";
+import { DEFAULT_TAB } from '../const.js';
+import Observer from '../utils/observer.js';
 
 class TabModel extends Observer {
 	constructor() {

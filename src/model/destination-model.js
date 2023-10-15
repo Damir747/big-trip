@@ -1,4 +1,4 @@
-import Observer from "../utils/observer.js";
+import Observer from '../utils/observer.js';
 
 class Destinations extends Observer {
 	constructor() {

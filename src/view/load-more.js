@@ -1,4 +1,4 @@
-import AbstractView from "../framework/abstract-view";
+import AbstractView from '../framework/abstract-view';
 
 const createLoadMoreButtonTemplate = () => '<div><button class="btn  btn--big  btn--yellow" type="button">Load More Points</button></div>';
 

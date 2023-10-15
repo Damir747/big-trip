@@ -1,5 +1,5 @@
 import AbstractView from '../framework/abstract-view.js';
-import { SORT_NAMES } from '../const.js';
+import { SortNames } from '../const.js';
 
 const createSortItem = (sortName, isDisabled, isChecked, upSort) => {
 	return `<div class="trip-sort__item  trip-sort__item--${sortName}">
@@ -9,7 +9,7 @@ const createSortItem = (sortName, isDisabled, isChecked, upSort) => {
 `;
 }
 const sortTemplate = (activeSort, upSort) => {
-	const sortItemsTemplate = SORT_NAMES.map((sort, item) => createSortItem(sort.value, sort.disabled, sort.value === activeSort, upSort));
+	const sortItemsTemplate = SortNames.map((sort, item) => createSortItem(sort.value, sort.disabled, sort.value === activeSort, upSort));
 	return `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
                 ${sortItemsTemplate.join('')}
                 </form>`;

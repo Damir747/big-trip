@@ -1,6 +1,6 @@
-import { UpdateType } from "../const.js";
-import AbstractView from "../framework/abstract-view.js";
-import FilterView from "../view/filter-view.js";
+import { UpdateType } from '../const.js';
+import AbstractView from '../framework/abstract-view.js';
+import FilterView from '../view/filter-view.js';
 import { render, remove, replace } from '../framework/render.js';
 import { RenderPosition } from '../const.js';
 import { getFilterCount } from '../utils/filter.js';

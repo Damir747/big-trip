@@ -1,4 +1,4 @@
-import { CONTAINER } from './const.js';
+import { Container } from './const.js';
 import { findElement } from './utils/common.js';
 import { render } from './framework/render.js';
 import TripPresenter from './presenter/trip.js';
@@ -40,7 +40,7 @@ const storeDestinations = new Store(STORE_DESTINATIONS_NAME, window.localStorage
 const apiWithProviderDestinations = new Provider(api, storeDestinations);
 
 const headerView = new HeaderView();	// Заголовок (header) для: Маршрут и стоимость, Меню, Фильтры
-render(findElement(document, CONTAINER.HEADER), headerView.getElement(), RenderPosition.BEFOREEND);
+render(findElement(document, Container.HEADER), headerView.getElement(), RenderPosition.BEFOREEND);
 
 //? offersModel инициализировать 36:31
 
@@ -54,19 +54,19 @@ const filterModel = new FilterModel();
 // Сортировки
 const sortModel = new SortModel();
 
-const tripPresenter = new TripPresenter(findElement(document, CONTAINER.TRIP), findElement(document, CONTAINER.TRIPINFO), pointsModel, filterModel, sortModel, apiWithProviderPoints, destinationsModel);
+const tripPresenter = new TripPresenter(findElement(document, Container.TRIP), findElement(document, Container.TRIPINFO), pointsModel, filterModel, sortModel, apiWithProviderPoints, destinationsModel);
 tripPresenter.init();
 
-const statPresenter = new StatPresenter(findElement(document, CONTAINER.TRIP), pointsModel);
+const statPresenter = new StatPresenter(findElement(document, Container.TRIP), pointsModel);
 statPresenter.init();
 
-const tabPresenter = new TabPresenter(findElement(document, CONTAINER.TAB), findElement(document, CONTAINER.STAT), tabModel, pointsModel, tripPresenter, statPresenter);
+const tabPresenter = new TabPresenter(findElement(document, Container.TAB), findElement(document, Container.STAT), tabModel, pointsModel, tripPresenter, statPresenter);
 tabPresenter.init(tripPresenter);
 
-const filterPresenter = new FilterPresenter(findElement(document, CONTAINER.FILTER), pointsModel, filterModel);
+const filterPresenter = new FilterPresenter(findElement(document, Container.FILTER), pointsModel, filterModel);
 filterPresenter.init();
 
-const sortPresenter = new SortPresenter(findElement(document, CONTAINER.SORT), filterModel, sortModel, tabModel);
+const sortPresenter = new SortPresenter(findElement(document, Container.SORT), filterModel, sortModel, tabModel);
 sortPresenter.init();
 
 apiWithProviderOffers.getOffers()

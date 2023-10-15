@@ -1,6 +1,6 @@
-import { DEFAULT_TAB, UpdateType } from "../const.js";
-import AbstractView from "../framework/abstract-view.js";
-import TabView from "../view/tab-view.js";
+import { DEFAULT_TAB, UpdateType } from '../const.js';
+import AbstractView from '../framework/abstract-view.js';
+import TabView from '../view/tab-view.js';
 import { render, remove, replace } from '../framework/render.js';
 import { RenderPosition } from '../const.js';
 

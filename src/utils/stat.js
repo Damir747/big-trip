@@ -1,4 +1,4 @@
-import { ChartMode } from "../const.js";
+import { ChartMode } from '../const.js';
 import { compareTwoDates, sortByDecreasing } from '../utils/common.js';
 
 const getSortedData = (points, uniqueTypes, chartMode) => {

@@ -1,6 +1,6 @@
-import AbstractView from "../framework/abstract-view.js";
+import AbstractView from '../framework/abstract-view.js';
 import StatView from '../view/stat-view.js';
-import { render, replace, remove } from "../framework/render.js";
+import { render, replace, remove } from '../framework/render.js';
 import { RenderPosition } from '../const.js';
 
 class StatPresenter extends AbstractView {
