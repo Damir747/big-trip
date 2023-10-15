@@ -1,3 +1,4 @@
+import { VISUALLY_HIDDEN } from '../const.js';
 import { createElement } from '../utils/common.js';
 
 const SHAKE_ANIMATION_TIMEOUT = 600;
@@ -23,10 +24,10 @@ class AbstractView {
 		this._element = null;
 	}
 	show() {
-		this.getElement().classList.remove('visually-hidden');
+		this.getElement().classList.remove(VISUALLY_HIDDEN);
 	}
 	hide() {
-		this.getElement().classList.add('visually-hidden');
+		this.getElement().classList.add(VISUALLY_HIDDEN);
 	}
 	shake(callback) {
 		this.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / DURATION_MULTIPLIER}s`;

@@ -88,13 +88,13 @@ class PointPresenter extends AbstractView {
 	}
 
 	destroy() {
-		if (this._pointEditorComponent == null) {
+		if (this._pointEditorComponent === null) {
 			return;
 		}
 		remove(this._pointEditorComponent);
 		this._pointEditorComponent = null;
 
-		if (this._pointComponent == null) {
+		if (this._pointComponent === null) {
 			return;
 		}
 		remove(this._pointComponent);

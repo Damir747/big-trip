@@ -1,3 +1,4 @@
+//? в класс поместить?
 const getOffersTemplate = (offers, isDisabled) => {
 	let offersList = "";
 	offers.forEach((el) => offersList += `<div class="event__offer-selector">

@@ -32,11 +32,15 @@ const tripInfoTemplate = (points) => {
 		}
 	});
 
+	const dateRange = () => {
+		return (minDate !== Infinity) ? `<p class="trip-info__dates">${humanizeDate(minDate, DateFormat.FORMAT_SHORT_DATE)}&nbsp;&mdash;&nbsp;${humanizeDate(maxDate, DateFormat.FORMAT_SHORT_DATE)}</p>` : '';
+	}
+
 	return `<section class="trip-main__trip-info  trip-info">
 				<div class="trip-info__main">
               <h1 class="trip-info__title">${wayInfo(points)}</h1>
 
-              <p class="trip-info__dates">${humanizeDate(minDate, DateFormat.FORMAT_SHORT_DATE)}&nbsp;&mdash;&nbsp;${humanizeDate(maxDate, DateFormat.FORMAT_SHORT_DATE)}</p>
+              ${dateRange()}
             </div>
 
             <p class="trip-info__cost">

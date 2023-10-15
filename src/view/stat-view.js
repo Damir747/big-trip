@@ -1,7 +1,7 @@
 import AbstractView from '../framework/abstract-view.js';
 import Chart from '../../node_modules/chart.js';
 import ChartDataLabels from '../../node_modules/chartjs-plugin-datalabels';
-import { getSortedData } from '../utils/stat.js';
+import { getSortedData, getUniqueTypes } from '../utils/stat.js';
 import { ChartMode, BAR_HEIGHT, TYPE_HORIZONTAL_BAR, BACKGROUND_COLOR, HOVER_BACKGROUND_COLOR, ANCHOR_START, ANCHOR_END } from '../const.js';
 import { findElement } from '../utils/common.js';
 import dayjs from 'dayjs';
@@ -282,7 +282,7 @@ class StatView extends AbstractView {
 		const typeCtx = findElement(this.getElement(), '.statistics__chart--type');
 		const timeCtx = findElement(this.getElement(), '.statistics__chart--time');
 
-		const uniqueTypes = uniqueTypes(this._points);
+		const uniqueTypes = getUniqueTypes(this._points);
 		this._moneyChart = moneyChart(moneyCtx, this._points, uniqueTypes);
 		this._typeChart = typeChart(typeCtx, this._points, uniqueTypes);
 		this._timeChart = timeChart(timeCtx, this._points, uniqueTypes);

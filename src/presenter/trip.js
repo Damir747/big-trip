@@ -24,7 +24,6 @@ class TripPresenter {
 
 		this._boardViewComponent = new BoardView();			// сортировка и контент
 		this._pointListComponent = new PointListView();		// точки маршрута
-		this._noPoint = new NoPointView();						// Нет точек маршрута
 		this._loadingComponent = new LoadingView();			// загрузка
 		this._pointPresenter = {};
 
@@ -54,6 +53,34 @@ class TripPresenter {
 	show() {
 		this._boardViewComponent.show();
 	}
+
+	_clearBoard(resetSort = false) {
+		this._resetPointMode();
+		Object.values(this._pointPresenter).forEach((pointPresenter) => pointPresenter.destroy());
+		this._pointPresenter = {};
+		if (this._tripInfo !== undefined) {
+			this._tripInfo.getElement();
+			remove(this._tripInfo);
+		}
+		if (this._loadMoreButton !== undefined) {
+			remove(this._loadMoreButton);
+		}
+		if (this._noPoint) {
+			remove(this._noPoint);
+		}
+		remove(this._loadingComponent);
+		if (resetSort) {
+			this._showPointsStart = 0;
+			this._showPoints = DEFAULT_POINT_COUNT;
+		}
+	}
+
+	_createPoint() {
+		this._filterModel.setActiveFilter(UpdateType.FULL, DEFAULT_FILTER);	// сбрасывается фильтрация, как следствие, сбрасывается сортировка
+		this._pointNewPresenter.init();
+
+	}
+
 	_getAllPoints() {
 		return this._pointsModel.getPoints();
 	}
@@ -63,15 +90,6 @@ class TripPresenter {
 			this._sortModel.getActiveSort(),
 			this._sortModel.getUpSort()
 		);
-	}
-
-	_toggleButton() {
-		if (this._getPoints().length > this._showPoints) {
-			this._loadMoreButton.show();
-		}
-		else {
-			this._loadMoreButton.hide();
-		}
 	}
 
 	_handleButton() {
@@ -100,6 +118,7 @@ class TripPresenter {
 		this._getPoints().slice(from, to).forEach((tripPoint) => this._renderPoint(tripPoint));
 	}
 	_renderNoPoints() {
+		this._noPoint = new NoPointView(this._filterModel.getActiveFilter());						// Нет точек маршрута
 		render(this._boardViewComponent, this._noPoint, RenderPosition.BEFOREEND);
 	}
 
@@ -125,6 +144,7 @@ class TripPresenter {
 			this._renderNoPoints();
 			return;
 		}
+
 		this._renderPointList();
 		this._renderLoadMoreButton();
 	}
@@ -197,35 +217,7 @@ class TripPresenter {
 			.values(this._pointPresenter)
 			.forEach((pointPresenter) => pointPresenter.resetView());
 	}
-	_clearBoard(resetSort = false) {
-		this._resetPointMode();
-		Object.values(this._pointPresenter).forEach((pointPresenter) => pointPresenter.destroy());
-		this._pointPresenter = {};
-		if (this._tripInfo !== undefined) {
-			this._tripInfo.getElement();
-			remove(this._tripInfo);
-		}
-		if (this._loadMoreButton !== undefined) {
-			remove(this._loadMoreButton);
-		}
-		this._noPoint.getElement();
-		remove(this._noPoint);
-		// remove Empty
-		// remove Cost
-		if (resetSort) {
-			this._showPointsStart = 0;
-			this._showPoints = DEFAULT_POINT_COUNT;
-			// this._upSort = false;
-			// this._sortModel.setActiveSort(UpdateType.FULL, DEFAULT_SORT);
-			// this._filterModel.setActiveFilter(UpdateType.FULL, DEFAULT_FILTER);
-		}
-	}
 
-	_createPoint() {
-		this._filterModel.setActiveFilter(UpdateType.FULL, DEFAULT_FILTER);	// сбрасывается фильтрация, как следствие, сбрасывается сортировка
-		this._pointNewPresenter.init();
-
-	}
 	_setHandleNewPointButton() {
 		const btnAddEvent = document.querySelector('.trip-main__event-add-btn');
 		btnAddEvent.addEventListener('click', (evt) => {
@@ -234,6 +226,15 @@ class TripPresenter {
 			btnAddEvent.disabled = true;
 		});
 	}
+	_toggleButton() {
+		if (this._getPoints().length > this._showPoints) {
+			this._loadMoreButton.show();
+		}
+		else {
+			this._loadMoreButton.hide();
+		}
+	}
+
 }
 
 export default TripPresenter;

@@ -1,6 +1,6 @@
 import { humanizeDate, compareTwoDates, findElement, addListener, removeListener, isOnline } from '../utils/common.js';
 import { getOffersTemplate } from '../utils/offer.js';
-import { DateFormat, ICON_DIRECTION, EVENT_TYPE, EditMode } from '../const.js';
+import { DateFormat, ICON_DIRECTION, EVENT_TYPE, EditMode, OFFER_SECTION_CLASS, VISUALLY_HIDDEN } from '../const.js';
 import SmartView from './smart.js';
 import flatpickr from 'flatpickr';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
@@ -91,18 +91,18 @@ const editPointTemplate = (point, editMode, destinations) => {
                 </header>
                 <section class="event__details">
                   <section class="event__section  event__section--offers">
-                    <h3 class="event__section-title  event__section-title--offers ${point.offers.length === 0 ? 'visually-hidden' : ''}">Offers</h3>
+                    <h3 class="event__section-title  event__section-title--offers ${point.offers.length === 0 ? VISUALLY_HIDDEN : ''}">Offers</h3>
 
                     <div class="event__available-offers">
 								${getOffersTemplate(point.offers, point.isDisabled)}
                     </div>
                   </section>
 
-                  <section class="event__section  event__section--destination ${point.description.length === 0 ? 'visually-hidden' : ''}">
+                  <section class="event__section  event__section--destination ${point.description.length === 0 ? VISUALLY_HIDDEN : ''}">
                     <h3 class="event__section-title  event__section-title--destination">Destination</h3>
                     <p class="event__destination-description">${point.description}</p>
 
-                    <div class="event__photos-container ${photosList.length === 0 ? 'visually-hidden' : ''}">
+                    <div class="event__photos-container ${photosList.length === 0 ? VISUALLY_HIDDEN : ''}">
                       <div class="event__photos-tape">
                         ${photosList}
                       </div>
@@ -244,10 +244,10 @@ class PointEditorView extends SmartView {
 			checkedOffers: [],
 		});
 		if (this._offers && this._offers.length >= 0) {
-			document.querySelector('.event__section--offers').classList.remove('visually-hidden');
+			document.querySelector(OFFER_SECTION_CLASS).classList.remove(VISUALLY_HIDDEN);
 		}
 		else {
-			document.querySelector('.event__section--offers').classList.add('visually-hidden');
+			document.querySelector(OFFER_SECTION_CLASS).classList.add(VISUALLY_HIDDEN);
 		}
 	}
 

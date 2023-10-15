@@ -1,16 +1,17 @@
 import AbstractView from '../framework/abstract-view.js';
 
-const createNoPointTemplate = () => {
-	// const filterMenu = new FilterMenu();
-	// console.log(filterMenu.getElement());
-	return '<p class="trip-events__msg" style="color:black">Click New Event to create your first point</p>';
-	// 'There are no past events now'
-	// 'There are no future events now'
+const createNoPointTemplate = (activeFilter) => {
+	return `<p class="trip-events__msg" style="color:black">There are no ${activeFilter} events now.<br>
+	Click New Event to create your first point</p>`;
 };
 
 class NoPointView extends AbstractView {
+	constructor(activeFilter) {
+		super();
+		this._activeFilter = activeFilter;
+	}
 	getTemplate() {
-		return createNoPointTemplate();
+		return createNoPointTemplate(this._activeFilter);
 	}
 }
 
