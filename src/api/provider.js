@@ -1,5 +1,4 @@
 import PointModel from '../model/point-model.js'
-import { isOnline } from '../utils/common.js';
 
 const getSyncedPoints = (items) => {
 	return items.filter(({ success }) => success)
@@ -13,14 +12,14 @@ const createStoreStructure = (items) => {
 		});
 	}, {});
 }
-//? реализуйте приватный метод _isOnLine для проверки наличия сети;
+
 class Provider {
 	constructor(api, store) {
 		this._api = api;
 		this._store = store;
 	}
 	getPoints() {
-		if (isOnline()) {
+		if (this._isOnline()) {
 			return this._api.getPoints()
 				.then((points) => {
 					const items = createStoreStructure(points.map(PointModel.adaptToServer));
@@ -32,7 +31,7 @@ class Provider {
 		return Promise.resolve(storePoints.map(PointModel.adaptToClient));
 	}
 	getDestinations() {
-		if (isOnline()) {
+		if (this._isOnline()) {
 			return this._api.getDestinations()
 				.then((destinations) => {
 					this._store.setItems(destinations);
@@ -44,7 +43,7 @@ class Provider {
 		return Promise.resolve(storeItems.map(PointModel.adaptDestinationsToClient));
 	}
 	getOffers() {
-		if (isOnline()) {
+		if (this._isOnline()) {
 			return this._api.getOffers()
 				.then((offers) => {
 					const items = createStoreStructure(offers.map(PointModel.adaptOffersToServer));
@@ -60,7 +59,7 @@ class Provider {
 	}
 
 	updatePoint(point) {
-		if (isOnline()) {
+		if (this._isOnline()) {
 			return this._api.updatePoint(point)
 				.then((updatedPoint) => {
 					this._store.setItem(updatedPoint.id, PointModel.adaptToServer(updatedPoint));
@@ -71,7 +70,7 @@ class Provider {
 		return Promise.resolve(point);
 	}
 	addPoint(point) {
-		if (isOnline()) {
+		if (this._isOnline()) {
 			return this._api.addPoint(point)
 				.then((newPoint) => {
 					this._store.setItem(newPoint.id, PointModel.adaptToServer(newPoint))
@@ -81,7 +80,7 @@ class Provider {
 		return Promise.reject(new Error('Add point failed'));
 	}
 	deletePoint(point) {
-		if (isOnline()) {
+		if (this._isOnline()) {
 			return this._api.deletePoint(point)
 				.then(() =>
 					this._store.removeItem(point.id));
@@ -89,7 +88,7 @@ class Provider {
 		return Promise.reject(new Error('Delete point failed'));
 	}
 	sync() {
-		if (isOnline()) {
+		if (this._isOnline()) {
 			const storePoints = Object.values(this._store.getItems());
 			return this._api.sync(storePoints)
 				.then((response) => {
@@ -102,6 +101,9 @@ class Provider {
 				});
 		}
 		return Promise.reject(new Error('sync data failed'));
+	}
+	_isOnline() {
+		return window.navigator.onLine;
 	}
 }
 
