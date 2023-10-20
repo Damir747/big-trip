@@ -71,7 +71,6 @@ sortPresenter.init();
 
 apiWithProviderOffers.getOffers()
 	.then((offers) => {
-		console.log('Данные offers получены', offers);
 		pointsModel.setOffers(offers);
 	})
 	.catch((err) => {
@@ -79,7 +78,6 @@ apiWithProviderOffers.getOffers()
 	});
 apiWithProviderPoints.getPoints()
 	.then((points) => {
-		console.log('Данные points получены', points);
 		pointsModel.setPoints(UpdateType.INIT, points);
 	})
 	.catch((err) => {
@@ -89,7 +87,6 @@ apiWithProviderPoints.getPoints()
 
 apiWithProviderDestinations.getDestinations()
 	.then((destinations) => {
-		console.log('Данные destinations получены.', destinations);
 		destinationsModel.setDestinations(destinations);
 	})
 	.catch((err) => {

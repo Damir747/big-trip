@@ -203,7 +203,6 @@ class TripPresenter {
 				break;
 			case UpdateType.PATCH:
 				this._resetPointMode();
-				// this._pointPresenter[data.id].init(data);
 				break;
 			default:
 				throw new Error('UpdateType is not found');

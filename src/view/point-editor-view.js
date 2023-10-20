@@ -1,10 +1,8 @@
-import { humanizeDate, compareTwoDates, findElement, addListener, removeListener, isOnline } from '../utils/common.js';
-import { getOffersTemplate } from '../utils/offer.js';
+import { firstLetterUpperCase, humanizeDate, compareTwoDates, findElement, addListener, removeListener, isOnline } from '../utils/common.js';
 import { DateFormat, ICON_DIRECTION, EVENT_TYPE, EditMode, OFFER_SECTION_CLASS, VISUALLY_HIDDEN } from '../const.js';
 import SmartView from './smart.js';
 import flatpickr from 'flatpickr';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
-import { firstLetterUpperCase } from '../utils/common.js';
 import { checkPriceIsNumber } from '../utils/point.js';
 import he from 'he';
 import { render } from '../framework/render.js';
@@ -26,6 +24,18 @@ const eventTypeTemplate = (eventType, checkedType, isDisabled) => {
                           <label class="event__type-label  event__type-label--${eventType}" for="event-type-${eventType}-1">${firstLetterUpperCase(eventType)}</label>
                         </div>
 `
+}
+const getOffersTemplate = (offers, isDisabled) => {
+	let offersList = "";
+	offers.forEach((el) => offersList += `<div class="event__offer-selector">
+	                     <input class="event__offer-checkbox  visually-hidden" id="event-offer-${el.short}-1" type="checkbox" name="event-offer-${el.short}" ${(!el.hasOwnProperty('checked') || el.checked) ? 'checked' : ''} ${isDisabled ? 'disabled' : ''}>
+	                     <label class="event__offer-label" for="event-offer-${el.short}-1">
+	                       <span class="event__offer-title">${el.title}</span>
+	                       &plus;&euro;&nbsp;
+	                       <span class="event__offer-price">${el.price}</span>
+	                     </label>
+	                   </div>`);
+	return offersList;
 }
 
 const editPointTemplate = (point, editMode, destinations) => {
@@ -144,10 +154,6 @@ class PointEditorView extends SmartView {
 		this._destinationsModel.addObserver(this.refreshDatalist);
 	}
 
-	init() {
-		console.log('Edit Component Init');
-	}
-
 	refreshDatalist() {
 		const containerDestinations = findElement(this.getElement(), '.event__field-group--destination');
 		const containerDatalist = findElement(this.getElement(), 'datalist');
@@ -185,10 +191,8 @@ class PointEditorView extends SmartView {
 	removeElement() {
 		super.removeElement();
 		if (this._dateStart || this._dateEnd) {
-			// this._dateStart.destroy();
-			// this._dateStart = null;
-			// this._dateEnd.destroy();
-			// this._dateEnd = null;
+			this._dateStart = null;
+			this._dateEnd = null;
 		}
 	}
 
@@ -298,7 +302,6 @@ class PointEditorView extends SmartView {
 
 	_setDatePicker(datePicker, flag) {
 		if (datePicker) {
-			// datePicker.destroy();
 			datePicker = null;
 		}
 		if (flag) {

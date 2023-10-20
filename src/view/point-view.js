@@ -1,7 +1,18 @@
 import { addListener, humanizeDate, humanizeTripTime, isOnline } from '../utils/common.js';
 import { DateFormat, ICON_DIRECTION } from '../const.js';
-import { getSelectedOffersTemplate } from '../utils/offer.js';
 import AbstractView from '../framework/abstract-view.js';
+
+const getSelectedOffersTemplate = (checkedOffer) => {
+	let offersList = "";
+	checkedOffer.forEach((el) => {
+		offersList += `<li class="event__offer">
+	                 <span class="event__offer-title">${el.title}</span>
+	                 &plus;&euro;&nbsp;
+	                 <span class="event__offer-price">${el.price}</span>
+	               </li>`;
+	});
+	return offersList;
+}
 
 const pointTemplate = (point) => {
 	const checkedFavorite = point.checkedFavorite ? 'event__favorite-btn--active' : '';
