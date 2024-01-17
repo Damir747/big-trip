@@ -43,6 +43,7 @@ class Provider {
 		return Promise.resolve(storeItems.map(PointModel.adaptDestinationsToClient));
 	}
 	getOffers() {
+		console.log('getOffers');
 		if (this._isOnline()) {
 			return this._api.getOffers()
 				.then((offers) => {

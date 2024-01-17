@@ -40,10 +40,10 @@ const storeDestinations = new Store(STORE_DESTINATIONS_NAME, window.localStorage
 const apiWithProviderDestinations = new Provider(api, storeDestinations);
 
 const headerView = new HeaderView();	// Заголовок (header) для: Маршрут и стоимость, Меню, Фильтры
+console.log('start');
 render(findElement(document, Container.HEADER), headerView.getElement(), RenderPosition.BEFOREEND);
 
 //? offersModel инициализировать 36:31
-
 const pointsModel = new PointsModel();
 const destinationsModel = new Destinations();
 
@@ -71,6 +71,7 @@ sortPresenter.init();
 
 apiWithProviderOffers.getOffers()
 	.then((offers) => {
+		console.log('apiWithProviderOffers.getOffers');
 		pointsModel.setOffers(offers);
 	})
 	.catch((err) => {
@@ -101,7 +102,7 @@ window.addEventListener('load', () => {
 	}
 });
 
-window.addEventListener('online', (evt) => {
+window.addEventListener('online', (_evt) => {
 	document.title = document.title.replace('[offline]', '');
 	toastRemove();
 	apiWithProviderPoints.sync();
@@ -109,7 +110,7 @@ window.addEventListener('online', (evt) => {
 	const buttonsRollDown = document.querySelectorAll('.event__rollup-btn');
 	buttonsRollDown.forEach(button => button.disabled = false);
 });
-window.addEventListener('offline', (evt) => {
+window.addEventListener('offline', (_evt) => {
 	document.title += ' [offline]';
 	toast('we are offline', true);
 	document.querySelector('.trip-main__event-add-btn').disabled = true;
