@@ -40,7 +40,6 @@ const storeDestinations = new Store(STORE_DESTINATIONS_NAME, window.localStorage
 const apiWithProviderDestinations = new Provider(api, storeDestinations);
 
 const headerView = new HeaderView();	// Заголовок (header) для: Маршрут и стоимость, Меню, Фильтры
-console.log('start');
 render(findElement(document, Container.HEADER), headerView.getElement(), RenderPosition.BEFOREEND);
 
 //? offersModel инициализировать 36:31
@@ -71,7 +70,6 @@ sortPresenter.init();
 
 apiWithProviderOffers.getOffers()
 	.then((offers) => {
-		console.log('apiWithProviderOffers.getOffers');
 		pointsModel.setOffers(offers);
 	})
 	.catch((err) => {

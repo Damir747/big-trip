@@ -26,6 +26,7 @@ class Provider {
 					this._store.setItems(items);
 					return points;
 				})
+				.catch((err) => console.log(err));
 		}
 		const storePoints = Object.values(this._store.getItems());
 		return Promise.resolve(storePoints.map(PointModel.adaptToClient));
