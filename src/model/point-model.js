@@ -175,7 +175,6 @@ class PointsModel extends Observer {
 	}
 
 	static adaptOffersToClient(offer) {
-		console.log('adaptOffersToClient');
 		const adaptOnlyOffers = (offers) => {
 			const adaptedOffers = [];
 			offers.forEach(offer => {
