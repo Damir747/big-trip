@@ -68,7 +68,6 @@ filterPresenter.init();
 const sortPresenter = new SortPresenter(findElement(document, Container.SORT), filterModel, sortModel, tabModel);
 sortPresenter.init();
 
-console.log('aaa');
 apiWithProviderOffers.getOffers()
 	.then((offers) => {
 		pointsModel.setOffers(offers);
